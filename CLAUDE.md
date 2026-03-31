@@ -1,0 +1,297 @@
+# CLAUDE.md — OpenClaw Face
+
+## Projektuebersicht
+
+**OpenClaw Face** gibt dem lokal laufenden OpenClaw-Agenten ein sichtbares Gesicht. Zwei Apps arbeiten zusammen: Eine macOS-App (Bridge) verbindet sich per WebSocket mit dem lokalen OpenClaw-Gateway und leitet Emotion-Events via Bonjour an ein angeschlossenes iOS-Device weiter. Das iPhone/iPad zeigt als reines Display animierte Gesichter, die den emotionalen Zustand des Agenten in Echtzeit widerspiegeln.
+
+Zielgruppe: Self-Hosted-AI-Enthusiasten mit lokalem OpenClaw-Setup auf einem Mac Mini M4.
+
+---
+
+## Architektur
+
+```
+OpenClaw Gateway (localhost:18789)
+       |
+       | WebSocket (Protocol v3, Ed25519)
+       v
+macOS App — "OpenClaw Face" (Bridge)
+       |
+       | Bonjour / Network.framework (LAN/USB)
+       v
+iOS App — "OpenClaw Display" (Face)
+       |
+       v
+  Animiertes Gesicht auf iPhone/iPad
+```
+
+### Zwei Targets, ein Xcode-Projekt (via XcodeGen)
+
+| Target             | Plattform | Bundle ID                           | Rolle                                  |
+|--------------------|-----------|-------------------------------------|----------------------------------------|
+| `OpenClawFace`     | macOS 14+ | net.eab-solutions.openclawface      | Bridge: Gateway <-> Display, Konfiguration |
+| `OpenClawDisplay`  | iOS 17+   | net.eab-solutions.openclawdisplay   | Reines Face-Display, empfaengt Befehle |
+
+### Dependencies
+- **Lottie** (SPM, v4.4+) — Vektorbasierte Animationen fuer Preset-Avatare
+- Keine weiteren externen Dependencies
+
+### Shared Code
+Alles in `Shared/` wird von beiden Targets kompiliert: Models, Networking, Renderer, Theme, Lottie-Animationen.
+
+---
+
+## Technologie-Stack
+
+### Gemeinsam
+- **Sprache:** Swift 6, strikt async/await, complete concurrency checking
+- **UI-Framework:** SwiftUI
+- **Design:** Zentrale Farbverwaltung in `Theme.swift`, Terminal-Aesthetik (schwarz, gruen, monospace)
+- **Projekt-Generator:** XcodeGen (`project.yml`) — nach jeder Aenderung: `xcodegen generate`
+
+### macOS App (Bridge)
+- **Gateway:** WebSocket via `URLSessionWebSocketTask`, OpenClaw Protocol v3, Ed25519-Signing (CryptoKit)
+- **Display:** Bonjour-Server via `Network.framework` mit Length-Prefixed Framing
+- **Credentials:** Keychain (`KeychainService`)
+- **Persistenz:** UserDefaults fuer Configs (kein CoreData)
+- **Architektur:** MVVM, Services, `@StateObject` / `@ObservedObject`
+
+### iOS App (Display)
+- **Kommunikation:** Bonjour-Client via `NWBrowser` + `NWConnection`, auto-discovery
+- **Rendering:** Zwei Systeme: Lottie (Presets) + SwiftUI Shapes (Custom Avatare)
+- **Fullscreen:** Landscape, System-Overlays hidden
+
+---
+
+## Zwei Avatar-Systeme
+
+### 1. Lottie-Presets (fertige Animationen)
+13 vorgefertigte Lottie-JSON-Animationen in `Shared/Animations/`. Jede hat 240 Frames (8 Emotion-Segments a 30 Frames, 30fps). Generiert mit `tools/generate_lottie.py`.
+
+| Kategorie | Avatare |
+|-----------|---------|
+| **Nur Augen** | Round Eyes, Cyber Eyes, Minimal Dots, Neon Eyes (Farbwechsel), Angry Eyes (rot), Cute Eyes (Kawaii) |
+| **Gesichter** | Robot, Cat, Ghost, Owl, Skull, Alien |
+| **Sphere** | RGB Sphere (Siri-aehnlich, Farbe = Emotion) |
+
+Gesteuert durch: `LottieAnimationEngine` + `LottieFaceView` (UIKit/AppKit Wrapper mit `play(fromFrame:toFrame:)`)
+
+### 2. Custom Avatar Editor (Baukasten)
+Programmatischer SwiftUI-Renderer. Der User baut sein eigenes Gesicht aus Komponenten:
+
+```
+CustomAvatar
+├── FaceOutline     (circle, roundedRect, oval, square, hexagon, none)
+├── EyebrowLeft     (straight, arched, angry, worried, thick, none)
+├── EyebrowRight    (unabhaengig oder gespiegelt)
+├── EyeLeft         (round, oval, almond, droopy, wide, slit)
+│   └── PupilLeft   (round, vertical, horizontal, star, dot, none)
+├── EyeRight        (unabhaengig oder gespiegelt)
+│   └── PupilRight  (unabhaengig oder gespiegelt)
+├── Nose            (triangle, round, line, dot, none)
+├── Mouth           (line, smile, open, small, wide, none)
+└── Accessory       (ears, horns, antenna, halo, glasses, bow, none)
+```
+
+Jedes Element hat: **Shape-Variante + Farbe (10 Presets) + Groesse + Position**.
+
+Gesteuert durch: `EmotionAnimator` (30fps, smooth Transitions, Blinzeln, Pupillen-Drift, Mund-Talk, Error-Shake, Atmen) + `CustomFaceView` + `FaceShapes.swift`
+
+Quick-Presets: Default, Robot, Kawaii, Demon, Hacker
+
+---
+
+## Emotion-Protokoll
+
+### 8 Emotion-States
+| State        | Beschreibung                              |
+|--------------|-------------------------------------------|
+| `idle`       | Agent wartet, keine aktive Aufgabe        |
+| `thinking`   | Agent verarbeitet, plant                  |
+| `focused`    | Langer Task, intensive Verarbeitung       |
+| `responding` | Agent formuliert Antwort                  |
+| `error`      | Fehler im Agent-Prozess                   |
+| `success`    | Aufgabe erfolgreich abgeschlossen         |
+| `listening`  | Agent wartet auf Input                    |
+| `sleeping`   | Agent im Standby / inaktiv                |
+
+### Bonjour-Protokoll (macOS -> iOS)
+```json
+{"cmd": "emotion", "state": "thinking", "intensity": 0.8, "context": "planning"}
+{"cmd": "avatar", "avatar": {"avatarType": "eyes_neon"}}
+{"cmd": "ping"}
+```
+Framing: 4-Byte Length-Header (Big Endian) + JSON Payload ueber TCP.
+iOS antwortet mit: `{"ack": true}`
+
+### Gateway-Event-Mapping (EmotionRouter)
+- `chat` event + `state: "delta"` -> `responding`
+- `chat` event + `state: "final"` -> `success`
+- `agent.status` + `status: "thinking"` -> `thinking`
+- Connection-State-Aenderungen -> `sleeping`, `error`, `success`
+
+### EmotionAnimator Features
+- Smooth Transitions (0.5s ease-out-cubic zwischen Emotionen)
+- Automatisches Blinzeln (zufaellig alle 2.5-5 Sek)
+- Pupillen-Drift (Idle: Mikrobewegung, Thinking: aktiv herumschauen, Listening: leicht)
+- Atmen (subtile Scale-Oszillation des ganzen Gesichts)
+- Mund-Animation (oeffnet/schliesst bei Responding)
+- Error-Shake (ganzes Gesicht vibriert)
+- Mood-Tracking (gewichteter Durchschnitt der letzten 50 Emotionen)
+
+---
+
+## Projektstruktur
+
+```
+ocFaceMe/
+├── CLAUDE.md
+├── project.yml                              <- XcodeGen
+├── tools/
+│   └── generate_lottie.py                   <- Generiert alle 13 Lottie-JSONs
+├── Shared/                                  <- Beide Targets
+│   ├── Models/
+│   │   ├── AvatarConfig.swift               <- AvatarType enum (13 Lottie-Presets), Emotion-Segment-Mapping
+│   │   ├── CustomAvatarConfig.swift         <- Komplettes Custom-Avatar-Modell mit allen Komponenten + Farben
+│   │   └── EmotionState.swift               <- 8 States + EmotionCommand/Ack (Bonjour-Protokoll)
+│   ├── Networking/
+│   │   ├── BonjourConstants.swift           <- Service-Type + EmotionFramerProtocol (Length-Prefixed)
+│   │   ├── ConnectionState.swift
+│   │   ├── DeviceIdentity.swift             <- Ed25519 Keypair, Keychain-Persistenz
+│   │   ├── GatewayConnectionConfig.swift
+│   │   ├── GatewayService.swift             <- WebSocket zu OpenClaw, Auto-Connect, Reconnect (Exp. Backoff)
+│   │   ├── KeychainService.swift
+│   │   └── OpenClawAPI.swift                <- OCResponse, AnyCodable, GatewayError
+│   ├── Renderer/
+│   │   ├── LottieAnimationEngine.swift      <- Laedt Lottie-JSON, steuert Segments per Emotion
+│   │   ├── LottieFaceView.swift             <- UIKit/AppKit Wrapper (UIViewRepresentable/NSViewRepresentable)
+│   │   ├── EmotionAnimator.swift            <- 30fps Pose-Interpolation, Blinzeln, Pupillen, Mood
+│   │   ├── CustomFaceView.swift             <- SwiftUI View, composited alle Shapes mit EmotionAnimator
+│   │   └── FaceShapes.swift                 <- Bezier-Shapes: Eye, Eyebrow, Pupil, Mouth, Nose, Face, Accessory
+│   ├── Animations/                          <- Lottie JSON Dateien (als Resources in beide Targets)
+│   │   ├── eyes_round.json                  <- 6 Augen-Varianten
+│   │   ├── eyes_cyber.json
+│   │   ├── eyes_minimal.json
+│   │   ├── eyes_neon.json                   <- Farbwechsel pro Emotion
+│   │   ├── eyes_angry.json                  <- Rot, schraeg
+│   │   ├── eyes_cute.json                   <- Kawaii mit Iris
+│   │   ├── face_robot.json                  <- 6 Gesichter
+│   │   ├── face_cat.json
+│   │   ├── face_ghost.json
+│   │   ├── face_owl.json
+│   │   ├── face_skull.json
+│   │   ├── face_alien.json
+│   │   └── sphere_rgb.json                  <- Siri-aehnliche RGB-Kugel
+│   └── Theme/
+│       └── Theme.swift                      <- Terminal-Aesthetik, alle Farben/Fonts/Spacing
+├── macOS/                                   <- OpenClawFace Target
+│   ├── App/
+│   │   ├── OpenClawFaceApp.swift            <- @main, DI, Auto-Connect, Bonjour-Start
+│   │   └── ContentView.swift                <- 4 Tabs: BRIDGE, AVATAR, SKILL, CONFIG
+│   ├── Services/
+│   │   ├── BonjourServer.swift              <- Advertised _openclawface._tcp, sendet Commands
+│   │   ├── EmotionRouter.swift              <- Gateway-Events -> EmotionState -> BonjourServer
+│   │   └── EmotionSkillService.swift        <- EMOTION.md auf Agenten-Workspace pushen/entfernen
+│   ├── ViewModels/
+│   │   └── SettingsViewModel.swift          <- Gateway-Config, Reachability-Test
+│   ├── Views/
+│   │   ├── AvatarEditorView.swift           <- Zwei Modi: [PRESETS] + [CUSTOM], Push to Display
+│   │   ├── CustomEditorView.swift           <- Full Custom Editor: 5 Sektionen (Eyes/Brows/Mouth/Face/Extras)
+│   │   ├── DashboardView.swift              <- Gateway+Display+Bonjour Status, Manual Emotion, Log
+│   │   ├── SettingsView.swift               <- Host/Port/Token/SSL, Test, Connect/Disconnect
+│   │   └── SkillView.swift                  <- Agent-Liste, EMOTION.md Install/Remove
+│   └── Resources/
+│       └── OpenClawFace.entitlements        <- network.client + network.server
+└── iOS/                                     <- OpenClawDisplay Target
+    ├── App/
+    │   └── OpenClawDisplayApp.swift         <- @main, BonjourClient, empfaengt emotion/avatar Commands
+    ├── Services/
+    │   └── BonjourClient.swift              <- NWBrowser auto-discovery, empfaengt + ACKt Commands
+    └── Views/
+        └── FaceView.swift                   <- Fullscreen, Lottie oder Custom, Verbindungsstatus-Dot
+```
+
+---
+
+## Entwicklungsrichtlinien
+
+- Alle Farben und Design-Attribute zentral in `Theme.swift`
+- Keine hardcodierten Farben, Abstaende oder Schriftgroessen ausserhalb von Theme
+- Keine Emojis oder dekorativen Icons in der UI
+- Keine Chevron-Pfeile in Navigations- oder Auswahlmenues
+- Credentials ausschliesslich via Keychain
+- WebSocket- und Bonjour-Kommunikation vollstaendig async
+- Fehlerbehandlung explizit und sichtbar im UI
+- Terminal-Aesthetik: schwarzer Hintergrund, gruener Monospace-Text, eckige Klammern `[BUTTON]`
+- XcodeGen: Nach Datei-Aenderungen immer `rm -rf OpenClawFace.xcodeproj && xcodegen generate`
+- Lottie-Animationen: Mit `python3 tools/generate_lottie.py` regenerieren
+
+---
+
+## Entwicklungsphasen
+
+### Phase 1 — Grundstruktur + Simulator ✅
+- Xcode-Projekt mit XcodeGen (macOS + iOS Target)
+- Theme, Networking-Layer (Gateway Protocol v3, Ed25519)
+- Bonjour-Kommunikation (Server + Client, Length-Prefixed Framing)
+- macOS: Dashboard, Settings, 4-Tab-Navigation
+- iOS: Fullscreen FaceView mit Verbindungsstatus
+- Beide Targets bauen erfolgreich
+
+### Phase 2 — Live-Integration ✅
+- Auto-Connect zum lokalen Gateway bei App-Start
+- Reconnect mit Exponential Backoff (1s...30s)
+- EmotionRouter: Gateway-Events -> Emotion -> BonjourServer -> iOS
+- Emotion-Skill-Management: EMOTION.md pro Agent installieren/entfernen
+- [SKILL] Tab mit Agent-Liste
+
+### Phase 3 — Lottie Avatar-System ✅
+- 13 Lottie-Presets (6 Augen, 6 Gesichter, 1 RGB-Sphere)
+- Python-Generator (`tools/generate_lottie.py`) fuer alle Animationen
+- LottieAnimationEngine + LottieFaceView (UIKit/AppKit Wrapper)
+- Jede Animation: 240 Frames, 8 Emotion-Segments
+- [AVATAR] Tab mit Preset-Auswahl und Live-Preview
+- Farbe pro Emotion (Neon Eyes, RGB Sphere)
+
+### Phase 4 — Custom Avatar Editor ✅
+- Komponenten-basierter SwiftUI-Renderer (Bezier-Shapes)
+- 7 Komponenten: FaceOutline, EyeL/R, EyebrowL/R, PupilL/R, Nose, Mouth, Accessory
+- Jede Komponente: Shape-Variante + Farbe + Groesse
+- EmotionAnimator: 30fps Pose-Interpolation, Blinzeln, Pupillen-Drift, Mund-Talk, Shake, Atmen, Mood
+- CustomEditorView: 5 Sektionen (Eyes, Brows, Mouth, Face, Extras)
+- Quick-Presets: Default, Robot, Kawaii, Demon, Hacker
+- [AVATAR] Tab: [PRESETS] und [CUSTOM] Modi nebeneinander
+
+---
+
+## Offene Aufgaben (naechste Session)
+
+### Prioritaet 1 — iOS Custom Avatar anzeigen
+- [ ] Bonjour-Protokoll erweitern: `cmd:"customAvatar"` mit `CustomAvatarConfig` Payload
+- [ ] iOS FaceView: Umschalten zwischen Lottie (Preset) und CustomFaceView (Custom)
+- [ ] iOS: EmotionAnimator starten, auf Bonjour-Emotion-Commands reagieren
+- [ ] macOS: [PUSH TO DISPLAY] sendet Custom-Config an iOS
+
+### Prioritaet 2 — Emotion Engine verbessern
+- [ ] EmotionAnimator: Personality-System (viele Errors = nervoeser Idle, viele Success = selbstbewusster)
+- [ ] Smooth Pupillen-Tracking: Pupillen folgen "Aufmerksamkeit" (zentriert bei Focused, wandernd bei Thinking)
+- [ ] Augenbrauen-Asymmetrie bei Thinking (eine hoch, eine runter)
+- [ ] Micro-Expressions: zufaellige kleine Zuckungen im Idle
+
+### Prioritaet 3 — Lottie-Emotionen fixen
+- [ ] Lottie-Presets: Emotionen sehen noch zu aehnlich aus
+- [ ] LottieFaceView: Pruefen ob `play(fromFrame:toFrame:)` korrekt bei jedem Emotion-Wechsel aufgerufen wird
+- [ ] Eventuell: Lottie durch Custom-Renderer komplett ersetzen (bessere Kontrolle)
+
+### Prioritaet 4 — Produktreife
+- [ ] Onboarding-Flow (Ersteinrichtung: Gateway-URL, erster Avatar)
+- [ ] Custom-Avatare speichern/laden (mehrere Slots)
+- [ ] Export/Import von Custom-Avataren
+- [ ] End-to-End Test mit echtem OpenClaw Gateway
+
+---
+
+## Verwandte Projekte
+
+- **OpenClaw CommandCenter** (ocSHELL) — iOS-App als primaeres OpenClaw Control Interface. Gateway-Networking-Code (`GatewayService`, `DeviceIdentity`, `KeychainService`) wurde von dort adaptiert.
+- **OpenClaw** — Open-Source AI Agent Framework, lokal auf Mac Mini M4

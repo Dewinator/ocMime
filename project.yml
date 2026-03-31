@@ -1,0 +1,82 @@
+name: OpenClawFace
+options:
+  bundleIdPrefix: net.eab-solutions
+  deploymentTarget:
+    macOS: "14.0"
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+
+packages:
+  Lottie:
+    url: https://github.com/airbnb/lottie-ios
+    from: "4.4.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+
+  # ── macOS App: Bridge / Control Center ──
+  OpenClawFace:
+    type: application
+    platform: macOS
+    sources:
+      - path: macOS
+      - path: Shared
+    resources:
+      - path: Shared/Animations
+        buildPhase: resources
+    dependencies:
+      - package: Lottie
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: net.eab-solutions.openclawface
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: "OpenClaw Face"
+        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.utilities"
+        INFOPLIST_KEY_NSMainStoryboardFile: ""
+        INFOPLIST_KEY_NSLocalNetworkUsageDescription: "OpenClaw Face needs local network access to communicate with the iOS display device."
+        INFOPLIST_KEY_NSBonjourServices: "_openclawface._tcp"
+        ENABLE_HARDENED_RUNTIME: YES
+        SWIFT_STRICT_CONCURRENCY: complete
+    entitlements:
+      path: macOS/Resources/OpenClawFace.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.network.client: true
+        com.apple.security.network.server: true
+
+  # ── iOS App: Display / Face ──
+  OpenClawDisplay:
+    type: application
+    platform: iOS
+    sources:
+      - path: iOS
+      - path: Shared
+    resources:
+      - path: Shared/Animations
+        buildPhase: resources
+    dependencies:
+      - package: Lottie
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: net.eab-solutions.openclawdisplay
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: "OpenClaw Display"
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        INFOPLIST_KEY_NSLocalNetworkUsageDescription: "OpenClaw Display needs local network access to receive emotion commands from the Mac bridge."
+        INFOPLIST_KEY_NSBonjourServices: "_openclawface._tcp"
+        SWIFT_STRICT_CONCURRENCY: complete
+        TARGETED_DEVICE_FAMILY: "1,2"

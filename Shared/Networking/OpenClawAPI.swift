@@ -1,0 +1,110 @@
+import Foundation
+
+// MARK: - Generic WebSocket Response
+
+struct OCResponse: Decodable, @unchecked Sendable {
+    let type: String?
+    let id: String?
+    let method: String?
+    let ok: Bool?
+    let payload: AnyCodable?
+    let result: AnyCodable?
+    let error: OCErrorPayload?
+    let event: String?
+    let data: AnyCodable?
+    let seq: Int?
+    let nonce: String?
+
+    var responseData: [String: Any]? {
+        (payload?.value as? [String: Any]) ?? (result?.value as? [String: Any])
+    }
+}
+
+struct OCErrorPayload: Decodable, Sendable {
+    let message: String?
+    let code: String?
+}
+
+// MARK: - Gateway Errors
+
+enum GatewayError: Error, LocalizedError {
+    case invalidURL
+    case notConnected
+    case unexpectedFrame
+    case authenticationFailed
+    case timeout
+    case serverError(String)
+
+    var isTimeout: Bool {
+        if case .timeout = self { return true }
+        return false
+    }
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:             return "Invalid gateway URL"
+        case .notConnected:           return "Not connected"
+        case .unexpectedFrame:        return "Unexpected gateway frame"
+        case .authenticationFailed:   return "Authentication failed"
+        case .timeout:                return "Connection timeout"
+        case .serverError(let msg):   return msg
+        }
+    }
+}
+
+// MARK: - AnyCodable Helper
+
+struct AnyCodable: Codable, Equatable, @unchecked Sendable {
+    let value: Any
+
+    init(_ value: Any) {
+        self.value = value
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if container.decodeNil() {
+            value = NSNull()
+        } else if let bool = try? container.decode(Bool.self) {
+            value = bool
+        } else if let int = try? container.decode(Int.self) {
+            value = int
+        } else if let double = try? container.decode(Double.self) {
+            value = double
+        } else if let string = try? container.decode(String.self) {
+            value = string
+        } else if let array = try? container.decode([AnyCodable].self) {
+            value = array.map(\.value)
+        } else if let dict = try? container.decode([String: AnyCodable].self) {
+            value = dict.mapValues(\.value)
+        } else {
+            value = NSNull()
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch value {
+        case is NSNull:
+            try container.encodeNil()
+        case let bool as Bool:
+            try container.encode(bool)
+        case let int as Int:
+            try container.encode(int)
+        case let double as Double:
+            try container.encode(double)
+        case let string as String:
+            try container.encode(string)
+        case let array as [Any]:
+            try container.encode(array.map { AnyCodable($0) })
+        case let dict as [String: Any]:
+            try container.encode(dict.mapValues { AnyCodable($0) })
+        default:
+            try container.encodeNil()
+        }
+    }
+
+    static func == (lhs: AnyCodable, rhs: AnyCodable) -> Bool {
+        String(describing: lhs.value) == String(describing: rhs.value)
+    }
+}

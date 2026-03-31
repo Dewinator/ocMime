@@ -1,0 +1,835 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		045D8E1129B581C24103C16B /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 390D6F3E0CA2406677408054 /* DashboardView.swift */; };
+		09D2B9C59CEFB552A5BDEB4A /* EmotionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A40371D715FA4AD61AEFD16 /* EmotionAnimator.swift */; };
+		0C58FFDF6BA13D16DB539D2A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A701C3DA0C568C830649DFF /* Theme.swift */; };
+		0D59C29B986DBC22E3CFE354 /* sphere_rgb.json in Resources */ = {isa = PBXBuildFile; fileRef = 6028BECE6144168425499FE3 /* sphere_rgb.json */; };
+		0F4BDB0A4FCEE2CC6E1BC6E0 /* sphere_rgb.json in Resources */ = {isa = PBXBuildFile; fileRef = 6028BECE6144168425499FE3 /* sphere_rgb.json */; };
+		10D554033BB83B980FD07138 /* SkillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5541ABC65A7C97EA0758C953 /* SkillView.swift */; };
+		1441F365D9FD8F499CF8B0E5 /* eyes_round.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B7FD4CF51A882BCF8CFC987 /* eyes_round.json */; };
+		17030E6DC4F920916A602314 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB20ADA3D8508ACECECB0BE2 /* SettingsViewModel.swift */; };
+		1B740F986D18A25672209BA7 /* OpenClawDisplayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1598B2DEF6DD4A12207BB4 /* OpenClawDisplayApp.swift */; };
+		221648F14A79EEFB7E0B51BC /* eyes_minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = 48BC9C8D6EDE534AA062A933 /* eyes_minimal.json */; };
+		2669182CC4B0FE4341FF2A2F /* CustomAvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE0C6325D94E45F5CE1F24B /* CustomAvatarConfig.swift */; };
+		2D08C6DED23D3B0CABBE5209 /* EmotionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A40371D715FA4AD61AEFD16 /* EmotionAnimator.swift */; };
+		2F2CA266A67E0CDA9C71B978 /* face_owl.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C7E676DAE4587090F4836C9 /* face_owl.json */; };
+		372B5EB6799984EC0243245B /* face_alien.json in Resources */ = {isa = PBXBuildFile; fileRef = 79D74E1AC1C9231AD052795E /* face_alien.json */; };
+		3B6412B2D222907C20304DEB /* DeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */; };
+		41864AB26CB61D547D5C1E98 /* eyes_neon.json in Resources */ = {isa = PBXBuildFile; fileRef = 5998724A31E2B6C3F5CABD6F /* eyes_neon.json */; };
+		42BE5F83619754C334D28288 /* EmotionRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F9D82963F7180235B07947 /* EmotionRouter.swift */; };
+		4346785382A1951C30D5A902 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A701C3DA0C568C830649DFF /* Theme.swift */; };
+		43666696357AA413C9F977EE /* face_ghost.json in Resources */ = {isa = PBXBuildFile; fileRef = 6C79F6E4F0DD94A83EBB1227 /* face_ghost.json */; };
+		4682F27E3F0A8C0DC47221A6 /* face_alien.json in Resources */ = {isa = PBXBuildFile; fileRef = 79D74E1AC1C9231AD052795E /* face_alien.json */; };
+		479C59973695EB00694AEA60 /* OpenClawFaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A3E4FB9C96532DC73862E4 /* OpenClawFaceApp.swift */; };
+		4B7D99CD838493F33951D756 /* GatewayConnectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E019D28023E6A4CB7D51360F /* GatewayConnectionConfig.swift */; };
+		4DA33B02841F37408E8C442E /* CustomFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E536D42781880FEB0187F3 /* CustomFaceView.swift */; };
+		4FD5A69E9980F84F7D928C4E /* AvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9864A7AD9ED4F8BA7AB1985B /* AvatarConfig.swift */; };
+		59A7C24336B43E1345206AB1 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458E03334F85D5FB9D6FB854 /* KeychainService.swift */; };
+		5D444975990CAEB920391DC3 /* GatewayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1129501C1AFED39E8C989091 /* GatewayService.swift */; };
+		5DE2762A976D9F8E50AE3F91 /* AvatarEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CAD7E74AA899006EC78359 /* AvatarEditorView.swift */; };
+		641544A151C8D2DDA1289961 /* DeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */; };
+		6586A9A34E0DCCFE4EB52705 /* eyes_cute.json in Resources */ = {isa = PBXBuildFile; fileRef = 331499920907E06D9F07D538 /* eyes_cute.json */; };
+		6D41205D20A181E736B5DCD9 /* CustomAvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE0C6325D94E45F5CE1F24B /* CustomAvatarConfig.swift */; };
+		6F33400C3D21148ECAB428D2 /* eyes_cyber.json in Resources */ = {isa = PBXBuildFile; fileRef = AC0F95600D0CE9AFED29599F /* eyes_cyber.json */; };
+		7254239BD31DB536FEC3FE7A /* AvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9864A7AD9ED4F8BA7AB1985B /* AvatarConfig.swift */; };
+		7347F605D94534486B19FD97 /* BonjourConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591A5A7B281466D7B4A9428C /* BonjourConstants.swift */; };
+		7574E308BDAE00BADF29432E /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 286F5BB287AC93AEF4A658ED /* ConnectionState.swift */; };
+		7F98217EEFA5188CA903BF0E /* eyes_minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = 48BC9C8D6EDE534AA062A933 /* eyes_minimal.json */; };
+		7FE6C4E80F19D77AC6B06496 /* EmotionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2CBC5379AA0519941E74F6F /* EmotionState.swift */; };
+		850FD73BB6DB16B72E49BAF2 /* CustomFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E536D42781880FEB0187F3 /* CustomFaceView.swift */; };
+		8CD14E7F9D25F44339B58165 /* FaceShapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8EBC150FF70BE3F9E802B8 /* FaceShapes.swift */; };
+		8CFFAB8A314A9A2E4EE1AAFB /* face_robot.json in Resources */ = {isa = PBXBuildFile; fileRef = B0AA0989D95585FF17273EE8 /* face_robot.json */; };
+		8E6FC791B6FCCF42C85330C6 /* eyes_round.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B7FD4CF51A882BCF8CFC987 /* eyes_round.json */; };
+		92A103B72D4F2D1B01BE6A9F /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458E03334F85D5FB9D6FB854 /* KeychainService.swift */; };
+		A3784F6671622D251EB30195 /* LottieAnimationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C9EA4DB2650D91E9804A51 /* LottieAnimationEngine.swift */; };
+		A4DB6B4D2081F264A6F8D217 /* face_robot.json in Resources */ = {isa = PBXBuildFile; fileRef = B0AA0989D95585FF17273EE8 /* face_robot.json */; };
+		AC300BB47261A66277FA3012 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = B40FD4D8E32B392CCFFFDBB5 /* Lottie */; };
+		AD4F4D5CFF2BDA1821C74181 /* LottieFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03ECDD3BC49B711DC4E937EC /* LottieFaceView.swift */; };
+		AD5BBC4525C75F9DB57929DE /* OpenClawAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8113A644F456070302A2D547 /* OpenClawAPI.swift */; };
+		AD85E7CC7353D34A34DEC658 /* face_cat.json in Resources */ = {isa = PBXBuildFile; fileRef = DF307B0EC9A72F494596803A /* face_cat.json */; };
+		AF75B36106AF6769C329977D /* face_skull.json in Resources */ = {isa = PBXBuildFile; fileRef = DB0EF667BE1D11C1C1920E6D /* face_skull.json */; };
+		B0C970741208821BD0CEF2CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F224052065FEA0D73EDF1C0A /* ContentView.swift */; };
+		B1B23E63E51512B8DD1686F2 /* eyes_angry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3CBFFD555309F119351FEF6E /* eyes_angry.json */; };
+		B2804DE90D74989DCA300694 /* face_skull.json in Resources */ = {isa = PBXBuildFile; fileRef = DB0EF667BE1D11C1C1920E6D /* face_skull.json */; };
+		B6BF3A2570916A6EDEFCAB2D /* GatewayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1129501C1AFED39E8C989091 /* GatewayService.swift */; };
+		B794987A785C255E8D0FDC0D /* eyes_angry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3CBFFD555309F119351FEF6E /* eyes_angry.json */; };
+		B83AECA290DD18FD19A26050 /* eyes_cute.json in Resources */ = {isa = PBXBuildFile; fileRef = 331499920907E06D9F07D538 /* eyes_cute.json */; };
+		C16DBD2091736392CA283213 /* EmotionSkillService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989C7D15835E9BDD2961F75D /* EmotionSkillService.swift */; };
+		C2358E093EF52A8BBDEBA835 /* CustomEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E934876D493F45B8474902C /* CustomEditorView.swift */; };
+		CA0DC97AA47D47610FD76B16 /* OpenClawAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8113A644F456070302A2D547 /* OpenClawAPI.swift */; };
+		CBE587EE97B3E761F22C37A3 /* BonjourConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591A5A7B281466D7B4A9428C /* BonjourConstants.swift */; };
+		CD2650ECB308DD5C8E3F2113 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 286F5BB287AC93AEF4A658ED /* ConnectionState.swift */; };
+		D31A49A6A8BD46A7A9661513 /* LottieFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03ECDD3BC49B711DC4E937EC /* LottieFaceView.swift */; };
+		DB6F1A7CF3EBF9C819C060AE /* GatewayConnectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E019D28023E6A4CB7D51360F /* GatewayConnectionConfig.swift */; };
+		DC10BB24EFE6CB66A86F1126 /* eyes_neon.json in Resources */ = {isa = PBXBuildFile; fileRef = 5998724A31E2B6C3F5CABD6F /* eyes_neon.json */; };
+		DECAA45E54B9F04DD8AAA880 /* face_ghost.json in Resources */ = {isa = PBXBuildFile; fileRef = 6C79F6E4F0DD94A83EBB1227 /* face_ghost.json */; };
+		E018BAE326FEB69BD1FA7638 /* EmotionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2CBC5379AA0519941E74F6F /* EmotionState.swift */; };
+		E25D518992224A1C6908791B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CF05B0A5382F9D9E06DD96 /* SettingsView.swift */; };
+		E28C38B02BAFA693F2BD4098 /* FaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF23C9723E67FEBDBA078CF8 /* FaceView.swift */; };
+		E34743B2E5D4272F1246DF20 /* BonjourServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC004203B1F2F7015593B9F /* BonjourServer.swift */; };
+		E78741C20FEC14D2F9673296 /* eyes_cyber.json in Resources */ = {isa = PBXBuildFile; fileRef = AC0F95600D0CE9AFED29599F /* eyes_cyber.json */; };
+		E8A6170AFC9E04C2F2C7EDD4 /* face_cat.json in Resources */ = {isa = PBXBuildFile; fileRef = DF307B0EC9A72F494596803A /* face_cat.json */; };
+		E9570B9159B6A02EF499A31D /* FaceShapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8EBC150FF70BE3F9E802B8 /* FaceShapes.swift */; };
+		EDF6DEF807BDA887ACDDA944 /* face_owl.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C7E676DAE4587090F4836C9 /* face_owl.json */; };
+		EF7B91D22DF162B3D390BFCF /* BonjourClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A244AAB6AE282D76EED418F /* BonjourClient.swift */; };
+		F5D06BEA82E9FABDDA66D65E /* LottieAnimationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C9EA4DB2650D91E9804A51 /* LottieAnimationEngine.swift */; };
+		F6AEC89D27437C50A9DC9837 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D716E3D737421E9BFD13B8A5 /* Lottie */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		03ECDD3BC49B711DC4E937EC /* LottieFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieFaceView.swift; sourceTree = "<group>"; };
+		0A40371D715FA4AD61AEFD16 /* EmotionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionAnimator.swift; sourceTree = "<group>"; };
+		0B7FD4CF51A882BCF8CFC987 /* eyes_round.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_round.json; sourceTree = "<group>"; };
+		1129501C1AFED39E8C989091 /* GatewayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatewayService.swift; sourceTree = "<group>"; };
+		17E536D42781880FEB0187F3 /* CustomFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFaceView.swift; sourceTree = "<group>"; };
+		286F5BB287AC93AEF4A658ED /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
+		331499920907E06D9F07D538 /* eyes_cute.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_cute.json; sourceTree = "<group>"; };
+		38CAD7E74AA899006EC78359 /* AvatarEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarEditorView.swift; sourceTree = "<group>"; };
+		390D6F3E0CA2406677408054 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		3C7E676DAE4587090F4836C9 /* face_owl.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_owl.json; sourceTree = "<group>"; };
+		3CBFFD555309F119351FEF6E /* eyes_angry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_angry.json; sourceTree = "<group>"; };
+		458E03334F85D5FB9D6FB854 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		48BC9C8D6EDE534AA062A933 /* eyes_minimal.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_minimal.json; sourceTree = "<group>"; };
+		48F9D82963F7180235B07947 /* EmotionRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionRouter.swift; sourceTree = "<group>"; };
+		5541ABC65A7C97EA0758C953 /* SkillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillView.swift; sourceTree = "<group>"; };
+		591A5A7B281466D7B4A9428C /* BonjourConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourConstants.swift; sourceTree = "<group>"; };
+		5998724A31E2B6C3F5CABD6F /* eyes_neon.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_neon.json; sourceTree = "<group>"; };
+		6028BECE6144168425499FE3 /* sphere_rgb.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sphere_rgb.json; sourceTree = "<group>"; };
+		6A701C3DA0C568C830649DFF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		6C79F6E4F0DD94A83EBB1227 /* face_ghost.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_ghost.json; sourceTree = "<group>"; };
+		79D74E1AC1C9231AD052795E /* face_alien.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_alien.json; sourceTree = "<group>"; };
+		8113A644F456070302A2D547 /* OpenClawAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenClawAPI.swift; sourceTree = "<group>"; };
+		8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentity.swift; sourceTree = "<group>"; };
+		8A244AAB6AE282D76EED418F /* BonjourClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourClient.swift; sourceTree = "<group>"; };
+		8E934876D493F45B8474902C /* CustomEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEditorView.swift; sourceTree = "<group>"; };
+		8EE0C6325D94E45F5CE1F24B /* CustomAvatarConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAvatarConfig.swift; sourceTree = "<group>"; };
+		95A3E4FB9C96532DC73862E4 /* OpenClawFaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenClawFaceApp.swift; sourceTree = "<group>"; };
+		9864A7AD9ED4F8BA7AB1985B /* AvatarConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarConfig.swift; sourceTree = "<group>"; };
+		989C7D15835E9BDD2961F75D /* EmotionSkillService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionSkillService.swift; sourceTree = "<group>"; };
+		A2CBC5379AA0519941E74F6F /* EmotionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionState.swift; sourceTree = "<group>"; };
+		A8CF05B0A5382F9D9E06DD96 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AB20ADA3D8508ACECECB0BE2 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		AC0F95600D0CE9AFED29599F /* eyes_cyber.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_cyber.json; sourceTree = "<group>"; };
+		B0AA0989D95585FF17273EE8 /* face_robot.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_robot.json; sourceTree = "<group>"; };
+		B59526262F15AB71BD3E63C3 /* OpenClawFace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenClawFace.entitlements; sourceTree = "<group>"; };
+		B8C9EA4DB2650D91E9804A51 /* LottieAnimationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieAnimationEngine.swift; sourceTree = "<group>"; };
+		CF23C9723E67FEBDBA078CF8 /* FaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceView.swift; sourceTree = "<group>"; };
+		D19F04FAFD9F55057CBE8EC5 /* OpenClawDisplay.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = OpenClawDisplay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB0EF667BE1D11C1C1920E6D /* face_skull.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_skull.json; sourceTree = "<group>"; };
+		DF307B0EC9A72F494596803A /* face_cat.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_cat.json; sourceTree = "<group>"; };
+		E019D28023E6A4CB7D51360F /* GatewayConnectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatewayConnectionConfig.swift; sourceTree = "<group>"; };
+		E61122AC22536CD35EE4374B /* OpenClawFace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenClawFace.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC1598B2DEF6DD4A12207BB4 /* OpenClawDisplayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenClawDisplayApp.swift; sourceTree = "<group>"; };
+		EC8EBC150FF70BE3F9E802B8 /* FaceShapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceShapes.swift; sourceTree = "<group>"; };
+		F224052065FEA0D73EDF1C0A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FAC004203B1F2F7015593B9F /* BonjourServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServer.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0A02E54F76ACCC382D4FDD16 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6AEC89D27437C50A9DC9837 /* Lottie in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		60A75BA6B5C41C410EE6EA82 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC300BB47261A66277FA3012 /* Lottie in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1267E6E8EA896678152B73E8 /* Animations */ = {
+			isa = PBXGroup;
+			children = (
+				3CBFFD555309F119351FEF6E /* eyes_angry.json */,
+				331499920907E06D9F07D538 /* eyes_cute.json */,
+				AC0F95600D0CE9AFED29599F /* eyes_cyber.json */,
+				48BC9C8D6EDE534AA062A933 /* eyes_minimal.json */,
+				5998724A31E2B6C3F5CABD6F /* eyes_neon.json */,
+				0B7FD4CF51A882BCF8CFC987 /* eyes_round.json */,
+				79D74E1AC1C9231AD052795E /* face_alien.json */,
+				DF307B0EC9A72F494596803A /* face_cat.json */,
+				6C79F6E4F0DD94A83EBB1227 /* face_ghost.json */,
+				3C7E676DAE4587090F4836C9 /* face_owl.json */,
+				B0AA0989D95585FF17273EE8 /* face_robot.json */,
+				DB0EF667BE1D11C1C1920E6D /* face_skull.json */,
+				6028BECE6144168425499FE3 /* sphere_rgb.json */,
+			);
+			path = Animations;
+			sourceTree = "<group>";
+		};
+		17FB37133F50C90FF216A467 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				C71EB65255881F9B931478F1 /* App */,
+				B39FBED49E72C4DABD2D8DA8 /* Resources */,
+				BBC290BDDC5C4A3854A5D6F9 /* Services */,
+				C73CE344FD07438079AD67C8 /* Simulator */,
+				DDF0B02DDF6704C8C393A385 /* Views */,
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		286A90612E898BFB791B57D6 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				F224052065FEA0D73EDF1C0A /* ContentView.swift */,
+				95A3E4FB9C96532DC73862E4 /* OpenClawFaceApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		4050E3259FF9C8D110E36938 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				591A5A7B281466D7B4A9428C /* BonjourConstants.swift */,
+				286F5BB287AC93AEF4A658ED /* ConnectionState.swift */,
+				8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */,
+				E019D28023E6A4CB7D51360F /* GatewayConnectionConfig.swift */,
+				1129501C1AFED39E8C989091 /* GatewayService.swift */,
+				458E03334F85D5FB9D6FB854 /* KeychainService.swift */,
+				8113A644F456070302A2D547 /* OpenClawAPI.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		70478BCD8847ABEC4F11C8C9 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				6A701C3DA0C568C830649DFF /* Theme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		77FEA0D7F16C735B0086E3B6 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				FAC004203B1F2F7015593B9F /* BonjourServer.swift */,
+				48F9D82963F7180235B07947 /* EmotionRouter.swift */,
+				989C7D15835E9BDD2961F75D /* EmotionSkillService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		839D5DE7E6F6831A35C535EF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D19F04FAFD9F55057CBE8EC5 /* OpenClawDisplay.app */,
+				E61122AC22536CD35EE4374B /* OpenClawFace.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		996EA5B8C26FD20614C51B63 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AB20ADA3D8508ACECECB0BE2 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		B39FBED49E72C4DABD2D8DA8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B774ABA42A0C5EE63A8B8631 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				1267E6E8EA896678152B73E8 /* Animations */,
+				FBEC72692312BF43666FA4C6 /* Models */,
+				4050E3259FF9C8D110E36938 /* Networking */,
+				E8BF4505728AB496E5909B59 /* Renderer */,
+				70478BCD8847ABEC4F11C8C9 /* Theme */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		BBC290BDDC5C4A3854A5D6F9 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8A244AAB6AE282D76EED418F /* BonjourClient.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		BCC5A5F38A6310CEC67E1A9F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B59526262F15AB71BD3E63C3 /* OpenClawFace.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C71EB65255881F9B931478F1 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				EC1598B2DEF6DD4A12207BB4 /* OpenClawDisplayApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		C73CE344FD07438079AD67C8 /* Simulator */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Simulator;
+			sourceTree = "<group>";
+		};
+		D63183F4D381C024811FEEEB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				38CAD7E74AA899006EC78359 /* AvatarEditorView.swift */,
+				8E934876D493F45B8474902C /* CustomEditorView.swift */,
+				390D6F3E0CA2406677408054 /* DashboardView.swift */,
+				A8CF05B0A5382F9D9E06DD96 /* SettingsView.swift */,
+				5541ABC65A7C97EA0758C953 /* SkillView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D6AED68E39EA8D5EE80080C6 = {
+			isa = PBXGroup;
+			children = (
+				17FB37133F50C90FF216A467 /* iOS */,
+				F806BAE1A609F2306EEE3C9A /* macOS */,
+				B774ABA42A0C5EE63A8B8631 /* Shared */,
+				839D5DE7E6F6831A35C535EF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DDF0B02DDF6704C8C393A385 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CF23C9723E67FEBDBA078CF8 /* FaceView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E8BF4505728AB496E5909B59 /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				17E536D42781880FEB0187F3 /* CustomFaceView.swift */,
+				0A40371D715FA4AD61AEFD16 /* EmotionAnimator.swift */,
+				EC8EBC150FF70BE3F9E802B8 /* FaceShapes.swift */,
+				B8C9EA4DB2650D91E9804A51 /* LottieAnimationEngine.swift */,
+				03ECDD3BC49B711DC4E937EC /* LottieFaceView.swift */,
+			);
+			path = Renderer;
+			sourceTree = "<group>";
+		};
+		F806BAE1A609F2306EEE3C9A /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				286A90612E898BFB791B57D6 /* App */,
+				BCC5A5F38A6310CEC67E1A9F /* Resources */,
+				77FEA0D7F16C735B0086E3B6 /* Services */,
+				996EA5B8C26FD20614C51B63 /* ViewModels */,
+				D63183F4D381C024811FEEEB /* Views */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		FBEC72692312BF43666FA4C6 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9864A7AD9ED4F8BA7AB1985B /* AvatarConfig.swift */,
+				8EE0C6325D94E45F5CE1F24B /* CustomAvatarConfig.swift */,
+				A2CBC5379AA0519941E74F6F /* EmotionState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		20B594D9D63B374B51F1FBF1 /* OpenClawFace */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EF80549ADF52533346CA9DF2 /* Build configuration list for PBXNativeTarget "OpenClawFace" */;
+			buildPhases = (
+				A7E2BF3E4ACF4CBE4C0CCB49 /* Sources */,
+				8BF5B835ABA15A9550147D84 /* Resources */,
+				60A75BA6B5C41C410EE6EA82 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OpenClawFace;
+			packageProductDependencies = (
+				B40FD4D8E32B392CCFFFDBB5 /* Lottie */,
+			);
+			productName = OpenClawFace;
+			productReference = E61122AC22536CD35EE4374B /* OpenClawFace.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DE814357A9D4C29F582AFF88 /* OpenClawDisplay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 92802E2D25C4ABC4D007982D /* Build configuration list for PBXNativeTarget "OpenClawDisplay" */;
+			buildPhases = (
+				2403069413F527AD3E6005A7 /* Sources */,
+				244A48719148D436D1CA76EC /* Resources */,
+				0A02E54F76ACCC382D4FDD16 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OpenClawDisplay;
+			packageProductDependencies = (
+				D716E3D737421E9BFD13B8A5 /* Lottie */,
+			);
+			productName = OpenClawDisplay;
+			productReference = D19F04FAFD9F55057CBE8EC5 /* OpenClawDisplay.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E34DFD57AE21C13F34E0EDE6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					20B594D9D63B374B51F1FBF1 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					DE814357A9D4C29F582AFF88 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = FE02A30C619986AEE4E66AA7 /* Build configuration list for PBXProject "OpenClawFace" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D6AED68E39EA8D5EE80080C6;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5F6B98BF09C4D665088B2AE9 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DE814357A9D4C29F582AFF88 /* OpenClawDisplay */,
+				20B594D9D63B374B51F1FBF1 /* OpenClawFace */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		244A48719148D436D1CA76EC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B23E63E51512B8DD1686F2 /* eyes_angry.json in Resources */,
+				6586A9A34E0DCCFE4EB52705 /* eyes_cute.json in Resources */,
+				E78741C20FEC14D2F9673296 /* eyes_cyber.json in Resources */,
+				221648F14A79EEFB7E0B51BC /* eyes_minimal.json in Resources */,
+				DC10BB24EFE6CB66A86F1126 /* eyes_neon.json in Resources */,
+				8E6FC791B6FCCF42C85330C6 /* eyes_round.json in Resources */,
+				4682F27E3F0A8C0DC47221A6 /* face_alien.json in Resources */,
+				AD85E7CC7353D34A34DEC658 /* face_cat.json in Resources */,
+				43666696357AA413C9F977EE /* face_ghost.json in Resources */,
+				2F2CA266A67E0CDA9C71B978 /* face_owl.json in Resources */,
+				8CFFAB8A314A9A2E4EE1AAFB /* face_robot.json in Resources */,
+				AF75B36106AF6769C329977D /* face_skull.json in Resources */,
+				0F4BDB0A4FCEE2CC6E1BC6E0 /* sphere_rgb.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BF5B835ABA15A9550147D84 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B794987A785C255E8D0FDC0D /* eyes_angry.json in Resources */,
+				B83AECA290DD18FD19A26050 /* eyes_cute.json in Resources */,
+				6F33400C3D21148ECAB428D2 /* eyes_cyber.json in Resources */,
+				7F98217EEFA5188CA903BF0E /* eyes_minimal.json in Resources */,
+				41864AB26CB61D547D5C1E98 /* eyes_neon.json in Resources */,
+				1441F365D9FD8F499CF8B0E5 /* eyes_round.json in Resources */,
+				372B5EB6799984EC0243245B /* face_alien.json in Resources */,
+				E8A6170AFC9E04C2F2C7EDD4 /* face_cat.json in Resources */,
+				DECAA45E54B9F04DD8AAA880 /* face_ghost.json in Resources */,
+				EDF6DEF807BDA887ACDDA944 /* face_owl.json in Resources */,
+				A4DB6B4D2081F264A6F8D217 /* face_robot.json in Resources */,
+				B2804DE90D74989DCA300694 /* face_skull.json in Resources */,
+				0D59C29B986DBC22E3CFE354 /* sphere_rgb.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2403069413F527AD3E6005A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7254239BD31DB536FEC3FE7A /* AvatarConfig.swift in Sources */,
+				EF7B91D22DF162B3D390BFCF /* BonjourClient.swift in Sources */,
+				CBE587EE97B3E761F22C37A3 /* BonjourConstants.swift in Sources */,
+				7574E308BDAE00BADF29432E /* ConnectionState.swift in Sources */,
+				6D41205D20A181E736B5DCD9 /* CustomAvatarConfig.swift in Sources */,
+				850FD73BB6DB16B72E49BAF2 /* CustomFaceView.swift in Sources */,
+				641544A151C8D2DDA1289961 /* DeviceIdentity.swift in Sources */,
+				2D08C6DED23D3B0CABBE5209 /* EmotionAnimator.swift in Sources */,
+				E018BAE326FEB69BD1FA7638 /* EmotionState.swift in Sources */,
+				E9570B9159B6A02EF499A31D /* FaceShapes.swift in Sources */,
+				E28C38B02BAFA693F2BD4098 /* FaceView.swift in Sources */,
+				DB6F1A7CF3EBF9C819C060AE /* GatewayConnectionConfig.swift in Sources */,
+				B6BF3A2570916A6EDEFCAB2D /* GatewayService.swift in Sources */,
+				59A7C24336B43E1345206AB1 /* KeychainService.swift in Sources */,
+				A3784F6671622D251EB30195 /* LottieAnimationEngine.swift in Sources */,
+				AD4F4D5CFF2BDA1821C74181 /* LottieFaceView.swift in Sources */,
+				AD5BBC4525C75F9DB57929DE /* OpenClawAPI.swift in Sources */,
+				1B740F986D18A25672209BA7 /* OpenClawDisplayApp.swift in Sources */,
+				0C58FFDF6BA13D16DB539D2A /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7E2BF3E4ACF4CBE4C0CCB49 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4FD5A69E9980F84F7D928C4E /* AvatarConfig.swift in Sources */,
+				5DE2762A976D9F8E50AE3F91 /* AvatarEditorView.swift in Sources */,
+				7347F605D94534486B19FD97 /* BonjourConstants.swift in Sources */,
+				E34743B2E5D4272F1246DF20 /* BonjourServer.swift in Sources */,
+				CD2650ECB308DD5C8E3F2113 /* ConnectionState.swift in Sources */,
+				B0C970741208821BD0CEF2CE /* ContentView.swift in Sources */,
+				2669182CC4B0FE4341FF2A2F /* CustomAvatarConfig.swift in Sources */,
+				C2358E093EF52A8BBDEBA835 /* CustomEditorView.swift in Sources */,
+				4DA33B02841F37408E8C442E /* CustomFaceView.swift in Sources */,
+				045D8E1129B581C24103C16B /* DashboardView.swift in Sources */,
+				3B6412B2D222907C20304DEB /* DeviceIdentity.swift in Sources */,
+				09D2B9C59CEFB552A5BDEB4A /* EmotionAnimator.swift in Sources */,
+				42BE5F83619754C334D28288 /* EmotionRouter.swift in Sources */,
+				C16DBD2091736392CA283213 /* EmotionSkillService.swift in Sources */,
+				7FE6C4E80F19D77AC6B06496 /* EmotionState.swift in Sources */,
+				8CD14E7F9D25F44339B58165 /* FaceShapes.swift in Sources */,
+				4B7D99CD838493F33951D756 /* GatewayConnectionConfig.swift in Sources */,
+				5D444975990CAEB920391DC3 /* GatewayService.swift in Sources */,
+				92A103B72D4F2D1B01BE6A9F /* KeychainService.swift in Sources */,
+				F5D06BEA82E9FABDDA66D65E /* LottieAnimationEngine.swift in Sources */,
+				D31A49A6A8BD46A7A9661513 /* LottieFaceView.swift in Sources */,
+				CA0DC97AA47D47610FD76B16 /* OpenClawAPI.swift in Sources */,
+				479C59973695EB00694AEA60 /* OpenClawFaceApp.swift in Sources */,
+				E25D518992224A1C6908791B /* SettingsView.swift in Sources */,
+				17030E6DC4F920916A602314 /* SettingsViewModel.swift in Sources */,
+				10D554033BB83B980FD07138 /* SkillView.swift in Sources */,
+				4346785382A1951C30D5A902 /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		06DD0BBEF5EC714190BBD37B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = macOS/Resources/OpenClawFace.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "OpenClaw Face";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSBonjourServices = _openclawface._tcp;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "OpenClaw Face needs local network access to communicate with the iOS display device.";
+				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.eab-solutions.openclawface";
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+			};
+			name = Debug;
+		};
+		1FE673E25B231C55B87F0281 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		41FFD47FCD7957FE72263A3C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "OpenClaw Display";
+				INFOPLIST_KEY_NSBonjourServices = _openclawface._tcp;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "OpenClaw Display needs local network access to receive emotion commands from the Mac bridge.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.eab-solutions.openclawdisplay";
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B1ADCA39B410D53E075D4A02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = macOS/Resources/OpenClawFace.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "OpenClaw Face";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSBonjourServices = _openclawface._tcp;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "OpenClaw Face needs local network access to communicate with the iOS display device.";
+				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.eab-solutions.openclawface";
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+			};
+			name = Release;
+		};
+		CE165482BF707FD9A53678CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "OpenClaw Display";
+				INFOPLIST_KEY_NSBonjourServices = _openclawface._tcp;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "OpenClaw Display needs local network access to receive emotion commands from the Mac bridge.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.eab-solutions.openclawdisplay";
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E195D1695968A76AC4F85935 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		92802E2D25C4ABC4D007982D /* Build configuration list for PBXNativeTarget "OpenClawDisplay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41FFD47FCD7957FE72263A3C /* Debug */,
+				CE165482BF707FD9A53678CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EF80549ADF52533346CA9DF2 /* Build configuration list for PBXNativeTarget "OpenClawFace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				06DD0BBEF5EC714190BBD37B /* Debug */,
+				B1ADCA39B410D53E075D4A02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FE02A30C619986AEE4E66AA7 /* Build configuration list for PBXProject "OpenClawFace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E195D1695968A76AC4F85935 /* Debug */,
+				1FE673E25B231C55B87F0281 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5F6B98BF09C4D665088B2AE9 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B40FD4D8E32B392CCFFFDBB5 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F6B98BF09C4D665088B2AE9 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		D716E3D737421E9BFD13B8A5 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F6B98BF09C4D665088B2AE9 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = E34DFD57AE21C13F34E0EDE6 /* Project object */;
+}
