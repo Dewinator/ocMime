@@ -87,5 +87,8 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_NSLocalNetworkUsageDescription: "OpenClaw Display needs local network access to receive emotion commands from the Mac bridge."
         INFOPLIST_KEY_NSBonjourServices: "_openclawface._tcp"
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: "OpenClaw Display uses the microphone for speech-to-text and sound analysis to interact with the AI agent."
+        INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: "OpenClaw Display uses on-device speech recognition to convert your voice to text for the AI agent."
+        INFOPLIST_KEY_NSCameraUsageDescription: "OpenClaw Display uses the camera to detect when someone enters the room, so the AI agent can react."
         SWIFT_STRICT_CONCURRENCY: complete
         TARGETED_DEVICE_FAMILY: "1,2"

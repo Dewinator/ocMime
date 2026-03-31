@@ -83,6 +83,17 @@ final class BonjourServer: ObservableObject {
         send(.riveAvatarUpdate(config))
     }
 
+    func sendTTS(text: String, locale: String = "de-DE", rate: Double = 0.5) {
+        send(.tts(text: text, locale: locale, rate: rate))
+    }
+
+    func sendTTSStop() {
+        send(.ttsStop)
+    }
+
+    /// Callback for sensor data received from iOS (STT, presence, sound)
+    var onSensorReceived: ((SensorCommand) -> Void)?
+
     private func send(_ command: EmotionCommand) {
         guard let connection = activeConnection, let data = command.toData() else { return }
 
@@ -129,10 +140,17 @@ final class BonjourServer: ObservableObject {
 
     private func receiveLoop(_ connection: NWConnection) {
         connection.receiveMessage { data, context, isComplete, error in
-            if let data, let ack = EmotionAck.from(data: data) {
-                if !ack.ack {
+            if let data {
+                // Try parsing as SensorCommand first (STT, presence, sound)
+                if let sensor = SensorCommand.from(data: data) {
                     Task { @MainActor [weak self] in
-                        self?.lastError = "Display Error: \(ack.error ?? "unknown")"
+                        self?.onSensorReceived?(sensor)
+                    }
+                } else if let ack = EmotionAck.from(data: data) {
+                    if !ack.ack {
+                        Task { @MainActor [weak self] in
+                            self?.lastError = "Display Error: \(ack.error ?? "unknown")"
+                        }
                     }
                 }
             }

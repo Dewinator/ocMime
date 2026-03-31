@@ -5,12 +5,14 @@ struct ContentView: View {
     @ObservedObject var gateway: GatewayService
     @ObservedObject var emotionRouter: EmotionRouter
     @ObservedObject var bonjourServer: BonjourServer
+    @ObservedObject var sensorRouter: SensorRouter
 
     @State private var selectedTab: Tab = .dashboard
 
     enum Tab: String, CaseIterable {
         case dashboard = "BRIDGE"
         case avatar    = "AVATAR"
+        case sensor    = "SENSOR"
         case skill     = "SKILL"
         case settings  = "CONFIG"
     }
@@ -43,6 +45,8 @@ struct ContentView: View {
                 )
             case .avatar:
                 AvatarEditorView(bonjourServer: bonjourServer)
+            case .sensor:
+                SensorView(sensorRouter: sensorRouter, bonjourServer: bonjourServer)
             case .skill:
                 SkillView(gateway: gateway)
             case .settings:

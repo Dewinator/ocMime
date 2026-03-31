@@ -17,12 +17,15 @@ OpenClaw Gateway (localhost:18789)
        v
 macOS App — "OpenClaw Face" (Bridge)
        |
-       | Bonjour / Network.framework (LAN/USB)
+       | Bonjour / Network.framework (LAN/USB, bidirektional)
        v
-iOS App — "OpenClaw Display" (Face)
+iOS App — "OpenClaw Display" (Face + Sensor-Hub)
        |
-       v
-  Animiertes Gesicht auf iPhone/iPad
+       ├── Display: Animiertes Gesicht (Lottie/Custom/Rive)
+       ├── Mikrofon -> STT (SFSpeechRecognizer, on-device)
+       ├── Lautsprecher -> TTS (AVSpeechSynthesizer, on-device)
+       ├── Kamera -> Personen-Detektion (Vision.framework, on-device)
+       └── Mikrofon -> Sound-Analyse (SoundAnalysis, on-device)
 ```
 
 ### Zwei Targets, ein Xcode-Projekt (via XcodeGen)
@@ -30,7 +33,7 @@ iOS App — "OpenClaw Display" (Face)
 | Target             | Plattform | Bundle ID                           | Rolle                                  |
 |--------------------|-----------|-------------------------------------|----------------------------------------|
 | `OpenClawFace`     | macOS 14+ | net.eab-solutions.openclawface      | Bridge: Gateway <-> Display, Konfiguration |
-| `OpenClawDisplay`  | iOS 17+   | net.eab-solutions.openclawdisplay   | Reines Face-Display, empfaengt Befehle |
+| `OpenClawDisplay`  | iOS 17+   | net.eab-solutions.openclawdisplay   | Face-Display + Sensor-Hub (STT, TTS, Kamera, Sound) |
 
 ### Dependencies
 - **Lottie** (SPM, v4.4+) — Vektorbasierte Animationen fuer Preset-Avatare
@@ -56,10 +59,14 @@ Alles in `Shared/` wird von beiden Targets kompiliert: Models, Networking, Rende
 - **Persistenz:** UserDefaults fuer Configs (kein CoreData)
 - **Architektur:** MVVM, Services, `@StateObject` / `@ObservedObject`
 
-### iOS App (Display)
-- **Kommunikation:** Bonjour-Client via `NWBrowser` + `NWConnection`, auto-discovery
-- **Rendering:** Zwei Systeme: Lottie (Presets) + SwiftUI Shapes (Custom Avatare)
-- **Fullscreen:** Landscape, System-Overlays hidden
+### iOS App (Display + Sensor-Hub)
+- **Kommunikation:** Bonjour-Client via `NWBrowser` + `NWConnection`, auto-discovery, bidirektional
+- **Rendering:** Drei Systeme: Lottie (Presets) + SwiftUI Shapes (Custom) + Rive (State Machines)
+- **STT:** `SFSpeechRecognizer` on-device, Realtime-Streaming, Session-Rotation
+- **TTS:** `AVSpeechSynthesizer` mit Premium Voices, synchronisiert mit Emotion-State
+- **Personen-Detektion:** `Vision.framework` (`VNDetectHumanRectanglesRequest`), Debounce-Logik
+- **Sound-Analyse:** `SoundAnalysis.framework` (`SNClassifySoundRequest`), 15 relevante Geraeuschtypen
+- **Fullscreen:** Landscape, System-Overlays hidden, subtile Sensor-Status-Dots
 
 ---
 
@@ -122,16 +129,28 @@ Aktuell verfuegbare Rive-Avatare: Robot Face (Platzhalter, `.riv` Datei muss noc
 | `listening`  | Agent wartet auf Input                    |
 | `sleeping`   | Agent im Standby / inaktiv                |
 
-### Bonjour-Protokoll (macOS -> iOS)
+### Bonjour-Protokoll (bidirektional)
+
+**macOS -> iOS:**
 ```json
 {"cmd": "emotion", "state": "thinking", "intensity": 0.8, "context": "planning"}
 {"cmd": "avatar", "avatar": {"avatarType": "eyes_neon"}}
 {"cmd": "customAvatar", "customAvatar": {...}}
 {"cmd": "riveAvatar", "riveAvatar": {"riveFile": "robot_face", "stateMachine": "emotions"}}
+{"cmd": "tts", "ttsText": "Hallo!", "context": "de-DE", "intensity": 0.5}
+{"cmd": "ttsStop"}
 {"cmd": "ping"}
 ```
+
+**iOS -> macOS (Sensor-Daten):**
+```json
+{"cmd": "stt", "text": "Wie ist das Wetter?", "isFinal": true, "locale": "de-DE"}
+{"cmd": "presence", "detected": true, "personCount": 1, "confidence": 0.92}
+{"cmd": "sound", "soundType": "knock", "confidence": 0.85}
+```
+
 Framing: 4-Byte Length-Header (Big Endian) + JSON Payload ueber TCP.
-iOS antwortet mit: `{"ack": true}`
+iOS antwortet auf Commands mit: `{"ack": true}`
 
 ### Gateway-Event-Mapping (EmotionRouter)
 - `chat` event + `state: "delta"` -> `responding`
@@ -163,6 +182,7 @@ ocFaceMe/
 │   │   ├── AvatarConfig.swift               <- AvatarType enum (13 Lottie-Presets), Emotion-Segment-Mapping
 │   │   ├── CustomAvatarConfig.swift         <- Komplettes Custom-Avatar-Modell mit allen Komponenten + Farben
 │   │   ├── RiveAvatarConfig.swift           <- Rive Avatar-Typen, State-Machine-Mapping, Config
+│   │   ├── SensorCommand.swift             <- STT/Presence/Sound Commands (iOS->macOS) + TTS Extension
 │   │   └── EmotionState.swift               <- 8 States + EmotionCommand/Ack (Bonjour-Protokoll)
 │   ├── Networking/
 │   │   ├── BonjourConstants.swift           <- Service-Type + EmotionFramerProtocol (Length-Prefixed)
@@ -201,17 +221,19 @@ ocFaceMe/
 ├── macOS/                                   <- OpenClawFace Target
 │   ├── App/
 │   │   ├── OpenClawFaceApp.swift            <- @main, DI, Auto-Connect, Bonjour-Start
-│   │   └── ContentView.swift                <- 4 Tabs: BRIDGE, AVATAR, SKILL, CONFIG
+│   │   └── ContentView.swift                <- 5 Tabs: BRIDGE, AVATAR, SENSOR, SKILL, CONFIG
 │   ├── Services/
 │   │   ├── BonjourServer.swift              <- Advertised _openclawface._tcp, sendet Commands
 │   │   ├── EmotionRouter.swift              <- Gateway-Events -> EmotionState -> BonjourServer
-│   │   └── EmotionSkillService.swift        <- EMOTION.md auf Agenten-Workspace pushen/entfernen
+│   │   ├── EmotionSkillService.swift        <- EMOTION.md auf Agenten-Workspace pushen/entfernen
+│   │   └── SensorRouter.swift              <- Empfaengt iOS Sensor-Daten (STT, Presence, Sound), TTS
 │   ├── ViewModels/
 │   │   └── SettingsViewModel.swift          <- Gateway-Config, Reachability-Test
 │   ├── Views/
 │   │   ├── AvatarEditorView.swift           <- Zwei Modi: [PRESETS] + [CUSTOM], Push to Display
 │   │   ├── CustomEditorView.swift           <- Full Custom Editor: 5 Sektionen (Eyes/Brows/Mouth/Face/Extras)
 │   │   ├── DashboardView.swift              <- Gateway+Display+Bonjour Status, Manual Emotion, Log
+│   │   ├── SensorView.swift                 <- Sensor-Dashboard: STT-Log, TTS, Presence, Sound, Toggles
 │   │   ├── SettingsView.swift               <- Host/Port/Token/SSL, Test, Connect/Disconnect
 │   │   └── SkillView.swift                  <- Agent-Liste, EMOTION.md Install/Remove
 │   └── Resources/
@@ -220,7 +242,11 @@ ocFaceMe/
     ├── App/
     │   └── OpenClawDisplayApp.swift         <- @main, BonjourClient, empfaengt emotion/avatar Commands
     ├── Services/
-    │   └── BonjourClient.swift              <- NWBrowser auto-discovery, empfaengt + ACKt Commands
+    │   ├── BonjourClient.swift              <- NWBrowser auto-discovery, empfaengt + ACKt Commands, sendet Sensor-Daten
+    │   ├── TTSService.swift                 <- AVSpeechSynthesizer, Premium Voices, on-device TTS
+    │   ├── STTService.swift                 <- SFSpeechRecognizer, on-device STT, Session-Rotation
+    │   ├── PresenceService.swift            <- Vision.framework, Personen-Detektion via Front-Kamera
+    │   └── SoundAnalysisService.swift       <- SoundAnalysis.framework, Geraeusch-Klassifikation
     └── Views/
         └── FaceView.swift                   <- Fullscreen, Lottie oder Custom, Verbindungsstatus-Dot
 ```
@@ -286,15 +312,27 @@ ocFaceMe/
 - Bestehendes Lottie- und Custom-System bleibt parallel erhalten
 - `.riv` Dateien werden in `Shared/RiveAssets/` abgelegt
 
+### Phase 6 — iOS Sensor-Hub (STT, TTS, Kamera, Sound) ✅
+- Bonjour-Protokoll bidirektional: iOS sendet `SensorCommand` an macOS
+- `TTSService`: `AVSpeechSynthesizer`, Premium Voices, synchronisiert Emotion-State mit Sprechen
+- `STTService`: `SFSpeechRecognizer` on-device, Realtime-Streaming, automatische Session-Rotation
+- `PresenceService`: `VNDetectHumanRectanglesRequest`, Debounce-Logik, Front-Kamera
+- `SoundAnalysisService`: `SNClassifySoundRequest`, 15 relevante Geraeuschtypen
+- `SensorRouter` (macOS): Empfaengt Sensor-Daten, steuert EmotionRouter (Raum betreten/verlassen)
+- `SensorView` (macOS): [SENSOR] Tab mit Live-Status, TTS-Input, STT-Log, Sensor-Toggles
+- macOS 5-Tab-Navigation: BRIDGE, AVATAR, SENSOR, SKILL, CONFIG
+- Alle Sensor-Features komplett on-device, keine externen APIs noetig
+- Info.plist: Kamera, Mikrofon, Speech Recognition Permissions
+
 ---
 
 ## Offene Aufgaben (naechste Session)
 
-### Prioritaet 1 — iOS Custom Avatar anzeigen
-- [ ] Bonjour-Protokoll erweitern: `cmd:"customAvatar"` mit `CustomAvatarConfig` Payload
-- [ ] iOS FaceView: Umschalten zwischen Lottie (Preset) und CustomFaceView (Custom)
-- [ ] iOS: EmotionAnimator starten, auf Bonjour-Emotion-Commands reagieren
-- [ ] macOS: [PUSH TO DISPLAY] sendet Custom-Config an iOS
+### Prioritaet 1 — Gateway-Integration fuer Sensoren
+- [ ] STT-Texte an Gateway/Agent weiterleiten (neuer Endpoint oder Chat-Kanal)
+- [ ] Presence-Events an Gateway melden (Agent wacht auf bei Person, schlaeft bei leerem Raum)
+- [ ] TTS automatisch bei Agent-Antworten ausloesen (responding -> speak)
+- [ ] Audio-Session-Management: STT und TTS wechseln (nicht gleichzeitig)
 
 ### Prioritaet 2 — Emotion Engine verbessern
 - [ ] EmotionAnimator: Personality-System (viele Errors = nervoeser Idle, viele Success = selbstbewusster)

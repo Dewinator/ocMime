@@ -112,6 +112,8 @@ final class BonjourClient: ObservableObject {
         }
     }
 
+    // MARK: - Send to macOS
+
     private func sendAck(_ ack: EmotionAck) {
         guard let connection, let data = ack.toData() else { return }
 
@@ -119,5 +121,21 @@ final class BonjourClient: ObservableObject {
         let context = NWConnection.ContentContext(identifier: "ack", metadata: [message])
 
         connection.send(content: data, contentContext: context, isComplete: true, completion: .contentProcessed { _ in })
+    }
+
+    /// Send a sensor command back to macOS Bridge (STT, presence, sound)
+    func sendSensorCommand(_ command: SensorCommand) {
+        guard let connection, let data = command.toData() else { return }
+
+        let message = NWProtocolFramer.Message(definition: EmotionFramerProtocol.definition)
+        let context = NWConnection.ContentContext(identifier: "sensor", metadata: [message])
+
+        connection.send(content: data, contentContext: context, isComplete: true, completion: .contentProcessed { [weak self] error in
+            if let error {
+                Task { @MainActor in
+                    self?.connectionState = .error("Send Fehler: \(error.localizedDescription)")
+                }
+            }
+        })
     }
 }

@@ -12,6 +12,10 @@ struct FaceView: View {
     @ObservedObject var riveEngine: RiveAnimationEngine
     @ObservedObject var client: BonjourClient
     @ObservedObject var animator: EmotionAnimator
+    @ObservedObject var ttsService: TTSService
+    @ObservedObject var sttService: STTService
+    @ObservedObject var presenceService: PresenceService
+    @ObservedObject var soundService: SoundAnalysisService
     @Binding var displayMode: DisplayMode
     @Binding var customConfig: CustomAvatarConfig
 
@@ -31,10 +35,37 @@ struct FaceView: View {
                     .ignoresSafeArea()
             }
 
-            // Subtiler Verbindungsstatus oben rechts
+            // Status indicators
             VStack {
                 HStack {
+                    // Sensor status (top left) — subtle dots
+                    HStack(spacing: 3) {
+                        if sttService.isListening {
+                            Circle()
+                                .fill(Color.cyan.opacity(0.6))
+                                .frame(width: 5, height: 5)
+                        }
+                        if presenceService.isActive {
+                            Circle()
+                                .fill(presenceService.personDetected ? Color.orange.opacity(0.6) : Color.purple.opacity(0.4))
+                                .frame(width: 5, height: 5)
+                        }
+                        if soundService.isActive {
+                            Circle()
+                                .fill(Color.blue.opacity(0.4))
+                                .frame(width: 5, height: 5)
+                        }
+                        if ttsService.isSpeaking {
+                            Circle()
+                                .fill(Color.green.opacity(0.6))
+                                .frame(width: 5, height: 5)
+                        }
+                    }
+                    .padding(8)
+
                     Spacer()
+
+                    // Connection status (top right)
                     HStack(spacing: 4) {
                         Circle()
                             .fill(statusColor)
