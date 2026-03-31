@@ -3,11 +3,13 @@ import SwiftUI
 enum DisplayMode {
     case lottie
     case custom
+    case rive
 }
 
 struct FaceView: View {
 
     @ObservedObject var engine: LottieAnimationEngine
+    @ObservedObject var riveEngine: RiveAnimationEngine
     @ObservedObject var client: BonjourClient
     @ObservedObject var animator: EmotionAnimator
     @Binding var displayMode: DisplayMode
@@ -23,6 +25,9 @@ struct FaceView: View {
                     .ignoresSafeArea()
             case .custom:
                 CustomFaceView(config: customConfig, animator: animator)
+                    .ignoresSafeArea()
+            case .rive:
+                RiveFaceView(engine: riveEngine)
                     .ignoresSafeArea()
             }
 

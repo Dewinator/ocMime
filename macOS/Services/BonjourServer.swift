@@ -79,6 +79,10 @@ final class BonjourServer: ObservableObject {
         send(.customAvatarUpdate(config))
     }
 
+    func sendRiveAvatarConfig(_ config: RiveAvatarConfig) {
+        send(.riveAvatarUpdate(config))
+    }
+
     private func send(_ command: EmotionCommand) {
         guard let connection = activeConnection, let data = command.toData() else { return }
 

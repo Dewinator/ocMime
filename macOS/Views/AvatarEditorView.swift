@@ -4,15 +4,19 @@ struct AvatarEditorView: View {
 
     @ObservedObject var bonjourServer: BonjourServer
     @StateObject private var lottieEngine = LottieAnimationEngine()
+    @StateObject private var riveEngine = RiveAnimationEngine()
     @StateObject private var emotionAnimator = EmotionAnimator()
 
     @State private var avatarMode: AvatarMode = .preset
     @State private var presetConfig = AvatarConfig.default
     @State private var customConfig = CustomAvatarConfig.default
+    @State private var riveConfig = RiveAvatarConfig.default
+    @State private var selectedRiveType: RiveAvatarType = .robotFace
 
     enum AvatarMode: String, CaseIterable {
         case preset = "PRESETS"
         case custom = "CUSTOM"
+        case rive = "RIVE"
     }
 
     var body: some View {
@@ -51,6 +55,8 @@ struct AvatarEditorView: View {
                 presetContent
             case .custom:
                 CustomEditorView(config: $customConfig, animator: emotionAnimator, bonjourServer: bonjourServer)
+            case .rive:
+                riveContent
             }
 
             // Push Button
@@ -85,6 +91,96 @@ struct AvatarEditorView: View {
         .onAppear {
             loadConfigs()
             lottieEngine.setConfig(presetConfig)
+        }
+    }
+
+    // MARK: - Rive Content
+
+    @ViewBuilder
+    private var riveContent: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            // Preview
+            RiveFaceView(engine: riveEngine)
+                .frame(height: 160)
+                .background(Color.black)
+
+            // Emotion test
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: Theme.Spacing.xs) {
+                    ForEach(EmotionState.allCases) { state in
+                        Button {
+                            riveEngine.setEmotion(state, intensity: 0.7)
+                        } label: {
+                            Text(state.label)
+                                .font(Theme.Font.tiny)
+                                .foregroundStyle(Theme.textSecondary)
+                                .padding(.horizontal, Theme.Spacing.xs)
+                                .padding(.vertical, 2)
+                                .background(Theme.backgroundTertiary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, Theme.Spacing.lg)
+            }
+        }
+
+        ScrollView {
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                Text("$ ls rive_avatars/")
+                    .font(Theme.Font.caption)
+                    .foregroundStyle(Theme.textTertiary)
+
+                ForEach(RiveAvatarType.allCases) { type in
+                    Button {
+                        selectedRiveType = type
+                        riveConfig = RiveAvatarConfig(type: type)
+                        riveEngine.setType(type)
+                    } label: {
+                        HStack(spacing: Theme.Spacing.md) {
+                            Circle()
+                                .fill(selectedRiveType == type ? Theme.accent : Theme.statusReady)
+                                .frame(width: 8, height: 8)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(type.label)
+                                    .font(Theme.Font.body)
+                                    .foregroundStyle(selectedRiveType == type ? Theme.textPrimary : Theme.textSecondary)
+                                Text(type.description)
+                                    .font(Theme.Font.tiny)
+                                    .foregroundStyle(Theme.textTertiary)
+                            }
+                            Spacer()
+                            if selectedRiveType == type {
+                                Text("[ACTIVE]")
+                                    .font(Theme.Font.tiny)
+                                    .foregroundStyle(Theme.accent)
+                            }
+                        }
+                        .padding(.vertical, Theme.Spacing.xs)
+                        .padding(.horizontal, Theme.Spacing.sm)
+                        .background(selectedRiveType == type ? Theme.accentLight : Color.clear)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                // Info about adding custom .riv files
+                VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                    Text("$ cat README")
+                        .font(Theme.Font.caption)
+                        .foregroundStyle(Theme.textTertiary)
+                    Text("Eigene .riv Dateien in Shared/RiveAssets/ ablegen.")
+                        .font(Theme.Font.tiny)
+                        .foregroundStyle(Theme.textTertiary)
+                    Text("State Machine muss 'emotions' heissen mit Inputs:")
+                        .font(Theme.Font.tiny)
+                        .foregroundStyle(Theme.textTertiary)
+                    Text("  emotionState (Number 0-7), intensity (Number 0-1)")
+                        .font(Theme.Font.tiny)
+                        .foregroundStyle(Theme.textTertiary)
+                }
+                .padding(.top, Theme.Spacing.md)
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
         }
     }
 
@@ -171,6 +267,8 @@ struct AvatarEditorView: View {
             bonjourServer.sendAvatarConfig(presetConfig)
         case .custom:
             bonjourServer.sendCustomAvatarConfig(customConfig)
+        case .rive:
+            bonjourServer.sendRiveAvatarConfig(riveConfig)
         }
     }
 
@@ -180,6 +278,9 @@ struct AvatarEditorView: View {
         }
         if let data = customConfig.toData() {
             UserDefaults.standard.set(data, forKey: "avatar.custom")
+        }
+        if let data = riveConfig.toData() {
+            UserDefaults.standard.set(data, forKey: "avatar.rive")
         }
         UserDefaults.standard.set(avatarMode.rawValue, forKey: "avatar.mode")
     }
@@ -192,6 +293,13 @@ struct AvatarEditorView: View {
         if let data = UserDefaults.standard.data(forKey: "avatar.custom"),
            let saved = CustomAvatarConfig.from(data: data) {
             customConfig = saved
+        }
+        if let data = UserDefaults.standard.data(forKey: "avatar.rive"),
+           let saved = RiveAvatarConfig.from(data: data) {
+            riveConfig = saved
+            if let type = RiveAvatarType.allCases.first(where: { $0.fileName == saved.riveFile }) {
+                selectedRiveType = type
+            }
         }
         if let mode = UserDefaults.standard.string(forKey: "avatar.mode"),
            let m = AvatarMode(rawValue: mode) {

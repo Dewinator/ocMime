@@ -4,6 +4,7 @@ import SwiftUI
 struct OpenClawDisplayApp: App {
 
     @StateObject private var engine = LottieAnimationEngine()
+    @StateObject private var riveEngine = RiveAnimationEngine()
     @StateObject private var client = BonjourClient()
     @StateObject private var animator = EmotionAnimator()
     @State private var displayMode: DisplayMode = .lottie
@@ -13,18 +14,21 @@ struct OpenClawDisplayApp: App {
         WindowGroup {
             FaceView(
                 engine: engine,
+                riveEngine: riveEngine,
                 client: client,
                 animator: animator,
                 displayMode: $displayMode,
                 customConfig: $customConfig
             )
             .onAppear {
-                client.onEmotionReceived = { [weak engine, weak animator] command in
+                client.onEmotionReceived = { [weak engine, weak riveEngine, weak animator] command in
                     switch command.cmd {
                     case "emotion":
                         if let stateStr = command.state,
                            let state = EmotionState(rawValue: stateStr) {
-                            engine?.setEmotion(state, intensity: command.intensity ?? 0.5)
+                            let intensity = command.intensity ?? 0.5
+                            engine?.setEmotion(state, intensity: intensity)
+                            riveEngine?.setEmotion(state, intensity: intensity)
                             animator?.setEmotion(state)
                         }
                     case "avatar":
@@ -39,6 +43,13 @@ struct OpenClawDisplayApp: App {
                             Task { @MainActor in
                                 customConfig = config
                                 displayMode = .custom
+                            }
+                        }
+                    case "riveAvatar":
+                        if let config = command.riveAvatar {
+                            riveEngine?.setConfig(config)
+                            Task { @MainActor in
+                                displayMode = .rive
                             }
                         }
                     default:

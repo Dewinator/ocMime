@@ -34,7 +34,7 @@ iOS App — "OpenClaw Display" (Face)
 
 ### Dependencies
 - **Lottie** (SPM, v4.4+) — Vektorbasierte Animationen fuer Preset-Avatare
-- Keine weiteren externen Dependencies
+- **RiveRuntime** (SPM, v6.0+) — State-Machine-basierte Animationen fuer Rive-Avatare
 
 ### Shared Code
 Alles in `Shared/` wird von beiden Targets kompiliert: Models, Networking, Renderer, Theme, Lottie-Animationen.
@@ -99,6 +99,13 @@ Gesteuert durch: `EmotionAnimator` (30fps, smooth Transitions, Blinzeln, Pupille
 
 Quick-Presets: Default, Robot, Kawaii, Demon, Hacker
 
+### 3. Rive Avatare (State-Machine-basiert)
+State-Machine-gesteuerte Animationen via [Rive](https://rive.app). `.riv` Dateien in `Shared/RiveAssets/`. Jede Datei muss eine State Machine `"emotions"` mit Inputs `emotionState` (Number 0-7) und `intensity` (Number 0-1) enthalten.
+
+Gesteuert durch: `RiveAnimationEngine` (Wrapper um `RiveViewModel`) + `RiveFaceView` (SwiftUI View)
+
+Aktuell verfuegbare Rive-Avatare: Robot Face (Platzhalter, `.riv` Datei muss noch erstellt werden)
+
 ---
 
 ## Emotion-Protokoll
@@ -119,6 +126,8 @@ Quick-Presets: Default, Robot, Kawaii, Demon, Hacker
 ```json
 {"cmd": "emotion", "state": "thinking", "intensity": 0.8, "context": "planning"}
 {"cmd": "avatar", "avatar": {"avatarType": "eyes_neon"}}
+{"cmd": "customAvatar", "customAvatar": {...}}
+{"cmd": "riveAvatar", "riveAvatar": {"riveFile": "robot_face", "stateMachine": "emotions"}}
 {"cmd": "ping"}
 ```
 Framing: 4-Byte Length-Header (Big Endian) + JSON Payload ueber TCP.
@@ -153,6 +162,7 @@ ocFaceMe/
 │   ├── Models/
 │   │   ├── AvatarConfig.swift               <- AvatarType enum (13 Lottie-Presets), Emotion-Segment-Mapping
 │   │   ├── CustomAvatarConfig.swift         <- Komplettes Custom-Avatar-Modell mit allen Komponenten + Farben
+│   │   ├── RiveAvatarConfig.swift           <- Rive Avatar-Typen, State-Machine-Mapping, Config
 │   │   └── EmotionState.swift               <- 8 States + EmotionCommand/Ack (Bonjour-Protokoll)
 │   ├── Networking/
 │   │   ├── BonjourConstants.swift           <- Service-Type + EmotionFramerProtocol (Length-Prefixed)
@@ -167,7 +177,9 @@ ocFaceMe/
 │   │   ├── LottieFaceView.swift             <- UIKit/AppKit Wrapper (UIViewRepresentable/NSViewRepresentable)
 │   │   ├── EmotionAnimator.swift            <- 30fps Pose-Interpolation, Blinzeln, Pupillen, Mood
 │   │   ├── CustomFaceView.swift             <- SwiftUI View, composited alle Shapes mit EmotionAnimator
-│   │   └── FaceShapes.swift                 <- Bezier-Shapes: Eye, Eyebrow, Pupil, Mouth, Nose, Face, Accessory
+│   │   ├── FaceShapes.swift                 <- Bezier-Shapes: Eye, Eyebrow, Pupil, Mouth, Nose, Face, Accessory
+│   │   ├── RiveAnimationEngine.swift        <- Wrapper um RiveViewModel, steuert State Machine Inputs
+│   │   └── RiveFaceView.swift               <- SwiftUI View fuer Rive-Avatare
 │   ├── Animations/                          <- Lottie JSON Dateien (als Resources in beide Targets)
 │   │   ├── eyes_round.json                  <- 6 Augen-Varianten
 │   │   ├── eyes_cyber.json
@@ -182,6 +194,8 @@ ocFaceMe/
 │   │   ├── face_skull.json
 │   │   ├── face_alien.json
 │   │   └── sphere_rgb.json                  <- Siri-aehnliche RGB-Kugel
+│   ├── RiveAssets/                          <- Rive .riv Dateien (als Resources in beide Targets)
+│   │   └── (robot_face.riv)                 <- Platzhalter, muss in Rive Editor erstellt werden
 │   └── Theme/
 │       └── Theme.swift                      <- Terminal-Aesthetik, alle Farben/Fonts/Spacing
 ├── macOS/                                   <- OpenClawFace Target
@@ -262,6 +276,16 @@ ocFaceMe/
 - Quick-Presets: Default, Robot, Kawaii, Demon, Hacker
 - [AVATAR] Tab: [PRESETS] und [CUSTOM] Modi nebeneinander
 
+### Phase 5 — Rive Avatar-System ✅
+- `rive-ios` (RiveRuntime) als SPM Dependency integriert
+- `RiveAnimationEngine`: Wrapper um `RiveViewModel`, steuert State Machine Inputs (`emotionState`, `intensity`)
+- `RiveFaceView`: SwiftUI View fuer Rive-Avatare (iOS + macOS)
+- `RiveAvatarConfig`: Codable Config fuer Bonjour-Protokoll (`cmd:"riveAvatar"`)
+- `DisplayMode.rive` als dritter Modus neben `.lottie` und `.custom`
+- [AVATAR] Tab: Dritter Modus `[RIVE]` mit Live-Preview und Emotion-Test
+- Bestehendes Lottie- und Custom-System bleibt parallel erhalten
+- `.riv` Dateien werden in `Shared/RiveAssets/` abgelegt
+
 ---
 
 ## Offene Aufgaben (naechste Session)
@@ -278,12 +302,17 @@ ocFaceMe/
 - [ ] Augenbrauen-Asymmetrie bei Thinking (eine hoch, eine runter)
 - [ ] Micro-Expressions: zufaellige kleine Zuckungen im Idle
 
-### Prioritaet 3 — Lottie-Emotionen fixen
+### Prioritaet 3 — Rive Avatare erstellen
+- [ ] Erstes Rive-Avatar (`robot_face.riv`) im Rive Editor erstellen mit 8 Emotion-States
+- [ ] Weitere Rive-Avatare designen und `RiveAvatarType` erweitern
+- [ ] Optional: `triggerBlink` Trigger in Rive State Machine einbauen
+
+### Prioritaet 4 — Lottie-Emotionen fixen
 - [ ] Lottie-Presets: Emotionen sehen noch zu aehnlich aus
 - [ ] LottieFaceView: Pruefen ob `play(fromFrame:toFrame:)` korrekt bei jedem Emotion-Wechsel aufgerufen wird
 - [ ] Eventuell: Lottie durch Custom-Renderer komplett ersetzen (bessere Kontrolle)
 
-### Prioritaet 4 — Produktreife
+### Prioritaet 5 — Produktreife
 - [ ] Onboarding-Flow (Ersteinrichtung: Gateway-URL, erster Avatar)
 - [ ] Custom-Avatare speichern/laden (mehrere Slots)
 - [ ] Export/Import von Custom-Avataren

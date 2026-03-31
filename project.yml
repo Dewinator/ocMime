@@ -11,6 +11,9 @@ packages:
   Lottie:
     url: https://github.com/airbnb/lottie-ios
     from: "4.4.0"
+  RiveRuntime:
+    url: https://github.com/rive-app/rive-ios
+    from: "6.0.0"
 
 settings:
   base:
@@ -30,8 +33,11 @@ targets:
     resources:
       - path: Shared/Animations
         buildPhase: resources
+      - path: Shared/RiveAssets
+        buildPhase: resources
     dependencies:
       - package: Lottie
+      - package: RiveRuntime
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: net.eab-solutions.openclawface
@@ -63,8 +69,11 @@ targets:
     resources:
       - path: Shared/Animations
         buildPhase: resources
+      - path: Shared/RiveAssets
+        buildPhase: resources
     dependencies:
       - package: Lottie
+      - package: RiveRuntime
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: net.eab-solutions.openclawdisplay
