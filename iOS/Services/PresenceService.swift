@@ -16,7 +16,7 @@ final class PresenceService: ObservableObject {
     private var captureSession: AVCaptureSession?
     private let videoOutput = AVCaptureVideoDataOutput()
     private let processingQueue = DispatchQueue(label: "net.eab-solutions.openclawdisplay.presence", qos: .userInitiated)
-    private var lastProcessTime: Date = .distantPast
+    private nonisolated(unsafe) var lastProcessTime: Date = .distantPast
     private let processInterval: TimeInterval = 0.5  // Process every 500ms (2fps for presence)
 
     // Debounce: require multiple consecutive frames to change state

@@ -5,14 +5,11 @@ import RiveRuntime
 final class RiveAnimationEngine: ObservableObject {
 
     @Published private(set) var currentState: EmotionState = .idle
-    @Published private(set) var currentConfig: RiveAvatarConfig = .default
+    @Published private(set) var currentConfig: RiveAvatarConfig?
     @Published private(set) var viewModel: RiveViewModel?
+    @Published private(set) var loadError: String?
 
     private var intensity: Double = 0.5
-
-    init() {
-        loadRiveFile(config: .default)
-    }
 
     // MARK: - Avatar
 
@@ -37,30 +34,27 @@ final class RiveAnimationEngine: ObservableObject {
     // MARK: - Private
 
     private func loadRiveFile(config: RiveAvatarConfig) {
+        // Check if .riv file exists in bundle before loading
+        guard Bundle.main.url(forResource: config.riveFile, withExtension: "riv") != nil else {
+            viewModel = nil
+            loadError = "\(config.riveFile).riv not found"
+            return
+        }
         viewModel = RiveViewModel(
             fileName: config.riveFile,
             stateMachineName: config.stateMachine
         )
+        loadError = nil
         applyEmotion()
     }
 
     private func applyEmotion() {
         guard let vm = viewModel else { return }
-        do {
-            try vm.setInput("emotionState", value: currentState.riveStateValue)
-            try vm.setInput("intensity", value: intensity)
-        } catch {
-            // Inputs may not exist in all .riv files — silently ignore
-        }
+        vm.setInput("emotionState", value: currentState.riveStateValue)
+        vm.setInput("intensity", value: intensity)
     }
 
-    /// Trigger a one-shot event (e.g. blink)
     func fireTrigger(_ name: String) {
-        guard let vm = viewModel else { return }
-        do {
-            try vm.triggerInput(name)
-        } catch {
-            // Trigger may not exist — silently ignore
-        }
+        viewModel?.triggerInput(name)
     }
 }

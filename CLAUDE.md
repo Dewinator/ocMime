@@ -70,7 +70,7 @@ Alles in `Shared/` wird von beiden Targets kompiliert: Models, Networking, Rende
 
 ---
 
-## Zwei Avatar-Systeme
+## Drei Avatar-Systeme
 
 ### 1. Lottie-Presets (fertige Animationen)
 13 vorgefertigte Lottie-JSON-Animationen in `Shared/Animations/`. Jede hat 240 Frames (8 Emotion-Segments a 30 Frames, 30fps). Generiert mit `tools/generate_lottie.py`.
@@ -111,7 +111,9 @@ State-Machine-gesteuerte Animationen via [Rive](https://rive.app). `.riv` Dateie
 
 Gesteuert durch: `RiveAnimationEngine` (Wrapper um `RiveViewModel`) + `RiveFaceView` (SwiftUI View)
 
-Aktuell verfuegbare Rive-Avatare: Robot Face (Platzhalter, `.riv` Datei muss noch erstellt werden)
+**Wichtig:** `RiveAnimationEngine` laedt lazy — kein Crash wenn `.riv` Dateien fehlen. Existenz wird vor dem Laden via `Bundle.main.url(forResource:withExtension:)` geprueft.
+
+Aktuell verfuegbare Rive-Avatare: Robot Face (Platzhalter, `.riv` Datei muss noch im Rive Editor erstellt werden)
 
 ---
 
@@ -230,7 +232,7 @@ ocFaceMe/
 │   ├── ViewModels/
 │   │   └── SettingsViewModel.swift          <- Gateway-Config, Reachability-Test
 │   ├── Views/
-│   │   ├── AvatarEditorView.swift           <- Zwei Modi: [PRESETS] + [CUSTOM], Push to Display
+│   │   ├── AvatarEditorView.swift           <- Drei Modi: [PRESETS] + [CUSTOM] + [RIVE], Push to Display
 │   │   ├── CustomEditorView.swift           <- Full Custom Editor: 5 Sektionen (Eyes/Brows/Mouth/Face/Extras)
 │   │   ├── DashboardView.swift              <- Gateway+Display+Bonjour Status, Manual Emotion, Log
 │   │   ├── SensorView.swift                 <- Sensor-Dashboard: STT-Log, TTS, Presence, Sound, Toggles
@@ -248,7 +250,7 @@ ocFaceMe/
     │   ├── PresenceService.swift            <- Vision.framework, Personen-Detektion via Front-Kamera
     │   └── SoundAnalysisService.swift       <- SoundAnalysis.framework, Geraeusch-Klassifikation
     └── Views/
-        └── FaceView.swift                   <- Fullscreen, Lottie oder Custom, Verbindungsstatus-Dot
+        └── FaceView.swift                   <- Fullscreen, Lottie/Custom/Rive, Sensor-Status-Dots
 ```
 
 ---
