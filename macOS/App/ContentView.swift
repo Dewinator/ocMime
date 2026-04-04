@@ -30,6 +30,7 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, Theme.Spacing.sm)
                             .background(selectedTab == tab ? Theme.accent : Theme.backgroundSecondary)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
