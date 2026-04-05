@@ -22,6 +22,7 @@ struct CustomEditorView: View {
             // Live Preview
             CustomFaceView(config: config, animator: animator)
                 .frame(height: 200)
+                .clipped()
                 .background(config.backgroundColor.swiftUI)
                 .onAppear {
                     animator.start()

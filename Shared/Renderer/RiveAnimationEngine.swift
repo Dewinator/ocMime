@@ -10,11 +10,16 @@ final class RiveAnimationEngine: ObservableObject {
     @Published private(set) var loadError: String?
 
     private var intensity: Double = 0.5
+    private(set) var hasLoadedOnce = false
+
+    init() {
+        // Lazy: do NOT load on init — wait for explicit setConfig/setType
+    }
 
     // MARK: - Avatar
 
     func setConfig(_ config: RiveAvatarConfig) {
-        guard config != currentConfig else { return }
+        guard config != currentConfig || !hasLoadedOnce else { return }
         currentConfig = config
         loadRiveFile(config: config)
     }
@@ -34,12 +39,16 @@ final class RiveAnimationEngine: ObservableObject {
     // MARK: - Private
 
     private func loadRiveFile(config: RiveAvatarConfig) {
-        // Check if .riv file exists in bundle before loading
+        hasLoadedOnce = true
+        loadError = nil
+
+        // Check if file exists in bundle before loading
         guard Bundle.main.url(forResource: config.riveFile, withExtension: "riv") != nil else {
             viewModel = nil
-            loadError = "\(config.riveFile).riv not found"
+            loadError = "Datei '\(config.riveFile).riv' nicht im Bundle gefunden"
             return
         }
+
         viewModel = RiveViewModel(
             fileName: config.riveFile,
             stateMachineName: config.stateMachine

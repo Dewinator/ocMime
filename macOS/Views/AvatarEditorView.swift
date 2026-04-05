@@ -43,6 +43,7 @@ struct AvatarEditorView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, Theme.Spacing.xs)
                             .background(avatarMode == mode ? Theme.accent : Theme.backgroundTertiary)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
@@ -50,14 +51,18 @@ struct AvatarEditorView: View {
             .padding(.horizontal, Theme.Spacing.lg)
 
             // Content
-            switch avatarMode {
-            case .preset:
-                presetContent
-            case .custom:
-                CustomEditorView(config: $customConfig, animator: emotionAnimator, bonjourServer: bonjourServer)
-            case .rive:
-                riveContent
+            Group {
+                switch avatarMode {
+                case .preset:
+                    presetContent
+                case .custom:
+                    CustomEditorView(config: $customConfig, animator: emotionAnimator, bonjourServer: bonjourServer)
+                case .rive:
+                    riveContent
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .layoutPriority(1)
 
             // Push Button
             HStack(spacing: Theme.Spacing.md) {
@@ -91,6 +96,12 @@ struct AvatarEditorView: View {
         .onAppear {
             loadConfigs()
             lottieEngine.setConfig(presetConfig)
+            // Rive engine loads lazily — only when RIVE tab is selected and a type chosen
+        }
+        .onChange(of: avatarMode) { _, newMode in
+            if newMode == .rive && !riveEngine.hasLoadedOnce {
+                riveEngine.setType(selectedRiveType)
+            }
         }
     }
 
@@ -98,34 +109,36 @@ struct AvatarEditorView: View {
 
     @ViewBuilder
     private var riveContent: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            // Preview
-            RiveFaceView(engine: riveEngine)
-                .frame(height: 160)
-                .background(Color.black)
+        VStack(spacing: 0) {
+            VStack(spacing: Theme.Spacing.sm) {
+                // Preview
+                RiveFaceView(engine: riveEngine)
+                    .frame(height: 160)
+                    .clipped()
+                    .background(Color.black)
 
-            // Emotion test
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: Theme.Spacing.xs) {
-                    ForEach(EmotionState.allCases) { state in
-                        Button {
-                            riveEngine.setEmotion(state, intensity: 0.7)
-                        } label: {
-                            Text(state.label)
-                                .font(Theme.Font.tiny)
-                                .foregroundStyle(Theme.textSecondary)
-                                .padding(.horizontal, Theme.Spacing.xs)
-                                .padding(.vertical, 2)
-                                .background(Theme.backgroundTertiary)
+                // Emotion test
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: Theme.Spacing.xs) {
+                        ForEach(EmotionState.allCases) { state in
+                            Button {
+                                riveEngine.setEmotion(state, intensity: 0.7)
+                            } label: {
+                                Text(state.label)
+                                    .font(Theme.Font.tiny)
+                                    .foregroundStyle(Theme.textSecondary)
+                                    .padding(.horizontal, Theme.Spacing.xs)
+                                    .padding(.vertical, 2)
+                                    .background(Theme.backgroundTertiary)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .padding(.horizontal, Theme.Spacing.lg)
                 }
-                .padding(.horizontal, Theme.Spacing.lg)
             }
-        }
 
-        ScrollView {
+            ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                 Text("$ ls rive_avatars/")
                     .font(Theme.Font.caption)
@@ -181,6 +194,7 @@ struct AvatarEditorView: View {
                 .padding(.top, Theme.Spacing.md)
             }
             .padding(.horizontal, Theme.Spacing.lg)
+            }
         }
     }
 
@@ -188,35 +202,37 @@ struct AvatarEditorView: View {
 
     @ViewBuilder
     private var presetContent: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            // Preview
-            LottieFaceView(engine: lottieEngine)
-                .frame(height: 160)
-                .background(Color.black)
+        VStack(spacing: 0) {
+            VStack(spacing: Theme.Spacing.sm) {
+                // Preview
+                LottieFaceView(engine: lottieEngine)
+                    .frame(height: 160)
+                    .clipped()
+                    .background(Color.black)
 
-            // Emotion test
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: Theme.Spacing.xs) {
-                    ForEach(EmotionState.allCases) { state in
-                        Button {
-                            lottieEngine.setEmotion(state, intensity: 0.7)
-                        } label: {
-                            Text(state.label)
-                                .font(Theme.Font.tiny)
-                                .foregroundStyle(Theme.textSecondary)
-                                .padding(.horizontal, Theme.Spacing.xs)
-                                .padding(.vertical, 2)
-                                .background(Theme.backgroundTertiary)
+                // Emotion test
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: Theme.Spacing.xs) {
+                        ForEach(EmotionState.allCases) { state in
+                            Button {
+                                lottieEngine.setEmotion(state, intensity: 0.7)
+                            } label: {
+                                Text(state.label)
+                                    .font(Theme.Font.tiny)
+                                    .foregroundStyle(Theme.textSecondary)
+                                    .padding(.horizontal, Theme.Spacing.xs)
+                                    .padding(.vertical, 2)
+                                    .background(Theme.backgroundTertiary)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .padding(.horizontal, Theme.Spacing.lg)
                 }
-                .padding(.horizontal, Theme.Spacing.lg)
             }
-        }
 
-        ScrollView {
-            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                 ForEach(AvatarType.categories, id: \.self) { category in
                     Text("$ ls \(category.lowercased().replacingOccurrences(of: " ", with: "_"))/")
                         .font(Theme.Font.caption)
@@ -255,6 +271,7 @@ struct AvatarEditorView: View {
                 }
             }
             .padding(.horizontal, Theme.Spacing.lg)
+            }
         }
     }
 
