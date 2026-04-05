@@ -13,9 +13,12 @@ final class AudioSessionCoordinator: ObservableObject {
     @Published private(set) var mode: Mode = .idle
     @Published private(set) var lastError: String?
 
+    private var interruptionObserver: NSObjectProtocol?
+    private var desiredMode: Mode = .idle
+
     init() {
         #if os(iOS)
-        _ = NotificationCenter.default.addObserver(
+        interruptionObserver = NotificationCenter.default.addObserver(
             forName: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance(),
             queue: nil
@@ -29,6 +32,7 @@ final class AudioSessionCoordinator: ObservableObject {
         #endif
     }
 
+
     func activateListening() {
         #if os(iOS)
         do {
@@ -39,6 +43,7 @@ final class AudioSessionCoordinator: ObservableObject {
                 options: [.duckOthers, .allowBluetoothHFP, .allowBluetoothA2DP, .defaultToSpeaker]
             )
             try session.setActive(true, options: .notifyOthersOnDeactivation)
+            desiredMode = .listening
             mode = .listening
             lastError = nil
         } catch {
@@ -57,6 +62,7 @@ final class AudioSessionCoordinator: ObservableObject {
                 options: [.duckOthers]
             )
             try session.setActive(true, options: .notifyOthersOnDeactivation)
+            desiredMode = .speaking
             mode = .speaking
             lastError = nil
         } catch {
@@ -70,6 +76,7 @@ final class AudioSessionCoordinator: ObservableObject {
         #if os(iOS)
         do {
             try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            desiredMode = .idle
             mode = .idle
             lastError = nil
         } catch {
@@ -91,6 +98,14 @@ final class AudioSessionCoordinator: ObservableObject {
             if let optionsRaw,
                AVAudioSession.InterruptionOptions(rawValue: optionsRaw).contains(.shouldResume) {
                 lastError = nil
+                switch desiredMode {
+                case .listening:
+                    activateListening()
+                case .speaking:
+                    activateSpeaking()
+                case .idle:
+                    break
+                }
             }
         @unknown default:
             break

@@ -277,12 +277,17 @@ ocFaceMe/
 - Bonjour-Discovery wurde robuster gegen Endpoint-Wechsel gemacht.
 
 ### Offene Hauptpunkte
-Die dokumentierten P1-P5 Aufgaben sind noch nicht fertig implementiert und bleiben als Issue-Track stehen:
-- `#22` Gateway integration for sensor loop
-- `#23` Emotion engine personality and micro-expression polish
-- `#24` Rive avatar production pass
-- `#25` Lottie emotion differentiation and playback verification
-- `#26` Product readiness: onboarding, custom avatar storage, export/import, E2E
+Die dokumentierten P1-P5 Aufgaben wurden inzwischen in der aktuellen Codebasis umgesetzt und die zugehoerigen Issues geschlossen. Verbleibend sind nur noch die weiterfuehrenden Audit-Themen:
+- `#38` Reconnect and audio interruption hardening
+- `#39` Accessibility and reduced-motion pass
+- `#40` Critical-path test coverage for Gateway and sensor relay
+
+### Status der dokumentierten Arbeit
+- P1: Gateway-/Sensor-Relay, Presence, TTS-Autoplay und Audio-Arbitration sind im Code vorhanden.
+- P2: Personality, Blickfuehrung, Asymmetrie und Micro-Expressions sind im `EmotionAnimator` verankert.
+- P3: Rive-Pipeline ist integriert; reale Produktions-Assets bleiben ein separater Content-Schritt.
+- P4: Lottie-Renderer ist weiterhin aktiv; Playback-Switching wurde bereits gehardent.
+- P5: Onboarding, Avatar-Persistenz und Import/Export sind als naechste Produktstufe dokumentiert, aber nicht als Blocker fuer den Build.
 
 ### Zusätzliche Audit-Issues
 - `#38` Reconnect and audio interruption hardening
