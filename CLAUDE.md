@@ -280,9 +280,15 @@ ocFaceMe/
 
 ### Zusätzliche Audit-Issues
 - `#38` Reconnect and audio interruption hardening
-- `#39` Accessibility and reduced-motion pass
 - `#40` Critical-path test coverage for Gateway and sensor relay
 - `#42` Project Audit Report
+- `#54` Bonjour endpoint deduping and reconnect race audit
+- `#55` Motion accessibility and reduced-motion pass
+- `#56` P1 Gateway integration for sensor relay and audio handoff
+- `#57` P2 EmotionAnimator personality, gaze, and micro-expression pass
+- `#58` P3 First production Rive avatar and state-machine expansion
+- `#59` P4 Lottie emotion separation and segment playback audit
+- `#60` P5 Product readiness: onboarding, avatar storage, export/import, and E2E gateway test
 
 ### Architektur-Erkenntnisse
 - Der aktuelle Code ist klar in `Shared/`, `macOS/` und `iOS/` getrennt; das Pattern ist brauchbar und sollte beibehalten werden.
