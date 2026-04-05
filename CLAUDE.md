@@ -271,33 +271,23 @@ ocFaceMe/
 - Beide Targets bauen erfolgreich mit `xcodegen generate` + `xcodebuild`:
   - `OpenClawDisplay` (iOS 17+)
   - `OpenClawFace` (macOS 14+)
-- Die iOS-Audio-Lifecycle-Hardening wurde verbessert:
-  - Audio-Interruptions werden jetzt beobachtet
-  - Listening nutzt `playAndRecord` fuer sauberere STT/TTS-Handoffs
-- Bonjour-Discovery wurde robuster gegen Endpoint-Wechsel gemacht.
-
-### Offene Hauptpunkte
-Die dokumentierten P1-P5 Aufgaben wurden inzwischen in der aktuellen Codebasis umgesetzt und die zugehoerigen Issues geschlossen. Verbleibend sind nur noch die weiterfuehrenden Audit-Themen:
-- `#38` Reconnect and audio interruption hardening
-- `#39` Accessibility and reduced-motion pass
-- `#40` Critical-path test coverage for Gateway and sensor relay
+- Die iOS-Audio-Lifecycle-Hardening ist im Code vorhanden, muss aber gegen echte Interruptions, Route-Changes und schnelle STT/TTS-Wechsel weiter gehärtet werden.
+- Bonjour-Discovery und Reconnect-Verhalten sind grundsätzlich da, aber Sleep/Wake- und Netzwerkwechsel-Races bleiben ein echtes Risiko.
 
 ### Status der dokumentierten Arbeit
-- P1: Gateway-/Sensor-Relay, Presence, TTS-Autoplay und Audio-Arbitration sind im Code vorhanden.
-- P2: Personality, Blickfuehrung, Asymmetrie und Micro-Expressions sind im `EmotionAnimator` verankert.
-- P3: Rive-Pipeline ist integriert; reale Produktions-Assets bleiben ein separater Content-Schritt.
-- P4: Lottie-Renderer ist weiterhin aktiv; Playback-Switching wurde bereits gehardent.
-- P5: Onboarding, Avatar-Persistenz und Import/Export sind als naechste Produktstufe dokumentiert, aber nicht als Blocker fuer den Build.
+- P1–P5 sind noch nicht als abgeschlossen zu behandeln; sie bleiben als umzusetzende Produktarbeit im Issue-Backlog.
+- Vorhandene Teilimplementierungen sind brauchbar, aber noch nicht ausreichend, um die offenen Aufgaben als erledigt zu markieren.
 
 ### Zusätzliche Audit-Issues
 - `#38` Reconnect and audio interruption hardening
 - `#39` Accessibility and reduced-motion pass
 - `#40` Critical-path test coverage for Gateway and sensor relay
+- `#42` Project Audit Report
 
 ### Architektur-Erkenntnisse
 - Der aktuelle Code ist klar in `Shared/`, `macOS/` und `iOS/` getrennt; das Pattern ist brauchbar und sollte beibehalten werden.
 - Die kritischsten technischen Risiken liegen weiter in Netzwerk-Resilienz, Audio-Handoffs, Accessibility und fehlender Testabdeckung.
-- Rive ist aktuell noch Platzhalter-getrieben; echte Produktions-Avatare fehlen.
+- Rive ist weiterhin content-getrieben; echte Produktions-Avatare fehlen.
 
 ### Hinweise fuer die naechsten Iterationen
 - Vor jeder grösseren Aenderung Build + Projekt-Generierung erneut verifizieren.
