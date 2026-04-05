@@ -258,6 +258,46 @@ ocFaceMe/
 ## Entwicklungsrichtlinien
 
 - Alle Farben und Design-Attribute zentral in `Theme.swift`
+- Nach jeder Datei-Aenderung: `rm -rf OpenClawFace.xcodeproj && xcodegen generate`
+- Keine neuen Config-Speicherorte ausser Keychain fuer Secrets und vorhandene Config-Mechanismen
+- Networking bleibt async/await-only
+- Sichtbare Fehlerzustände im UI statt stiller Fails
+
+---
+
+## Aktueller Audit-Stand (2026-04-05)
+
+### Verifiziert
+- Beide Targets bauen erfolgreich mit `xcodegen generate` + `xcodebuild`:
+  - `OpenClawDisplay` (iOS 17+)
+  - `OpenClawFace` (macOS 14+)
+- Die iOS-Audio-Lifecycle-Hardening wurde verbessert:
+  - Audio-Interruptions werden jetzt beobachtet
+  - Listening nutzt `playAndRecord` fuer sauberere STT/TTS-Handoffs
+- Bonjour-Discovery wurde robuster gegen Endpoint-Wechsel gemacht.
+
+### Offene Hauptpunkte
+Die dokumentierten P1-P5 Aufgaben sind noch nicht fertig implementiert und bleiben als Issue-Track stehen:
+- `#22` Gateway integration for sensor loop
+- `#23` Emotion engine personality and micro-expression polish
+- `#24` Rive avatar production pass
+- `#25` Lottie emotion differentiation and playback verification
+- `#26` Product readiness: onboarding, custom avatar storage, export/import, E2E
+
+### Zusätzliche Audit-Issues
+- `#38` Reconnect and audio interruption hardening
+- `#39` Accessibility and reduced-motion pass
+- `#40` Critical-path test coverage for Gateway and sensor relay
+
+### Architektur-Erkenntnisse
+- Der aktuelle Code ist klar in `Shared/`, `macOS/` und `iOS/` getrennt; das Pattern ist brauchbar und sollte beibehalten werden.
+- Die kritischsten technischen Risiken liegen weiter in Netzwerk-Resilienz, Audio-Handoffs, Accessibility und fehlender Testabdeckung.
+- Rive ist aktuell noch Platzhalter-getrieben; echte Produktions-Avatare fehlen.
+
+### Hinweise fuer die naechsten Iterationen
+- Vor jeder grösseren Aenderung Build + Projekt-Generierung erneut verifizieren.
+- Neue Workitems nur mit explizitem Issue und Priority-Label anlegen.
+- Keine auskommentierten TODOs; alles als Issue oder Code umgesetzt.
 
 ## Aktueller Stand / Notizen (2026-04-05)
 

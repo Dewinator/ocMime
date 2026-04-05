@@ -10,6 +10,7 @@ final class BonjourClient: ObservableObject {
 
     private var browser: NWBrowser?
     private var connection: NWConnection?
+    private var connectedEndpoint: NWEndpoint?
 
     var onEmotionReceived: ((EmotionCommand) -> Void)?
 
@@ -19,10 +20,12 @@ final class BonjourClient: ObservableObject {
 
         browser = NWBrowser(for: .bonjour(type: BonjourConstants.serviceType, domain: nil), using: parameters)
 
-        browser?.browseResultsChangedHandler = { [weak self] results, changes in
+        browser?.browseResultsChangedHandler = { [weak self] results, _ in
             Task { @MainActor in
-                if let result = results.first {
-                    self?.connectTo(result.endpoint)
+                guard let self else { return }
+                guard let result = results.first else { return }
+                if self.connectedEndpoint == nil || self.connectedEndpoint != result.endpoint {
+                    self.connectTo(result.endpoint)
                 }
             }
         }
@@ -57,6 +60,8 @@ final class BonjourClient: ObservableObject {
         // Schon verbunden?
         if connection != nil { return }
 
+        connectedEndpoint = endpoint
+
         let parameters = NWParameters.tcp
         let framerOptions = NWProtocolFramer.Options(definition: EmotionFramerProtocol.definition)
         parameters.defaultProtocolStack.applicationProtocols.insert(framerOptions, at: 0)
@@ -73,12 +78,14 @@ final class BonjourClient: ObservableObject {
                 case .failed(let error):
                     self?.connectionState = .error(error.localizedDescription)
                     self?.connection = nil
+                    self?.connectedEndpoint = nil
                     // Retry
                     try? await Task.sleep(for: .seconds(2))
                     self?.connectTo(endpoint)
                 case .cancelled:
                     self?.connectionState = .disconnected
                     self?.connection = nil
+                    self?.connectedEndpoint = nil
                 default:
                     break
                 }
