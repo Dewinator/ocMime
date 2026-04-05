@@ -1,146 +1,240 @@
 # OpenClaw Face
 
-**Give your local AI agent a face.** OpenClaw Face is a companion app system for [OpenClaw](https://github.com/Dewinator/OpenClaw) that turns an iPhone or iPad into a real-time animated face display for your self-hosted AI agent.
+**Gib deinem lokalen KI-Agenten ein Gesicht.**
 
-A macOS Bridge app connects to the local OpenClaw Gateway via WebSocket and relays emotion events over Bonjour to a connected iOS device. The iOS app renders animated avatars that reflect the agent's emotional state in real time -- and doubles as a sensor hub, sending speech, presence, and sound data back to the agent.
-
-## Architecture
+OpenClaw Face verbindet sich mit deinem selbst-gehosteten [OpenClaw](https://github.com/openclaw)-Agenten und zeigt dessen emotionalen Zustand als animiertes Gesicht auf einem iPhone oder iPad — in Echtzeit. Zusaetzlich nutzt die iOS-App Kamera, Mikrofon und Lautsprecher als Sensor-Hub, damit der Agent seine Umgebung wahrnehmen und mit ihr interagieren kann.
 
 ```
-OpenClaw Gateway (localhost:18789)
+OpenClaw Gateway (Mac Mini M4)
        |
        | WebSocket (Protocol v3, Ed25519)
        v
-macOS App -- "OpenClaw Face" (Bridge)
+macOS Bridge — Konfiguration, Routing, Dashboard
        |
-       | Bonjour / Network.framework (LAN/USB, bidirectional)
+       | Bonjour (bidirektional, LAN/USB)
        v
-iOS App -- "OpenClaw Display" (Face + Sensor Hub)
+iOS Display — Animiertes Gesicht + Sensor-Hub
        |
-       +-- Animated Face (Lottie / Custom / Rive)
-       +-- Microphone -> STT (on-device)
-       +-- Speaker -> TTS (on-device)
-       +-- Camera -> Presence Detection (on-device)
-       +-- Microphone -> Sound Classification (on-device)
+       +-- Gesicht: Lottie / Custom / Rive
+       +-- STT:     Sprache zu Text (on-device)
+       +-- TTS:     Text zu Sprache (on-device)
+       +-- Kamera:  Personen-Detektion (on-device)
+       +-- Sound:   Geraeusch-Klassifikation (on-device)
 ```
+
+---
+
+## Warum?
+
+Du betreibst OpenClaw lokal auf einem Mac Mini. Der Agent kann denken, planen, ausfuehren — aber er hat kein Gesicht, keine Stimme, keine Augen. OpenClaw Face aendert das:
+
+- **Sehen:** Erkennt, wenn jemand den Raum betritt — der Agent wacht auf
+- **Hoeren:** Wandelt Sprache in Text um, direkt auf dem iPhone — kein Whisper-API noetig
+- **Sprechen:** Liest Agent-Antworten vor, synchronisiert mit Gesichts-Animation
+- **Fuehlen:** 8 Emotionen spiegeln den Zustand des Agenten in Echtzeit wider
+
+Alles laeuft **komplett on-device**. Keine Cloud, keine externen APIs, keine Daten verlassen dein Netzwerk.
+
+---
 
 ## Features
 
-### Three Avatar Rendering Systems
+### Drei Avatar-Systeme
 
-| System | Description |
-|--------|-------------|
-| **Lottie Presets** | 13 pre-built vector animations (6 eye styles, 6 faces, 1 RGB sphere). 240 frames each with 8 emotion segments. Generated via `tools/generate_lottie.py`. |
-| **Custom Avatar Editor** | Build-your-own face from modular components (eyes, eyebrows, pupils, nose, mouth, accessories). Each element has shape variants, colors, and sizing. Includes quick presets (Robot, Kawaii, Demon, Hacker). |
-| **Rive Avatars** | State-machine-driven animations via [Rive](https://rive.app). Drop `.riv` files into `Shared/RiveAssets/` with an `"emotions"` state machine exposing `emotionState` (0-7) and `intensity` (0-1) inputs. |
+| System | Beschreibung | Anpassbar? |
+|--------|-------------|------------|
+| **Lottie Presets** | 13 vorgefertigte Animationen (Augen, Gesichter, RGB Sphere) | Avatar-Auswahl |
+| **Custom Editor** | Baukasten mit 7 Komponenten, 10 Farben, Quick-Presets | Komplett |
+| **Rive** | State-Machine-basierte Animationen, GPU-beschleunigt | Via Rive Editor |
 
-### Eight Emotion States
+### 8 Emotionen
 
-`idle` | `thinking` | `focused` | `responding` | `error` | `success` | `listening` | `sleeping`
+| Emotion | Wann | Gesicht |
+|---------|------|---------|
+| `idle` | Agent wartet | Ruhig, subtiles Atmen |
+| `thinking` | Agent plant | Blick wandert, Brauen asymmetrisch |
+| `focused` | Langer Task | Zusammengekniffene Augen |
+| `responding` | Antwort wird generiert | Mund bewegt sich |
+| `error` | Fehler aufgetreten | Zittern, rote Toene |
+| `success` | Aufgabe erledigt | Augen schliessen gluecklich |
+| `listening` | Wartet auf Input | Grosse Augen, aufmerksam |
+| `sleeping` | Standby | Augen zu, langsames Atmen |
 
-Emotions are mapped from Gateway events by `EmotionRouter` and transmitted to the iOS display in real time.
+### Sensor-Hub (iOS)
 
-### Emotion Animator
+| Sensor | Framework | Funktion |
+|--------|-----------|----------|
+| **Speech-to-Text** | `SFSpeechRecognizer` | Realtime-Streaming, Session-Rotation, on-device |
+| **Text-to-Speech** | `AVSpeechSynthesizer` | Premium Voices, Emotion-Synchronisation |
+| **Personen-Detektion** | `Vision.framework` | Front-Kamera, Debounce, Person-Enter/Leave Events |
+| **Sound-Analyse** | `SoundAnalysis.framework` | 15 Geraeuschtypen (knock, doorbell, speech...) |
 
-The custom avatar system features a 30fps emotion engine with:
-- Smooth transitions (0.5s ease-out-cubic)
-- Automatic blinking (random interval 2.5-5s)
-- Pupil drift (micro-movement in idle, active scanning in thinking)
-- Breathing animation (subtle scale oscillation)
-- Mouth animation (opens/closes during responding)
-- Error shake (full face vibration)
-- Mood tracking (weighted average of last 50 emotions)
+### macOS Bridge (5 Tabs)
 
-### iOS Sensor Hub
+| Tab | Funktion |
+|-----|----------|
+| **BRIDGE** | Gateway + Display Status, manuelle Emotion-Steuerung, Log |
+| **AVATAR** | Preset / Custom / Rive Auswahl, Live-Preview, Push to Display |
+| **SENSOR** | STT-Log, TTS-Eingabe, Sensor-Toggles, Live-Status |
+| **SKILL** | Agent-Liste, EMOTION.md installieren/entfernen |
+| **CONFIG** | Gateway Host/Port/Token, Verbindungstest |
 
-All processing happens on-device -- no external APIs required.
+---
 
-| Sensor | Framework | Capability |
-|--------|-----------|------------|
-| **Speech-to-Text** | `SFSpeechRecognizer` | Real-time streaming, session rotation |
-| **Text-to-Speech** | `AVSpeechSynthesizer` | Premium voices, emotion-synchronized |
-| **Presence Detection** | `Vision.framework` | Human rectangle detection, debounce logic |
-| **Sound Classification** | `SoundAnalysis.framework` | 15 sound types (knock, speech, music, etc.) |
+## Voraussetzungen
 
-### Bonjour Protocol
+| Komponente | Anforderung |
+|------------|------------|
+| Mac | macOS 14+ mit Xcode 16+ |
+| iPhone/iPad | iOS 17+ |
+| OpenClaw | Lokal laufende Instanz (Gateway auf `localhost:18789`) |
+| Netzwerk | Mac und iOS-Geraet im selben LAN (oder via USB) |
 
-Bidirectional communication over TCP with 4-byte length-prefixed JSON framing.
+---
 
-**macOS to iOS:** emotion commands, avatar config, TTS text, ping
-**iOS to macOS:** STT transcripts, presence events, sound classifications
+## Installation
 
-## Requirements
-
-| Target | Platform | Bundle ID |
-|--------|----------|-----------|
-| `OpenClawFace` | macOS 14+ | `net.eab-solutions.openclawface` |
-| `OpenClawDisplay` | iOS 17+ | `net.eab-solutions.openclawdisplay` |
-
-### Dependencies
-
-- [Lottie](https://github.com/airbnb/lottie-ios) (SPM, v4.4+) -- Vector animations for preset avatars
-- [RiveRuntime](https://github.com/rive-app/rive-ios) (SPM, v6.0+) -- State-machine animations for Rive avatars
-
-### Tech Stack
-
-- Swift 6 with strict concurrency checking
-- SwiftUI
-- XcodeGen (`project.yml`)
-- Ed25519 signing (CryptoKit) for Gateway authentication
-- Network.framework for Bonjour
-- Keychain for credential storage
-
-## Getting Started
+### 1. Repository klonen
 
 ```bash
-# Generate Xcode project
+git clone https://github.com/Dewinator/ocMime.git
+cd ocMime
+```
+
+### 2. Xcode-Projekt generieren
+
+```bash
+brew install xcodegen   # falls noch nicht installiert
 xcodegen generate
+```
 
-# Open in Xcode
+### 3. In Xcode oeffnen
+
+```bash
 open OpenClawFace.xcodeproj
+```
 
-# Regenerate Lottie animations (optional)
+### 4. Targets bauen
+
+| Target | Schema | Geraet |
+|--------|--------|--------|
+| `OpenClawFace` | macOS | Dein Mac |
+| `OpenClawDisplay` | iOS | Dein iPhone/iPad |
+
+### 5. Verbinden
+
+1. macOS-App starten — verbindet sich automatisch zum Gateway
+2. iOS-App starten — findet die macOS-App automatisch via Bonjour
+3. Im AVATAR-Tab ein Gesicht waehlen und [PUSH TO DISPLAY] klicken
+
+---
+
+## Entwicklung
+
+### Projektstruktur
+
+```
+ocMime/
++-- project.yml              XcodeGen-Konfiguration
++-- Shared/                   Code fuer beide Targets
+|   +-- Models/               Datenmodelle (Emotion, Avatar, Sensor)
+|   +-- Networking/           Bonjour, Gateway, Keychain
+|   +-- Renderer/             Lottie, Custom, Rive Engines + Views
+|   +-- Animations/           13 Lottie-JSON-Dateien
+|   +-- RiveAssets/           .riv Dateien
+|   +-- Theme/                Farben, Fonts, Spacing
++-- macOS/                    Bridge-App
+|   +-- App/                  Entry Point, ContentView (5 Tabs)
+|   +-- Services/             BonjourServer, EmotionRouter, SensorRouter
+|   +-- Views/                Dashboard, Avatar, Sensor, Skill, Settings
++-- iOS/                      Display-App
+|   +-- App/                  Entry Point, Sensor-Wiring
+|   +-- Services/             BonjourClient, TTS, STT, Presence, Sound
+|   +-- Views/                FaceView (Fullscreen)
++-- tools/
+    +-- generate_lottie.py    Generiert alle 13 Lottie-Animationen
+```
+
+### XcodeGen
+
+Nach jeder Datei-Aenderung (neue Dateien, Umbenennung):
+
+```bash
+rm -rf OpenClawFace.xcodeproj && xcodegen generate
+```
+
+### Lottie-Animationen regenerieren
+
+```bash
 python3 tools/generate_lottie.py
 ```
 
-Build and run `OpenClawFace` (macOS) and `OpenClawDisplay` (iOS) targets. The iOS device discovers the macOS bridge automatically via Bonjour.
+### Eigene Rive-Avatare erstellen
 
-## Project Structure
+1. Avatar im [Rive Editor](https://rive.app) designen
+2. State Machine `"emotions"` anlegen mit Inputs:
+   - `emotionState` (Number, 0-7)
+   - `intensity` (Number, 0.0-1.0)
+   - Optional: `triggerBlink` (Trigger)
+3. Als `.riv` exportieren und in `Shared/RiveAssets/` ablegen
+4. Neuen Case zu `RiveAvatarType` in `Shared/Models/RiveAvatarConfig.swift` hinzufuegen
 
+### Design-Richtlinien
+
+- Terminal-Aesthetik: Schwarzer Hintergrund, gruener Monospace-Text
+- Buttons in eckigen Klammern: `[PUSH TO DISPLAY]`
+- Keine Emojis, keine dekorativen Icons
+- Keine Chevron-Pfeile
+- Alle Farben zentral in `Theme.swift`
+- Credentials ausschliesslich via Keychain
+
+---
+
+## Bonjour-Protokoll
+
+Bidirektionale Kommunikation via TCP mit 4-Byte Length-Prefixed JSON Framing.
+
+### macOS -> iOS
+
+```json
+{"cmd": "emotion", "state": "thinking", "intensity": 0.8, "context": "planning"}
+{"cmd": "avatar", "avatar": {"avatarType": "eyes_neon"}}
+{"cmd": "customAvatar", "customAvatar": {...}}
+{"cmd": "riveAvatar", "riveAvatar": {"riveFile": "robot_face", "stateMachine": "emotions"}}
+{"cmd": "tts", "ttsText": "Hallo!", "context": "de-DE", "intensity": 0.5}
+{"cmd": "ttsStop"}
+{"cmd": "ping"}
 ```
-ocMIME/
-+-- project.yml                  XcodeGen project definition
-+-- tools/generate_lottie.py     Generates all 13 Lottie JSON animations
-+-- Shared/                      Code shared by both targets
-|   +-- Models/                  AvatarConfig, CustomAvatarConfig, RiveAvatarConfig,
-|   |                            SensorCommand, EmotionState
-|   +-- Networking/              Bonjour, Gateway WebSocket, Keychain, DeviceIdentity
-|   +-- Renderer/                Lottie/Custom/Rive engines and SwiftUI views
-|   +-- Animations/              13 Lottie JSON files
-|   +-- RiveAssets/              Rive .riv files
-|   +-- Theme/                   Terminal aesthetic (black, green, monospace)
-+-- macOS/                       Bridge app (Gateway <-> Display)
-|   +-- Services/                BonjourServer, EmotionRouter, SensorRouter
-|   +-- Views/                   5 tabs: Bridge, Avatar, Sensor, Skill, Config
-+-- iOS/                         Display + Sensor Hub
-    +-- Services/                BonjourClient, TTSService, STTService,
-    |                            PresenceService, SoundAnalysisService
-    +-- Views/                   Fullscreen face with sensor status dots
+
+### iOS -> macOS
+
+```json
+{"cmd": "stt", "text": "Wie ist das Wetter?", "isFinal": true, "locale": "de-DE"}
+{"cmd": "presence", "detected": true, "personCount": 1, "confidence": 0.92}
+{"cmd": "sound", "soundType": "knock", "confidence": 0.85}
 ```
 
-## Design Guidelines
+---
 
-- Terminal aesthetic: black background, green monospace text, bracket-style buttons `[ACTION]`
-- All colors and design tokens centralized in `Theme.swift`
-- No emojis, decorative icons, or chevron arrows in the UI
-- Credentials stored exclusively via Keychain
-- All networking fully async
+## Plugin-Architektur
 
-## Related Projects
+OpenClaw Face interagiert mit dem Gateway ueber das OpenClaw Protocol v3. Die Emotion-Logik ist vollstaendig in der macOS Bridge gekapselt:
 
-- [OpenClaw](https://github.com/Dewinator/OpenClaw) -- Open-source AI agent framework, runs locally on Mac Mini M4
-- **OpenClaw CommandCenter** (ocSHELL) -- iOS control interface for OpenClaw. Gateway networking code was adapted from this project.
+- **EmotionRouter** mappt Gateway-Events auf Emotionen
+- **SensorRouter** verarbeitet iOS-Sensordaten und leitet sie an den Gateway weiter
+- **EMOTION.md** kann pro Agent installiert werden (SKILL-Tab), damit der Agent seine Emotionen selbst steuern kann
 
-## License
+Bei einem OpenClaw-Update aendert sich nur die Gateway-Kommunikation. Die Emotion-Darstellung, Sensor-Verarbeitung und Avatar-Systeme bleiben unabhaengig.
 
-See [LICENSE](LICENSE) for details.
+---
+
+## Lizenz
+
+MIT
+
+---
+
+## Verwandte Projekte
+
+- [OpenClaw](https://github.com/openclaw) — Open-Source AI Agent Framework
+- [OpenClaw CommandCenter (ocSHELL)](https://github.com/Dewinator/ocSHELL) — iOS Control Interface fuer OpenClaw
