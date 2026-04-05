@@ -264,7 +264,9 @@ ocFaceMe/
 - iOS-Audio wurde auf einen zentralen `AudioSessionCoordinator` umgestellt, damit STT und TTS sich sauber gegenseitig ausschliessen.
 - `EmotionAnimator` traegt jetzt ein einfaches Personality-Modell plus Thinking-Asymmetrie, Focused-Pupil-Damping und Idle-Micro-Expressions.
 - `LottieFaceView` vermeidet redundante Segment-Starts bei unveraenderter Emotion.
+- Sensor-Routing protokolliert Gateway-Relay-Fehler nun passend zum jeweiligen Sensortyp statt alles als Presence zu verbuchen.
 - iOS `OpenClawDisplay` baut wieder erfolgreich mit `xcodebuild ... CODE_SIGNING_ALLOWED=NO`.
+- Dokumentierte offene Arbeiten sind als GitHub-Issues erfasst (`#32` bis `#37`) und warten auf Umsetzung/Abschluss.
 - Offene Produktarbeit bleibt: Gateway-Routing fuer STT/Presence/TTS, echte Rive-Avatare, Lottie-Emotionen differenzieren, Onboarding, Export/Import, E2E-Test.
 - Keine hardcodierten Farben, Abstaende oder Schriftgroessen ausserhalb von Theme
 - Keine Emojis oder dekorativen Icons in der UI

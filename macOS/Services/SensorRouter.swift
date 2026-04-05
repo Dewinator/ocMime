@@ -78,7 +78,7 @@ final class SensorRouter: ObservableObject {
                 "text": text,
                 "isFinal": true,
                 "locale": command.locale ?? "de-DE"
-            ])
+            ], logType: .stt)
         }
     }
 
@@ -102,7 +102,7 @@ final class SensorRouter: ObservableObject {
                 "detected": true,
                 "personCount": count,
                 "confidence": confidence
-            ])
+            ], logType: .presence)
         } else if !detected && wasPresent {
             addLog(.presence, detail: "Room empty")
             emotionRouter?.setEmotion(.sleeping, intensity: 0.3, context: "room_empty")
@@ -110,7 +110,7 @@ final class SensorRouter: ObservableObject {
                 "detected": false,
                 "personCount": 0,
                 "confidence": confidence
-            ])
+            ], logType: .presence)
         }
     }
 
@@ -128,7 +128,7 @@ final class SensorRouter: ObservableObject {
         forwardGatewayEvent(name: "sound.classified", payload: [
             "soundType": soundType,
             "confidence": confidence
-        ])
+        ], logType: .sound)
 
         // React to specific sounds
         switch soundType {
@@ -152,7 +152,7 @@ final class SensorRouter: ObservableObject {
             "text": text,
             "locale": ttsLocale,
             "rate": ttsRate
-        ])
+        ], logType: .tts)
     }
 
     func stopSpeaking() {
@@ -179,14 +179,14 @@ final class SensorRouter: ObservableObject {
         if sensorLog.count > 100 { sensorLog.removeFirst() }
     }
 
-    private func forwardGatewayEvent(name: String, payload: [String: Any]) {
+    private func forwardGatewayEvent(name: String, payload: [String: Any], logType: SensorLogEntry.SensorType) {
         guard let gateway else { return }
         Task {
             do {
                 _ = try await gateway.sendSensorEvent(name, payload: payload)
             } catch {
                 await MainActor.run {
-                    self.addLog(.presence, detail: "Gateway relay failed: \(error.localizedDescription)")
+                    self.addLog(logType, detail: "Gateway relay failed: \(error.localizedDescription)")
                 }
             }
         }
