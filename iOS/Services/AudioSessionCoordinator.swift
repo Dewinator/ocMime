@@ -14,19 +14,32 @@ final class AudioSessionCoordinator: ObservableObject {
     @Published private(set) var lastError: String?
 
     private var interruptionObserver: NSObjectProtocol?
+    private var routeChangeObserver: NSObjectProtocol?
     private var desiredMode: Mode = .idle
 
     init() {
         #if os(iOS)
+        let session = AVAudioSession.sharedInstance()
         interruptionObserver = NotificationCenter.default.addObserver(
             forName: AVAudioSession.interruptionNotification,
-            object: AVAudioSession.sharedInstance(),
+            object: session,
             queue: nil
         ) { [weak self] notification in
             let typeRaw = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
             let optionsRaw = notification.userInfo?[AVAudioSessionInterruptionOptionKey] as? UInt
             Task { @MainActor in
                 self?.handleInterruption(typeRaw: typeRaw, optionsRaw: optionsRaw)
+            }
+        }
+
+        routeChangeObserver = NotificationCenter.default.addObserver(
+            forName: AVAudioSession.routeChangeNotification,
+            object: session,
+            queue: nil
+        ) { [weak self] notification in
+            let reasonRaw = notification.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt
+            Task { @MainActor in
+                self?.handleRouteChange(reasonRaw: reasonRaw)
             }
         }
         #endif
@@ -108,6 +121,26 @@ final class AudioSessionCoordinator: ObservableObject {
                 }
             }
         @unknown default:
+            break
+        }
+    }
+
+    private func handleRouteChange(reasonRaw: UInt?) {
+        guard let reasonRaw,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonRaw) else { return }
+
+        switch reason {
+        case .oldDeviceUnavailable, .newDeviceAvailable, .categoryChange:
+            guard desiredMode != .idle else { return }
+            switch desiredMode {
+            case .listening:
+                activateListening()
+            case .speaking:
+                activateSpeaking()
+            case .idle:
+                break
+            }
+        default:
             break
         }
     }

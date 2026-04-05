@@ -11,6 +11,8 @@ final class BonjourClient: ObservableObject {
     private var browser: NWBrowser?
     private var connection: NWConnection?
     private var connectedEndpoint: NWEndpoint?
+    private var isConnecting = false
+    private var seenEndpoints = Set<String>()
 
     var onEmotionReceived: ((EmotionCommand) -> Void)?
 
@@ -23,9 +25,18 @@ final class BonjourClient: ObservableObject {
         browser?.browseResultsChangedHandler = { [weak self] results, _ in
             Task { @MainActor in
                 guard let self else { return }
-                guard let result = results.first else { return }
-                if self.connectedEndpoint == nil || self.connectedEndpoint != result.endpoint {
-                    self.connectTo(result.endpoint)
+                let sortedResults = results.sorted { lhs, rhs in
+                    lhs.endpoint.debugDescription < rhs.endpoint.debugDescription
+                }
+
+                for result in sortedResults {
+                    let endpointKey = result.endpoint.debugDescription
+                    guard self.seenEndpoints.insert(endpointKey).inserted else { continue }
+
+                    if self.connectedEndpoint == nil || self.connectedEndpoint != result.endpoint {
+                        self.connectTo(result.endpoint)
+                        break
+                    }
                 }
             }
         }
@@ -58,8 +69,9 @@ final class BonjourClient: ObservableObject {
 
     private func connectTo(_ endpoint: NWEndpoint) {
         // Schon verbunden?
-        if connection != nil { return }
+        if connection != nil || isConnecting { return }
 
+        isConnecting = true
         connectedEndpoint = endpoint
 
         let parameters = NWParameters.tcp
@@ -72,20 +84,25 @@ final class BonjourClient: ObservableObject {
             Task { @MainActor in
                 switch state {
                 case .ready:
+                    self?.isConnecting = false
                     self?.connectionState = .connected
                     self?.serverName = "\(endpoint)"
                     self?.receiveLoop()
                 case .failed(let error):
+                    self?.isConnecting = false
                     self?.connectionState = .error(error.localizedDescription)
                     self?.connection = nil
                     self?.connectedEndpoint = nil
+                    self?.seenEndpoints.removeAll()
                     // Retry
                     try? await Task.sleep(for: .seconds(2))
                     self?.connectTo(endpoint)
                 case .cancelled:
+                    self?.isConnecting = false
                     self?.connectionState = .disconnected
                     self?.connection = nil
                     self?.connectedEndpoint = nil
+                    self?.seenEndpoints.removeAll()
                 default:
                     break
                 }
@@ -98,7 +115,7 @@ final class BonjourClient: ObservableObject {
     private func receiveLoop() {
         guard let connection else { return }
 
-        connection.receiveMessage { [weak self] data, context, isComplete, error in
+        connection.receiveMessage { [weak self] data, _, _, error in
             Task { @MainActor in
                 if let data, let command = EmotionCommand.from(data: data) {
                     self?.lastEmotion = command

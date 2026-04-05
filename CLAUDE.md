@@ -271,12 +271,13 @@ ocFaceMe/
 - Beide Targets bauen erfolgreich mit `xcodegen generate` + `xcodebuild`:
   - `OpenClawDisplay` (iOS 17+)
   - `OpenClawFace` (macOS 14+)
-- Die iOS-Audio-Lifecycle-Hardening ist im Code vorhanden, muss aber gegen echte Interruptions, Route-Changes und schnelle STT/TTS-Wechsel weiter gehärtet werden.
+- iOS-Audio-Lifecycle ist jetzt mit Interruption- und Route-Change-Recovery besser gehärtet; STT/TTS bleiben aber weiter sensitive Wechselstellen.
 - Bonjour-Discovery und Reconnect-Verhalten sind grundsätzlich da, aber Sleep/Wake- und Netzwerkwechsel-Races bleiben ein echtes Risiko.
 
 ### Status der dokumentierten Arbeit
 - P1–P5 sind noch nicht als abgeschlossen zu behandeln; sie bleiben als umzusetzende Produktarbeit im Issue-Backlog.
 - Vorhandene Teilimplementierungen sind brauchbar, aber noch nicht ausreichend, um die offenen Aufgaben als erledigt zu markieren.
+- Audit-Fokus bleibt auf Bonjour-Race-Conditions, Audio-Handoffs, Accessibility und produktionsreifer Avatar-Persistenz.
 
 ### Zusätzliche Audit-Issues
 - `#38` Reconnect and audio interruption hardening
@@ -289,6 +290,7 @@ ocFaceMe/
 - `#58` P3 First production Rive avatar and state-machine expansion
 - `#59` P4 Lottie emotion separation and segment playback audit
 - `#60` P5 Product readiness: onboarding, avatar storage, export/import, and E2E gateway test
+- `#61` iOS orientation and accessibility configuration warning
 
 ### Architektur-Erkenntnisse
 - Der aktuelle Code ist klar in `Shared/`, `macOS/` und `iOS/` getrennt; das Pattern ist brauchbar und sollte beibehalten werden.

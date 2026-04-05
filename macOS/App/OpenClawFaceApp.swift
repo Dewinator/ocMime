@@ -9,6 +9,7 @@ struct OpenClawFaceApp: App {
     @StateObject private var sensorRouter = SensorRouter()
 
     var body: some Scene {
+        #if os(macOS)
         WindowGroup {
             ContentView(
                 gateway: gateway,
@@ -25,9 +26,25 @@ struct OpenClawFaceApp: App {
                 gateway.autoConnect()
             }
         }
-        #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 560, height: 560)
+        #else
+        WindowGroup {
+            ContentView(
+                gateway: gateway,
+                emotionRouter: emotionRouter,
+                bonjourServer: bonjourServer,
+                sensorRouter: sensorRouter
+            )
+            .frame(minWidth: 560, minHeight: 500)
+            .background(Theme.backgroundPrimary)
+            .onAppear {
+                emotionRouter.subscribe(to: gateway, bonjourServer: bonjourServer)
+                sensorRouter.subscribe(to: bonjourServer, emotionRouter: emotionRouter, gateway: gateway)
+                bonjourServer.start()
+                gateway.autoConnect()
+            }
+        }
         #endif
     }
 }
