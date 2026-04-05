@@ -51,14 +51,18 @@ struct AvatarEditorView: View {
             .padding(.horizontal, Theme.Spacing.lg)
 
             // Content
-            switch avatarMode {
-            case .preset:
-                presetContent
-            case .custom:
-                CustomEditorView(config: $customConfig, animator: emotionAnimator, bonjourServer: bonjourServer)
-            case .rive:
-                riveContent
+            Group {
+                switch avatarMode {
+                case .preset:
+                    presetContent
+                case .custom:
+                    CustomEditorView(config: $customConfig, animator: emotionAnimator, bonjourServer: bonjourServer)
+                case .rive:
+                    riveContent
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .layoutPriority(1)
 
             // Push Button
             HStack(spacing: Theme.Spacing.md) {
@@ -110,6 +114,7 @@ struct AvatarEditorView: View {
                 // Preview
                 RiveFaceView(engine: riveEngine)
                     .frame(height: 160)
+                    .clipped()
                     .background(Color.black)
 
                 // Emotion test
@@ -202,6 +207,7 @@ struct AvatarEditorView: View {
                 // Preview
                 LottieFaceView(engine: lottieEngine)
                     .frame(height: 160)
+                    .clipped()
                     .background(Color.black)
 
                 // Emotion test

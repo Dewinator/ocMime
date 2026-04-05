@@ -10,7 +10,7 @@ final class RiveAnimationEngine: ObservableObject {
     @Published private(set) var loadError: String?
 
     private var intensity: Double = 0.5
-    private(set) var hasLoadedOnceOnce = false
+    private(set) var hasLoadedOnce = false
 
     init() {
         // Lazy: do NOT load on init — wait for explicit setConfig/setType

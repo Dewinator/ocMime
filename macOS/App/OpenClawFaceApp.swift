@@ -25,7 +25,9 @@ struct OpenClawFaceApp: App {
                 gateway.autoConnect()
             }
         }
+        #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 560, height: 560)
+        #endif
     }
 }
