@@ -74,6 +74,9 @@ final class EmotionRouter: ObservableObject {
             setEmotion(.responding, intensity: 0.7, context: "streaming")
         case "final":
             setEmotion(.success, intensity: 0.6, context: "response_complete")
+            if let text = payload["text"] as? String, !text.isEmpty {
+                bonjourServer?.sendTTS(text: text, locale: payload["locale"] as? String ?? "de-DE", rate: 0.5)
+            }
         case "error":
             setEmotion(.error, intensity: 0.8, context: "chat_error")
         default:

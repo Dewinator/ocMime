@@ -258,6 +258,14 @@ ocFaceMe/
 ## Entwicklungsrichtlinien
 
 - Alle Farben und Design-Attribute zentral in `Theme.swift`
+
+## Aktueller Stand / Notizen (2026-04-05)
+
+- iOS-Audio wurde auf einen zentralen `AudioSessionCoordinator` umgestellt, damit STT und TTS sich sauber gegenseitig ausschliessen.
+- `EmotionAnimator` traegt jetzt ein einfaches Personality-Modell plus Thinking-Asymmetrie, Focused-Pupil-Damping und Idle-Micro-Expressions.
+- `LottieFaceView` vermeidet redundante Segment-Starts bei unveraenderter Emotion.
+- iOS `OpenClawDisplay` baut wieder erfolgreich mit `xcodebuild ... CODE_SIGNING_ALLOWED=NO`.
+- Offene Produktarbeit bleibt: Gateway-Routing fuer STT/Presence/TTS, echte Rive-Avatare, Lottie-Emotionen differenzieren, Onboarding, Export/Import, E2E-Test.
 - Keine hardcodierten Farben, Abstaende oder Schriftgroessen ausserhalb von Theme
 - Keine Emojis oder dekorativen Icons in der UI
 - Keine Chevron-Pfeile in Navigations- oder Auswahlmenues

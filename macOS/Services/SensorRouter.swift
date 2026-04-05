@@ -74,6 +74,11 @@ final class SensorRouter: ObservableObject {
 
             // Set emotion to listening while user is speaking
             emotionRouter?.setEmotion(.listening, intensity: 0.6, context: "stt_input")
+            forwardGatewayEvent(name: "stt.transcript", payload: [
+                "text": text,
+                "isFinal": true,
+                "locale": command.locale ?? "de-DE"
+            ])
         }
     }
 
@@ -93,9 +98,19 @@ final class SensorRouter: ObservableObject {
             addLog(.presence, detail: "Person entered (\(count), confidence: \(String(format: "%.0f%%", confidence * 100)))")
             // Wake up agent when someone enters
             emotionRouter?.setEmotion(.idle, intensity: 0.5, context: "person_entered")
+            forwardGatewayEvent(name: "presence.entered", payload: [
+                "detected": true,
+                "personCount": count,
+                "confidence": confidence
+            ])
         } else if !detected && wasPresent {
             addLog(.presence, detail: "Room empty")
             emotionRouter?.setEmotion(.sleeping, intensity: 0.3, context: "room_empty")
+            forwardGatewayEvent(name: "presence.empty", payload: [
+                "detected": false,
+                "personCount": 0,
+                "confidence": confidence
+            ])
         }
     }
 
@@ -110,6 +125,10 @@ final class SensorRouter: ObservableObject {
         lastSoundConfidence = confidence
 
         addLog(.sound, detail: "\(soundType) (\(String(format: "%.0f%%", confidence * 100)))")
+        forwardGatewayEvent(name: "sound.classified", payload: [
+            "soundType": soundType,
+            "confidence": confidence
+        ])
 
         // React to specific sounds
         switch soundType {
@@ -129,6 +148,11 @@ final class SensorRouter: ObservableObject {
         guard ttsEnabled else { return }
         bonjourServer?.sendTTS(text: text, locale: ttsLocale, rate: ttsRate)
         addLog(.tts, detail: text)
+        forwardGatewayEvent(name: "tts.requested", payload: [
+            "text": text,
+            "locale": ttsLocale,
+            "rate": ttsRate
+        ])
     }
 
     func stopSpeaking() {
@@ -153,6 +177,19 @@ final class SensorRouter: ObservableObject {
         let entry = SensorLogEntry(type: type, detail: detail, timestamp: Date())
         sensorLog.append(entry)
         if sensorLog.count > 100 { sensorLog.removeFirst() }
+    }
+
+    private func forwardGatewayEvent(name: String, payload: [String: Any]) {
+        guard let gateway else { return }
+        Task {
+            do {
+                _ = try await gateway.sendSensorEvent(name, payload: payload)
+            } catch {
+                await MainActor.run {
+                    self.addLog(.presence, detail: "Gateway relay failed: \(error.localizedDescription)")
+                }
+            }
+        }
     }
 }
 

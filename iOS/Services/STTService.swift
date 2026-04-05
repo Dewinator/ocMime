@@ -17,10 +17,12 @@ final class STTService: ObservableObject {
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
     private var locale: String = "de-DE"
+    private weak var audioCoordinator: AudioSessionCoordinator?
 
-    init(locale: String = "de-DE") {
+    init(locale: String = "de-DE", audioCoordinator: AudioSessionCoordinator? = nil) {
         self.locale = locale
         self.speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: locale))
+        self.audioCoordinator = audioCoordinator
     }
 
     // MARK: - Authorization
@@ -68,6 +70,7 @@ final class STTService: ObservableObject {
         recognitionTask?.cancel()
         recognitionTask = nil
         isListening = false
+        audioCoordinator?.deactivateIfIdle(expected: .listening)
     }
 
     func setLocale(_ localeId: String) {
@@ -85,11 +88,7 @@ final class STTService: ObservableObject {
         recognitionTask?.cancel()
         recognitionTask = nil
 
-        #if os(iOS)
-        let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.record, mode: .measurement, options: [.duckOthers, .allowBluetooth])
-        try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        #endif
+        audioCoordinator?.activateListening()
 
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
@@ -141,6 +140,8 @@ final class STTService: ObservableObject {
         recognitionRequest?.endAudio()
         recognitionRequest = nil
         recognitionTask = nil
+
+        audioCoordinator?.deactivateIfIdle(expected: .listening)
 
         // Brief pause then restart
         Task {

@@ -171,6 +171,8 @@ final class EmotionAnimator: ObservableObject {
     // Mood memory
     private var emotionHistory: [EmotionState] = []
     private let historyLimit = 50
+    private var streakEmotion: EmotionState?
+    private var streakCount: Int = 0
 
     func start() {
         guard timer == nil else { return }
@@ -194,6 +196,13 @@ final class EmotionAnimator: ObservableObject {
         emotionHistory.append(state)
         if emotionHistory.count > historyLimit {
             emotionHistory.removeFirst()
+        }
+
+        if streakEmotion == state {
+            streakCount += 1
+        } else {
+            streakEmotion = state
+            streakCount = 1
         }
     }
 
@@ -219,7 +228,9 @@ final class EmotionAnimator: ObservableObject {
         if transitionProgress < 1.0 {
             transitionProgress = min(1.0, transitionProgress + 0.06) // ~0.5s transition
             let t = easeOutCubic(transitionProgress)
-            currentPose = lerpPoseSet(from: previousPose, to: targetPose, t: t)
+            currentPose = applyPersonality(to: lerpPoseSet(from: previousPose, to: targetPose, t: t))
+        } else {
+            currentPose = applyPersonality(to: currentPose)
         }
 
         // Blink (random interval, ~every 3-5 seconds)
@@ -279,7 +290,10 @@ final class EmotionAnimator: ObservableObject {
     // MARK: - Pupil Drift
 
     private func updatePupilDrift() {
-        if emotion == .thinking {
+        if emotion == .focused {
+            pupilDriftX = pupilDriftX * 0.85
+            pupilDriftY = pupilDriftY * 0.85
+        } else if emotion == .thinking {
             // Active looking around
             pupilDriftX = sin(Double(frame) * 0.08) * 10
             pupilDriftY = cos(Double(frame) * 0.06) * 5
@@ -315,5 +329,66 @@ final class EmotionAnimator: ObservableObject {
             faceOutline: a.faceOutline.lerp(to: b.faceOutline, t: t),
             accessory: a.accessory.lerp(to: b.accessory, t: t)
         )
+    }
+
+    private func applyPersonality(to pose: EmotionPoseSet) -> EmotionPoseSet {
+        let successWeight = recentWeight(for: .success)
+        let errorWeight = recentWeight(for: .error)
+
+        var eyeLeft = pose.eyeLeft
+        var eyeRight = pose.eyeRight
+        var eyebrowLeft = pose.eyebrowLeft
+        var eyebrowRight = pose.eyebrowRight
+        var pupilLeft = pose.pupilLeft
+        var pupilRight = pose.pupilRight
+        var mouth = pose.mouth
+        var faceOutline = pose.faceOutline
+        var accessory = pose.accessory
+
+        if emotion == .idle {
+            let confidence = min(1.0, Double(successWeight) / 8.0)
+            let nerves = min(1.0, Double(errorWeight) / 6.0)
+            eyeLeft.offsetY += confidence * 1.2 - nerves * 1.5
+            eyeRight.offsetY += confidence * 1.0 - nerves * 1.6
+            mouth.scaleX += confidence * 0.08
+            mouth.scaleY += confidence * 0.04
+            accessory.rotation += confidence * 1.0 - nerves * 2.0
+        }
+
+        if emotion == .thinking {
+            eyebrowLeft.offsetY -= 1.8
+            eyebrowRight.offsetY += 1.5
+            eyebrowLeft.rotation -= 4
+            eyebrowRight.rotation += 4
+            pupilLeft.offsetX += sin(Double(frame) * 0.05) * 2
+            pupilRight.offsetX -= sin(Double(frame) * 0.05) * 2
+        }
+
+        if emotion == .idle && streakEmotion == .idle && streakCount > 3 {
+            let jitter = sin(Double(frame) * 0.45) * 0.7
+            eyeLeft.offsetY += jitter
+            eyeRight.offsetY -= jitter
+            mouth.offsetY += sin(Double(frame) * 0.3) * 0.4
+        }
+
+        return EmotionPoseSet(
+            eyeLeft: eyeLeft,
+            eyeRight: eyeRight,
+            eyebrowLeft: eyebrowLeft,
+            eyebrowRight: eyebrowRight,
+            pupilLeft: pupilLeft,
+            pupilRight: pupilRight,
+            mouth: mouth,
+            faceOutline: faceOutline,
+            accessory: accessory
+        )
+    }
+
+    private func recentWeight(for state: EmotionState) -> Int {
+        emotionHistory.enumerated().reduce(into: 0) { partial, entry in
+            let (index, emotion) = entry
+            guard emotion == state else { return }
+            partial += index + 1
+        }
     }
 }

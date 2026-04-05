@@ -8,9 +8,11 @@ final class TTSService: NSObject, ObservableObject {
     @Published var currentLocale: String = "de-DE"
 
     private let synthesizer = AVSpeechSynthesizer()
+    private weak var audioCoordinator: AudioSessionCoordinator?
     var onSpeakingChanged: ((Bool) -> Void)?
 
-    override init() {
+    init(audioCoordinator: AudioSessionCoordinator? = nil) {
+        self.audioCoordinator = audioCoordinator
         super.init()
         synthesizer.delegate = self
         configureAudioSession()
@@ -18,6 +20,7 @@ final class TTSService: NSObject, ObservableObject {
 
     func speak(text: String, locale: String = "de-DE", rate: Double = 0.5) {
         synthesizer.stopSpeaking(at: .immediate)
+        audioCoordinator?.activateSpeaking()
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: locale)
@@ -31,18 +34,11 @@ final class TTSService: NSObject, ObservableObject {
 
     func stop() {
         synthesizer.stopSpeaking(at: .immediate)
+        audioCoordinator?.deactivateIfIdle(expected: .speaking)
     }
 
     private func configureAudioSession() {
-        #if os(iOS)
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .default, options: [.duckOthers])
-            try session.setActive(true)
-        } catch {
-            // Audio session configuration failed — TTS may still work
-        }
-        #endif
+        // Defer activation until actual speech starts so STT can own the session while idle.
     }
 }
 
@@ -61,6 +57,7 @@ extension TTSService: AVSpeechSynthesizerDelegate {
         Task { @MainActor in
             isSpeaking = false
             onSpeakingChanged?(false)
+            audioCoordinator?.deactivateIfIdle(expected: .speaking)
         }
     }
 
@@ -68,6 +65,7 @@ extension TTSService: AVSpeechSynthesizerDelegate {
         Task { @MainActor in
             isSpeaking = false
             onSpeakingChanged?(false)
+            audioCoordinator?.deactivateIfIdle(expected: .speaking)
         }
     }
 }

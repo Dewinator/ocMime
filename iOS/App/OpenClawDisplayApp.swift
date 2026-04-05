@@ -6,13 +6,21 @@ struct OpenClawDisplayApp: App {
     @StateObject private var engine = LottieAnimationEngine()
     @StateObject private var riveEngine = RiveAnimationEngine()
     @StateObject private var client = BonjourClient()
+    @StateObject private var audioCoordinator: AudioSessionCoordinator
     @StateObject private var animator = EmotionAnimator()
-    @StateObject private var ttsService = TTSService()
-    @StateObject private var sttService = STTService()
+    @StateObject private var ttsService: TTSService
+    @StateObject private var sttService: STTService
     @StateObject private var presenceService = PresenceService()
     @StateObject private var soundService = SoundAnalysisService()
     @State private var displayMode: DisplayMode = .lottie
     @State private var customConfig = CustomAvatarConfig.default
+
+    init() {
+        let coordinator = AudioSessionCoordinator()
+        _audioCoordinator = StateObject(wrappedValue: coordinator)
+        _ttsService = StateObject(wrappedValue: TTSService(audioCoordinator: coordinator))
+        _sttService = StateObject(wrappedValue: STTService(audioCoordinator: coordinator))
+    }
 
     var body: some Scene {
         WindowGroup {

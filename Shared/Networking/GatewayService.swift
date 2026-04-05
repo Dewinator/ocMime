@@ -224,6 +224,13 @@ final class GatewayService: ObservableObject {
         return try await sendRequest("status")
     }
 
+    func sendSensorEvent(_ event: String, payload: [String: Any]) async throws -> OCResponse {
+        try await sendRequest("sensor.event", params: [
+            "event": event,
+            "payload": payload
+        ])
+    }
+
     // MARK: - Wait for Nonce
 
     struct ChallengeInfo {

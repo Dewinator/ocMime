@@ -24,6 +24,7 @@
 		29AF8B7EF7507DD138C4A498 /* RiveFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE8462F6B79BA30DE5CBAE0 /* RiveFaceView.swift */; };
 		2D08C6DED23D3B0CABBE5209 /* EmotionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A40371D715FA4AD61AEFD16 /* EmotionAnimator.swift */; };
 		2DB1E10564E20D54471DAC1C /* PresenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCEEA41FD2D58AE903F3AA1 /* PresenceService.swift */; };
+		2E83F5E12F4C1957F87DBD46 /* AudioSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91936E7A61A0DA1FEFDFBBAD /* AudioSessionCoordinator.swift */; };
 		2F2CA266A67E0CDA9C71B978 /* face_owl.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C7E676DAE4587090F4836C9 /* face_owl.json */; };
 		372B5EB6799984EC0243245B /* face_alien.json in Resources */ = {isa = PBXBuildFile; fileRef = 79D74E1AC1C9231AD052795E /* face_alien.json */; };
 		3B6412B2D222907C20304DEB /* DeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */; };
@@ -130,6 +131,7 @@
 		8A244AAB6AE282D76EED418F /* BonjourClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourClient.swift; sourceTree = "<group>"; };
 		8E934876D493F45B8474902C /* CustomEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEditorView.swift; sourceTree = "<group>"; };
 		8EE0C6325D94E45F5CE1F24B /* CustomAvatarConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAvatarConfig.swift; sourceTree = "<group>"; };
+		91936E7A61A0DA1FEFDFBBAD /* AudioSessionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSessionCoordinator.swift; sourceTree = "<group>"; };
 		94B50DF0C9DC80F632F6947F /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		95A3E4FB9C96532DC73862E4 /* OpenClawFaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenClawFaceApp.swift; sourceTree = "<group>"; };
 		9864A7AD9ED4F8BA7AB1985B /* AvatarConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarConfig.swift; sourceTree = "<group>"; };
@@ -208,9 +210,7 @@
 			isa = PBXGroup;
 			children = (
 				C71EB65255881F9B931478F1 /* App */,
-				B39FBED49E72C4DABD2D8DA8 /* Resources */,
 				BBC290BDDC5C4A3854A5D6F9 /* Services */,
-				C73CE344FD07438079AD67C8 /* Simulator */,
 				DDF0B02DDF6704C8C393A385 /* Views */,
 			);
 			path = iOS;
@@ -284,13 +284,6 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		B39FBED49E72C4DABD2D8DA8 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		B774ABA42A0C5EE63A8B8631 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -307,6 +300,7 @@
 		BBC290BDDC5C4A3854A5D6F9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				91936E7A61A0DA1FEFDFBBAD /* AudioSessionCoordinator.swift */,
 				8A244AAB6AE282D76EED418F /* BonjourClient.swift */,
 				DDCEEA41FD2D58AE903F3AA1 /* PresenceService.swift */,
 				CBF50339954645FA9A71F491 /* SoundAnalysisService.swift */,
@@ -330,13 +324,6 @@
 				EC1598B2DEF6DD4A12207BB4 /* OpenClawDisplayApp.swift */,
 			);
 			path = App;
-			sourceTree = "<group>";
-		};
-		C73CE344FD07438079AD67C8 /* Simulator */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Simulator;
 			sourceTree = "<group>";
 		};
 		D63183F4D381C024811FEEEB /* Views */ = {
@@ -473,7 +460,6 @@
 				};
 			};
 			buildConfigurationList = FE02A30C619986AEE4E66AA7 /* Build configuration list for PBXProject "OpenClawFace" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -487,6 +473,7 @@
 				478B865D868858A8F1C6B52C /* XCRemoteSwiftPackageReference "rive-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
+			productRefGroup = 839D5DE7E6F6831A35C535EF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -546,6 +533,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E83F5E12F4C1957F87DBD46 /* AudioSessionCoordinator.swift in Sources */,
 				7254239BD31DB536FEC3FE7A /* AvatarConfig.swift in Sources */,
 				EF7B91D22DF162B3D390BFCF /* BonjourClient.swift in Sources */,
 				CBE587EE97B3E761F22C37A3 /* BonjourConstants.swift in Sources */,

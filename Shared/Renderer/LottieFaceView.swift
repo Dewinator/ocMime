@@ -8,6 +8,12 @@ struct LottieFaceView: UIViewRepresentable {
 
     @ObservedObject var engine: LottieAnimationEngine
 
+    final class Coordinator {
+        var lastState: EmotionState?
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
     func makeUIView(context: Context) -> LottieAnimationView {
         let view = LottieAnimationView()
         view.contentMode = .scaleAspectFit
@@ -16,7 +22,7 @@ struct LottieFaceView: UIViewRepresentable {
         view.loopMode = .loop
         if let anim = engine.animationSource {
             view.animation = anim
-            playSegment(view: view, state: engine.currentState)
+            playSegment(view: view, state: engine.currentState, coordinator: context.coordinator)
         }
         return view
     }
@@ -26,10 +32,12 @@ struct LottieFaceView: UIViewRepresentable {
         if view.animation !== engine.animationSource, let anim = engine.animationSource {
             view.animation = anim
         }
-        playSegment(view: view, state: engine.currentState)
+        playSegment(view: view, state: engine.currentState, coordinator: context.coordinator)
     }
 
-    private func playSegment(view: LottieAnimationView, state: EmotionState) {
+    private func playSegment(view: LottieAnimationView, state: EmotionState, coordinator: Coordinator) {
+        guard coordinator.lastState != state else { return }
+        coordinator.lastState = state
         let start = AnimationFrameTime(state.lottieStartFrame)
         let end = AnimationFrameTime(state.lottieEndFrame)
         view.loopMode = .loop
@@ -45,6 +53,12 @@ struct LottieFaceView: NSViewRepresentable {
 
     @ObservedObject var engine: LottieAnimationEngine
 
+    final class Coordinator {
+        var lastState: EmotionState?
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
     func makeNSView(context: Context) -> LottieAnimationView {
         let view = LottieAnimationView()
         view.contentMode = .scaleAspectFit
@@ -52,7 +66,7 @@ struct LottieFaceView: NSViewRepresentable {
         view.loopMode = .loop
         if let anim = engine.animationSource {
             view.animation = anim
-            playSegment(view: view, state: engine.currentState)
+            playSegment(view: view, state: engine.currentState, coordinator: context.coordinator)
         }
         return view
     }
@@ -61,10 +75,12 @@ struct LottieFaceView: NSViewRepresentable {
         if view.animation !== engine.animationSource, let anim = engine.animationSource {
             view.animation = anim
         }
-        playSegment(view: view, state: engine.currentState)
+        playSegment(view: view, state: engine.currentState, coordinator: context.coordinator)
     }
 
-    private func playSegment(view: LottieAnimationView, state: EmotionState) {
+    private func playSegment(view: LottieAnimationView, state: EmotionState, coordinator: Coordinator) {
+        guard coordinator.lastState != state else { return }
+        coordinator.lastState = state
         let start = AnimationFrameTime(state.lottieStartFrame)
         let end = AnimationFrameTime(state.lottieEndFrame)
         view.loopMode = .loop
