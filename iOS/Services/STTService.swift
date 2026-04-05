@@ -123,8 +123,10 @@ final class STTService: ObservableObject {
 
         let inputNode = audioEngine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
-            self?.recognitionRequest?.append(buffer)
+        // Capture `request` directly — avoids crossing the @MainActor isolation
+        // boundary from the audio thread that drives the tap callback.
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [request] buffer, _ in
+            request.append(buffer)
         }
 
         audioEngine.prepare()

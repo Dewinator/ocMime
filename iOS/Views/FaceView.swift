@@ -19,6 +19,8 @@ struct FaceView: View {
     @Binding var displayMode: DisplayMode
     @Binding var customConfig: CustomAvatarConfig
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -82,6 +84,14 @@ struct FaceView: View {
             }
         }
         .persistentSystemOverlays(.hidden)
+        .onAppear {
+            engine.reduceMotion = reduceMotion
+            animator.reduceMotion = reduceMotion
+        }
+        .onChange(of: reduceMotion) { _, newValue in
+            engine.reduceMotion = newValue
+            animator.reduceMotion = newValue
+        }
     }
 
     private var statusColor: Color {

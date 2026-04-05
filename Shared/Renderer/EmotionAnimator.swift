@@ -165,6 +165,10 @@ final class EmotionAnimator: ObservableObject {
     private var transitionProgress: Double = 1.0
     private var previousPose: EmotionPoseSet = .forEmotion(.idle)
 
+    /// Set to true to snap poses instantly and suppress all secondary animations.
+    /// Propagated from the hosting view's accessibilityReduceMotion environment.
+    var reduceMotion: Bool = false
+
     private var timer: Timer?
     private var frame: Int = 0
 
@@ -191,7 +195,13 @@ final class EmotionAnimator: ObservableObject {
         previousPose = currentPose
         emotion = state
         targetPose = .forEmotion(state)
-        transitionProgress = 0
+
+        if reduceMotion {
+            transitionProgress = 1.0
+            currentPose = applyPersonality(to: targetPose)
+        } else {
+            transitionProgress = 0
+        }
 
         emotionHistory.append(state)
         if emotionHistory.count > historyLimit {
@@ -223,6 +233,18 @@ final class EmotionAnimator: ObservableObject {
 
     private func tick() {
         frame += 1
+
+        if reduceMotion {
+            currentPose = applyPersonality(to: targetPose)
+            transitionProgress = 1.0
+            blinkFactor = 1.0
+            pupilDriftX = 0
+            pupilDriftY = 0
+            breatheScale = 1.0
+            mouthTalkFactor = 0
+            shakeFactor = 0
+            return
+        }
 
         // Smooth transition (ease-out)
         if transitionProgress < 1.0 {
@@ -342,7 +364,7 @@ final class EmotionAnimator: ObservableObject {
         var pupilLeft = pose.pupilLeft
         var pupilRight = pose.pupilRight
         var mouth = pose.mouth
-        var faceOutline = pose.faceOutline
+        let faceOutline = pose.faceOutline
         var accessory = pose.accessory
 
         if emotion == .idle {

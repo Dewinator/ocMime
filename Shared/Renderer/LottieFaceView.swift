@@ -10,6 +10,7 @@ struct LottieFaceView: UIViewRepresentable {
 
     final class Coordinator {
         var lastState: EmotionState?
+        var lastReduceMotion: Bool = false
     }
 
     func makeCoordinator() -> Coordinator { Coordinator() }
@@ -28,7 +29,6 @@ struct LottieFaceView: UIViewRepresentable {
     }
 
     func updateUIView(_ view: LottieAnimationView, context: Context) {
-        // Avatar changed?
         if view.animation !== engine.animationSource, let anim = engine.animationSource {
             view.animation = anim
         }
@@ -36,13 +36,19 @@ struct LottieFaceView: UIViewRepresentable {
     }
 
     private func playSegment(view: LottieAnimationView, state: EmotionState, coordinator: Coordinator) {
-        guard coordinator.lastState != state else { return }
+        let reduceMotion = engine.reduceMotion
+        guard coordinator.lastState != state || coordinator.lastReduceMotion != reduceMotion else { return }
         coordinator.lastState = state
+        coordinator.lastReduceMotion = reduceMotion
         let start = AnimationFrameTime(state.lottieStartFrame)
         let end = AnimationFrameTime(state.lottieEndFrame)
-        view.loopMode = .loop
-        view.animationSpeed = state.animationSpeed
-        view.play(fromFrame: start, toFrame: end, loopMode: .loop)
+        if reduceMotion {
+            view.stop()
+            view.currentFrame = start
+        } else {
+            view.animationSpeed = state.animationSpeed
+            view.play(fromFrame: start, toFrame: end, loopMode: .loop)
+        }
     }
 }
 
@@ -55,6 +61,7 @@ struct LottieFaceView: NSViewRepresentable {
 
     final class Coordinator {
         var lastState: EmotionState?
+        var lastReduceMotion: Bool = false
     }
 
     func makeCoordinator() -> Coordinator { Coordinator() }
@@ -79,13 +86,19 @@ struct LottieFaceView: NSViewRepresentable {
     }
 
     private func playSegment(view: LottieAnimationView, state: EmotionState, coordinator: Coordinator) {
-        guard coordinator.lastState != state else { return }
+        let reduceMotion = engine.reduceMotion
+        guard coordinator.lastState != state || coordinator.lastReduceMotion != reduceMotion else { return }
         coordinator.lastState = state
+        coordinator.lastReduceMotion = reduceMotion
         let start = AnimationFrameTime(state.lottieStartFrame)
         let end = AnimationFrameTime(state.lottieEndFrame)
-        view.loopMode = .loop
-        view.animationSpeed = state.animationSpeed
-        view.play(fromFrame: start, toFrame: end, loopMode: .loop)
+        if reduceMotion {
+            view.stop()
+            view.currentFrame = start
+        } else {
+            view.animationSpeed = state.animationSpeed
+            view.play(fromFrame: start, toFrame: end, loopMode: .loop)
+        }
     }
 }
 #endif

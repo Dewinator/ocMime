@@ -4,6 +4,7 @@ struct CustomFaceView: View {
 
     let config: CustomAvatarConfig
     @ObservedObject var animator: EmotionAnimator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // Layout constants (relative to view size)
     private let eyeSpacing: CGFloat = 0.32      // distance from center
@@ -86,6 +87,8 @@ struct CustomFaceView: View {
             }
             .offset(x: shake)
         }
+        .onAppear { animator.reduceMotion = reduceMotion }
+        .onChange(of: reduceMotion) { _, newValue in animator.reduceMotion = newValue }
     }
 
     // MARK: - Layers

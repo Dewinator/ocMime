@@ -19,6 +19,8 @@ struct AvatarEditorView: View {
         case rive = "RIVE"
     }
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -96,12 +98,18 @@ struct AvatarEditorView: View {
         .onAppear {
             loadConfigs()
             lottieEngine.setConfig(presetConfig)
+            lottieEngine.reduceMotion = reduceMotion
+            emotionAnimator.reduceMotion = reduceMotion
             // Rive engine loads lazily — only when RIVE tab is selected and a type chosen
         }
         .onChange(of: avatarMode) { _, newMode in
             if newMode == .rive && !riveEngine.hasLoadedOnce {
                 riveEngine.setType(selectedRiveType)
             }
+        }
+        .onChange(of: reduceMotion) { _, newValue in
+            lottieEngine.reduceMotion = newValue
+            emotionAnimator.reduceMotion = newValue
         }
     }
 

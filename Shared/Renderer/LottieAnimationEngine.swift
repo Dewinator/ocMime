@@ -10,6 +10,10 @@ final class LottieAnimationEngine: ObservableObject {
 
     private var intensity: Double = 0.5
 
+    /// When true, the Lottie view should freeze on the first frame of each emotion segment
+    /// rather than looping. Propagated from the hosting view's accessibilityReduceMotion environment.
+    var reduceMotion: Bool = false
+
     init() {
         loadAnimation(for: .eyesRound)
     }
