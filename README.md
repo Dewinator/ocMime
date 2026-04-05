@@ -155,6 +155,10 @@ ocMime/
     +-- generate_lottie.py    Generiert alle 13 Lottie-Animationen
 ```
 
+### Build-Verifikation (End-to-End)
+
+Um den gesamten Build-Workflow zu pruefen: `xcodegen generate && xcodebuild -scheme OpenClawFace -destination 'platform=macOS' build && xcodebuild -scheme OpenClawDisplay -destination 'generic/platform=iOS' build CODE_SIGNING_ALLOWED=NO` — beide Targets muessen fehlerfrei durchlaufen.
+
 ### XcodeGen
 
 Nach jeder Datei-Aenderung (neue Dateien, Umbenennung):

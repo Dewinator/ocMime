@@ -302,6 +302,10 @@ ocFaceMe/
 - Neue Workitems nur mit explizitem Issue und Priority-Label anlegen.
 - Keine auskommentierten TODOs; alles als Issue oder Code umgesetzt.
 
+## Aktuelle Prioritaet
+
+README-Testsatz: Build-Verifikations-Anleitung in README.md ist aktueller Fokus.
+
 ## Aktueller Stand / Notizen (2026-04-05)
 
 - iOS-Audio wurde auf einen zentralen `AudioSessionCoordinator` umgestellt, damit STT und TTS sich sauber gegenseitig ausschliessen.
