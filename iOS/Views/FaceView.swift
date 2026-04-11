@@ -4,6 +4,7 @@ enum DisplayMode {
     case lottie
     case custom
     case rive
+    case abstract
 }
 
 struct FaceView: View {
@@ -12,12 +13,14 @@ struct FaceView: View {
     @ObservedObject var riveEngine: RiveAnimationEngine
     @ObservedObject var client: BonjourClient
     @ObservedObject var animator: EmotionAnimator
+    @ObservedObject var abstractAnimator: AbstractAnimator
     @ObservedObject var ttsService: TTSService
     @ObservedObject var sttService: STTService
     @ObservedObject var presenceService: PresenceService
     @ObservedObject var soundService: SoundAnalysisService
     @Binding var displayMode: DisplayMode
     @Binding var customConfig: CustomAvatarConfig
+    @Binding var abstractConfig: AbstractAvatarConfig
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -34,6 +37,9 @@ struct FaceView: View {
                     .ignoresSafeArea()
             case .rive:
                 RiveFaceView(engine: riveEngine)
+                    .ignoresSafeArea()
+            case .abstract:
+                AbstractFaceView(config: abstractConfig, animator: abstractAnimator)
                     .ignoresSafeArea()
             }
 

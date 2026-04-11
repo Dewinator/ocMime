@@ -10,8 +10,6 @@
 		045D8E1129B581C24103C16B /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 390D6F3E0CA2406677408054 /* DashboardView.swift */; };
 		09D2B9C59CEFB552A5BDEB4A /* EmotionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A40371D715FA4AD61AEFD16 /* EmotionAnimator.swift */; };
 		0C58FFDF6BA13D16DB539D2A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A701C3DA0C568C830649DFF /* Theme.swift */; };
-		0D59C29B986DBC22E3CFE354 /* sphere_rgb.json in Resources */ = {isa = PBXBuildFile; fileRef = 6028BECE6144168425499FE3 /* sphere_rgb.json */; };
-		0F4BDB0A4FCEE2CC6E1BC6E0 /* sphere_rgb.json in Resources */ = {isa = PBXBuildFile; fileRef = 6028BECE6144168425499FE3 /* sphere_rgb.json */; };
 		10068152566A11F0F68997CB /* SoundAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF50339954645FA9A71F491 /* SoundAnalysisService.swift */; };
 		10D554033BB83B980FD07138 /* SkillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5541ABC65A7C97EA0758C953 /* SkillView.swift */; };
 		1441F365D9FD8F499CF8B0E5 /* eyes_round.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B7FD4CF51A882BCF8CFC987 /* eyes_round.json */; };
@@ -25,14 +23,10 @@
 		2D08C6DED23D3B0CABBE5209 /* EmotionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A40371D715FA4AD61AEFD16 /* EmotionAnimator.swift */; };
 		2DB1E10564E20D54471DAC1C /* PresenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCEEA41FD2D58AE903F3AA1 /* PresenceService.swift */; };
 		2E83F5E12F4C1957F87DBD46 /* AudioSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91936E7A61A0DA1FEFDFBBAD /* AudioSessionCoordinator.swift */; };
-		2F2CA266A67E0CDA9C71B978 /* face_owl.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C7E676DAE4587090F4836C9 /* face_owl.json */; };
-		372B5EB6799984EC0243245B /* face_alien.json in Resources */ = {isa = PBXBuildFile; fileRef = 79D74E1AC1C9231AD052795E /* face_alien.json */; };
 		3B6412B2D222907C20304DEB /* DeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */; };
 		41864AB26CB61D547D5C1E98 /* eyes_neon.json in Resources */ = {isa = PBXBuildFile; fileRef = 5998724A31E2B6C3F5CABD6F /* eyes_neon.json */; };
 		42BE5F83619754C334D28288 /* EmotionRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F9D82963F7180235B07947 /* EmotionRouter.swift */; };
 		4346785382A1951C30D5A902 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A701C3DA0C568C830649DFF /* Theme.swift */; };
-		43666696357AA413C9F977EE /* face_ghost.json in Resources */ = {isa = PBXBuildFile; fileRef = 6C79F6E4F0DD94A83EBB1227 /* face_ghost.json */; };
-		4682F27E3F0A8C0DC47221A6 /* face_alien.json in Resources */ = {isa = PBXBuildFile; fileRef = 79D74E1AC1C9231AD052795E /* face_alien.json */; };
 		479C59973695EB00694AEA60 /* OpenClawFaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A3E4FB9C96532DC73862E4 /* OpenClawFaceApp.swift */; };
 		4B7D99CD838493F33951D756 /* GatewayConnectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E019D28023E6A4CB7D51360F /* GatewayConnectionConfig.swift */; };
 		4DA33B02841F37408E8C442E /* CustomFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E536D42781880FEB0187F3 /* CustomFaceView.swift */; };
@@ -40,52 +34,54 @@
 		58CBFF987D76EF8CA6C03784 /* STTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44A00F8A4515FC5E8FD1404 /* STTService.swift */; };
 		59A7C24336B43E1345206AB1 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458E03334F85D5FB9D6FB854 /* KeychainService.swift */; };
 		5B98FD8BE2B4DF2F8AEF624A /* SensorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EA5BADD225D829A37EECD /* SensorView.swift */; };
+		5CF3EED27CE07BAB2472A43F /* EmotionMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5420393EB6949E716F37CD61 /* EmotionMarker.swift */; };
 		5D444975990CAEB920391DC3 /* GatewayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1129501C1AFED39E8C989091 /* GatewayService.swift */; };
 		5DE2762A976D9F8E50AE3F91 /* AvatarEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CAD7E74AA899006EC78359 /* AvatarEditorView.swift */; };
 		5F3B375FA9EC53722CB4C263 /* RiveAvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2ACDDE62AB0FC286B198897 /* RiveAvatarConfig.swift */; };
+		5FE6724EC194BF3AECB3DF88 /* AbstractAvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A0EFA9EDD034EFCDB80F12E /* AbstractAvatarConfig.swift */; };
 		641544A151C8D2DDA1289961 /* DeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */; };
 		6586A9A34E0DCCFE4EB52705 /* eyes_cute.json in Resources */ = {isa = PBXBuildFile; fileRef = 331499920907E06D9F07D538 /* eyes_cute.json */; };
 		6D41205D20A181E736B5DCD9 /* CustomAvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE0C6325D94E45F5CE1F24B /* CustomAvatarConfig.swift */; };
+		6D7FC2327C36FF6258A4050A /* AbstractFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCFBF9EE697B7AE9380C66A5 /* AbstractFaceView.swift */; };
 		6F33400C3D21148ECAB428D2 /* eyes_cyber.json in Resources */ = {isa = PBXBuildFile; fileRef = AC0F95600D0CE9AFED29599F /* eyes_cyber.json */; };
 		7254239BD31DB536FEC3FE7A /* AvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9864A7AD9ED4F8BA7AB1985B /* AvatarConfig.swift */; };
 		7347F605D94534486B19FD97 /* BonjourConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591A5A7B281466D7B4A9428C /* BonjourConstants.swift */; };
 		7574E308BDAE00BADF29432E /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 286F5BB287AC93AEF4A658ED /* ConnectionState.swift */; };
+		780F255C93E139AA70DEBBE0 /* AbstractAvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A0EFA9EDD034EFCDB80F12E /* AbstractAvatarConfig.swift */; };
 		7F98217EEFA5188CA903BF0E /* eyes_minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = 48BC9C8D6EDE534AA062A933 /* eyes_minimal.json */; };
 		7FE6C4E80F19D77AC6B06496 /* EmotionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2CBC5379AA0519941E74F6F /* EmotionState.swift */; };
 		850FD73BB6DB16B72E49BAF2 /* CustomFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E536D42781880FEB0187F3 /* CustomFaceView.swift */; };
+		8C69D0C30B74A97AD3BFE66D /* LinkDiagnostic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628480542B362A1C2F80A640 /* LinkDiagnostic.swift */; };
 		8CD14E7F9D25F44339B58165 /* FaceShapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8EBC150FF70BE3F9E802B8 /* FaceShapes.swift */; };
-		8CFFAB8A314A9A2E4EE1AAFB /* face_robot.json in Resources */ = {isa = PBXBuildFile; fileRef = B0AA0989D95585FF17273EE8 /* face_robot.json */; };
 		8E6FC791B6FCCF42C85330C6 /* eyes_round.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B7FD4CF51A882BCF8CFC987 /* eyes_round.json */; };
 		8FE4EAF3C2598E33286DEC20 /* RiveAvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2ACDDE62AB0FC286B198897 /* RiveAvatarConfig.swift */; };
 		90DB664711C9B7F403AAC98D /* RiveAnimationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1829894F9288825269760821 /* RiveAnimationEngine.swift */; };
 		92A103B72D4F2D1B01BE6A9F /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458E03334F85D5FB9D6FB854 /* KeychainService.swift */; };
 		9E61F49FAC493E6322ED662C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 89148DE20157CF2478FA076D /* README.md */; };
 		A3784F6671622D251EB30195 /* LottieAnimationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C9EA4DB2650D91E9804A51 /* LottieAnimationEngine.swift */; };
-		A4DB6B4D2081F264A6F8D217 /* face_robot.json in Resources */ = {isa = PBXBuildFile; fileRef = B0AA0989D95585FF17273EE8 /* face_robot.json */; };
 		AC300BB47261A66277FA3012 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = B40FD4D8E32B392CCFFFDBB5 /* Lottie */; };
 		AD4F4D5CFF2BDA1821C74181 /* LottieFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03ECDD3BC49B711DC4E937EC /* LottieFaceView.swift */; };
 		AD5BBC4525C75F9DB57929DE /* OpenClawAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8113A644F456070302A2D547 /* OpenClawAPI.swift */; };
-		AD85E7CC7353D34A34DEC658 /* face_cat.json in Resources */ = {isa = PBXBuildFile; fileRef = DF307B0EC9A72F494596803A /* face_cat.json */; };
-		AF75B36106AF6769C329977D /* face_skull.json in Resources */ = {isa = PBXBuildFile; fileRef = DB0EF667BE1D11C1C1920E6D /* face_skull.json */; };
 		B0C970741208821BD0CEF2CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F224052065FEA0D73EDF1C0A /* ContentView.swift */; };
 		B1B23E63E51512B8DD1686F2 /* eyes_angry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3CBFFD555309F119351FEF6E /* eyes_angry.json */; };
-		B2804DE90D74989DCA300694 /* face_skull.json in Resources */ = {isa = PBXBuildFile; fileRef = DB0EF667BE1D11C1C1920E6D /* face_skull.json */; };
 		B6BF3A2570916A6EDEFCAB2D /* GatewayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1129501C1AFED39E8C989091 /* GatewayService.swift */; };
 		B794987A785C255E8D0FDC0D /* eyes_angry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3CBFFD555309F119351FEF6E /* eyes_angry.json */; };
 		B83AECA290DD18FD19A26050 /* eyes_cute.json in Resources */ = {isa = PBXBuildFile; fileRef = 331499920907E06D9F07D538 /* eyes_cute.json */; };
 		BB8828EC8485034258B412E7 /* SensorRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D967B16F2E31CBBC56CBF282 /* SensorRouter.swift */; };
+		BC86A51FFC3B5B01819C8B28 /* LinkDiagnostic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628480542B362A1C2F80A640 /* LinkDiagnostic.swift */; };
 		BFB1AF965A318B8A996747B6 /* RiveFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE8462F6B79BA30DE5CBAE0 /* RiveFaceView.swift */; };
 		C16DBD2091736392CA283213 /* EmotionSkillService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989C7D15835E9BDD2961F75D /* EmotionSkillService.swift */; };
 		C2358E093EF52A8BBDEBA835 /* CustomEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E934876D493F45B8474902C /* CustomEditorView.swift */; };
 		C4A8F4F89DBE104814CC86AC /* RiveAnimationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1829894F9288825269760821 /* RiveAnimationEngine.swift */; };
 		CA0DC97AA47D47610FD76B16 /* OpenClawAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8113A644F456070302A2D547 /* OpenClawAPI.swift */; };
+		CBB1411513FC89E32487219F /* EmotionMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5420393EB6949E716F37CD61 /* EmotionMarker.swift */; };
+		CBCCF171B30B74BAE705E936 /* AbstractFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCFBF9EE697B7AE9380C66A5 /* AbstractFaceView.swift */; };
 		CBE587EE97B3E761F22C37A3 /* BonjourConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591A5A7B281466D7B4A9428C /* BonjourConstants.swift */; };
 		CD2650ECB308DD5C8E3F2113 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 286F5BB287AC93AEF4A658ED /* ConnectionState.swift */; };
 		D31A49A6A8BD46A7A9661513 /* LottieFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03ECDD3BC49B711DC4E937EC /* LottieFaceView.swift */; };
 		D49CC0B1FD312A1346115210 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B50DF0C9DC80F632F6947F /* TTSService.swift */; };
 		DB6F1A7CF3EBF9C819C060AE /* GatewayConnectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E019D28023E6A4CB7D51360F /* GatewayConnectionConfig.swift */; };
 		DC10BB24EFE6CB66A86F1126 /* eyes_neon.json in Resources */ = {isa = PBXBuildFile; fileRef = 5998724A31E2B6C3F5CABD6F /* eyes_neon.json */; };
-		DECAA45E54B9F04DD8AAA880 /* face_ghost.json in Resources */ = {isa = PBXBuildFile; fileRef = 6C79F6E4F0DD94A83EBB1227 /* face_ghost.json */; };
 		E018BAE326FEB69BD1FA7638 /* EmotionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2CBC5379AA0519941E74F6F /* EmotionState.swift */; };
 		E25D518992224A1C6908791B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CF05B0A5382F9D9E06DD96 /* SettingsView.swift */; };
 		E28C38B02BAFA693F2BD4098 /* FaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF23C9723E67FEBDBA078CF8 /* FaceView.swift */; };
@@ -93,10 +89,8 @@
 		E520D97D67097675DF20FC36 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = FCF760D1B11C852F0DEF67A4 /* RiveRuntime */; };
 		E78741C20FEC14D2F9673296 /* eyes_cyber.json in Resources */ = {isa = PBXBuildFile; fileRef = AC0F95600D0CE9AFED29599F /* eyes_cyber.json */; };
 		E88A494D576B5752DACAEFC4 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = A7328FF023F9E402CAA08809 /* RiveRuntime */; };
-		E8A6170AFC9E04C2F2C7EDD4 /* face_cat.json in Resources */ = {isa = PBXBuildFile; fileRef = DF307B0EC9A72F494596803A /* face_cat.json */; };
 		E9570B9159B6A02EF499A31D /* FaceShapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8EBC150FF70BE3F9E802B8 /* FaceShapes.swift */; };
 		ED7BA0449FECCB423CEE4687 /* SensorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7863B6AC8A6662A75E2369 /* SensorCommand.swift */; };
-		EDF6DEF807BDA887ACDDA944 /* face_owl.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C7E676DAE4587090F4836C9 /* face_owl.json */; };
 		EF7B91D22DF162B3D390BFCF /* BonjourClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A244AAB6AE282D76EED418F /* BonjourClient.swift */; };
 		F5D06BEA82E9FABDDA66D65E /* LottieAnimationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C9EA4DB2650D91E9804A51 /* LottieAnimationEngine.swift */; };
 		F6AEC89D27437C50A9DC9837 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D716E3D737421E9BFD13B8A5 /* Lottie */; };
@@ -113,18 +107,17 @@
 		331499920907E06D9F07D538 /* eyes_cute.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_cute.json; sourceTree = "<group>"; };
 		38CAD7E74AA899006EC78359 /* AvatarEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarEditorView.swift; sourceTree = "<group>"; };
 		390D6F3E0CA2406677408054 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
-		3C7E676DAE4587090F4836C9 /* face_owl.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_owl.json; sourceTree = "<group>"; };
 		3CBFFD555309F119351FEF6E /* eyes_angry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_angry.json; sourceTree = "<group>"; };
 		458E03334F85D5FB9D6FB854 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		48BC9C8D6EDE534AA062A933 /* eyes_minimal.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_minimal.json; sourceTree = "<group>"; };
 		48F9D82963F7180235B07947 /* EmotionRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionRouter.swift; sourceTree = "<group>"; };
+		4A0EFA9EDD034EFCDB80F12E /* AbstractAvatarConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractAvatarConfig.swift; sourceTree = "<group>"; };
+		5420393EB6949E716F37CD61 /* EmotionMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionMarker.swift; sourceTree = "<group>"; };
 		5541ABC65A7C97EA0758C953 /* SkillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillView.swift; sourceTree = "<group>"; };
 		591A5A7B281466D7B4A9428C /* BonjourConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourConstants.swift; sourceTree = "<group>"; };
 		5998724A31E2B6C3F5CABD6F /* eyes_neon.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_neon.json; sourceTree = "<group>"; };
-		6028BECE6144168425499FE3 /* sphere_rgb.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sphere_rgb.json; sourceTree = "<group>"; };
+		628480542B362A1C2F80A640 /* LinkDiagnostic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkDiagnostic.swift; sourceTree = "<group>"; };
 		6A701C3DA0C568C830649DFF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		6C79F6E4F0DD94A83EBB1227 /* face_ghost.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_ghost.json; sourceTree = "<group>"; };
-		79D74E1AC1C9231AD052795E /* face_alien.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_alien.json; sourceTree = "<group>"; };
 		8113A644F456070302A2D547 /* OpenClawAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenClawAPI.swift; sourceTree = "<group>"; };
 		8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentity.swift; sourceTree = "<group>"; };
 		89148DE20157CF2478FA076D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -140,20 +133,18 @@
 		A8CF05B0A5382F9D9E06DD96 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AB20ADA3D8508ACECECB0BE2 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		AC0F95600D0CE9AFED29599F /* eyes_cyber.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyes_cyber.json; sourceTree = "<group>"; };
-		B0AA0989D95585FF17273EE8 /* face_robot.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_robot.json; sourceTree = "<group>"; };
 		B59526262F15AB71BD3E63C3 /* OpenClawFace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenClawFace.entitlements; sourceTree = "<group>"; };
 		B8C9EA4DB2650D91E9804A51 /* LottieAnimationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieAnimationEngine.swift; sourceTree = "<group>"; };
 		BDE8462F6B79BA30DE5CBAE0 /* RiveFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiveFaceView.swift; sourceTree = "<group>"; };
 		CA7863B6AC8A6662A75E2369 /* SensorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCommand.swift; sourceTree = "<group>"; };
 		CBF50339954645FA9A71F491 /* SoundAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundAnalysisService.swift; sourceTree = "<group>"; };
+		CCFBF9EE697B7AE9380C66A5 /* AbstractFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractFaceView.swift; sourceTree = "<group>"; };
 		CF23C9723E67FEBDBA078CF8 /* FaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceView.swift; sourceTree = "<group>"; };
 		CF9EA5BADD225D829A37EECD /* SensorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorView.swift; sourceTree = "<group>"; };
 		D19F04FAFD9F55057CBE8EC5 /* OpenClawDisplay.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = OpenClawDisplay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D44A00F8A4515FC5E8FD1404 /* STTService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTService.swift; sourceTree = "<group>"; };
 		D967B16F2E31CBBC56CBF282 /* SensorRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorRouter.swift; sourceTree = "<group>"; };
-		DB0EF667BE1D11C1C1920E6D /* face_skull.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_skull.json; sourceTree = "<group>"; };
 		DDCEEA41FD2D58AE903F3AA1 /* PresenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenceService.swift; sourceTree = "<group>"; };
-		DF307B0EC9A72F494596803A /* face_cat.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = face_cat.json; sourceTree = "<group>"; };
 		E019D28023E6A4CB7D51360F /* GatewayConnectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatewayConnectionConfig.swift; sourceTree = "<group>"; };
 		E61122AC22536CD35EE4374B /* OpenClawFace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenClawFace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC1598B2DEF6DD4A12207BB4 /* OpenClawDisplayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenClawDisplayApp.swift; sourceTree = "<group>"; };
@@ -195,13 +186,6 @@
 				48BC9C8D6EDE534AA062A933 /* eyes_minimal.json */,
 				5998724A31E2B6C3F5CABD6F /* eyes_neon.json */,
 				0B7FD4CF51A882BCF8CFC987 /* eyes_round.json */,
-				79D74E1AC1C9231AD052795E /* face_alien.json */,
-				DF307B0EC9A72F494596803A /* face_cat.json */,
-				6C79F6E4F0DD94A83EBB1227 /* face_ghost.json */,
-				3C7E676DAE4587090F4836C9 /* face_owl.json */,
-				B0AA0989D95585FF17273EE8 /* face_robot.json */,
-				DB0EF667BE1D11C1C1920E6D /* face_skull.json */,
-				6028BECE6144168425499FE3 /* sphere_rgb.json */,
 			);
 			path = Animations;
 			sourceTree = "<group>";
@@ -243,6 +227,7 @@
 				E019D28023E6A4CB7D51360F /* GatewayConnectionConfig.swift */,
 				1129501C1AFED39E8C989091 /* GatewayService.swift */,
 				458E03334F85D5FB9D6FB854 /* KeychainService.swift */,
+				628480542B362A1C2F80A640 /* LinkDiagnostic.swift */,
 				8113A644F456070302A2D547 /* OpenClawAPI.swift */,
 			);
 			path = Networking;
@@ -360,6 +345,7 @@
 		E8BF4505728AB496E5909B59 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				CCFBF9EE697B7AE9380C66A5 /* AbstractFaceView.swift */,
 				17E536D42781880FEB0187F3 /* CustomFaceView.swift */,
 				0A40371D715FA4AD61AEFD16 /* EmotionAnimator.swift */,
 				EC8EBC150FF70BE3F9E802B8 /* FaceShapes.swift */,
@@ -386,8 +372,10 @@
 		FBEC72692312BF43666FA4C6 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				4A0EFA9EDD034EFCDB80F12E /* AbstractAvatarConfig.swift */,
 				9864A7AD9ED4F8BA7AB1985B /* AvatarConfig.swift */,
 				8EE0C6325D94E45F5CE1F24B /* CustomAvatarConfig.swift */,
+				5420393EB6949E716F37CD61 /* EmotionMarker.swift */,
 				A2CBC5379AA0519941E74F6F /* EmotionState.swift */,
 				F2ACDDE62AB0FC286B198897 /* RiveAvatarConfig.swift */,
 				CA7863B6AC8A6662A75E2369 /* SensorCommand.swift */,
@@ -495,13 +483,6 @@
 				221648F14A79EEFB7E0B51BC /* eyes_minimal.json in Resources */,
 				DC10BB24EFE6CB66A86F1126 /* eyes_neon.json in Resources */,
 				8E6FC791B6FCCF42C85330C6 /* eyes_round.json in Resources */,
-				4682F27E3F0A8C0DC47221A6 /* face_alien.json in Resources */,
-				AD85E7CC7353D34A34DEC658 /* face_cat.json in Resources */,
-				43666696357AA413C9F977EE /* face_ghost.json in Resources */,
-				2F2CA266A67E0CDA9C71B978 /* face_owl.json in Resources */,
-				8CFFAB8A314A9A2E4EE1AAFB /* face_robot.json in Resources */,
-				AF75B36106AF6769C329977D /* face_skull.json in Resources */,
-				0F4BDB0A4FCEE2CC6E1BC6E0 /* sphere_rgb.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,13 +497,6 @@
 				7F98217EEFA5188CA903BF0E /* eyes_minimal.json in Resources */,
 				41864AB26CB61D547D5C1E98 /* eyes_neon.json in Resources */,
 				1441F365D9FD8F499CF8B0E5 /* eyes_round.json in Resources */,
-				372B5EB6799984EC0243245B /* face_alien.json in Resources */,
-				E8A6170AFC9E04C2F2C7EDD4 /* face_cat.json in Resources */,
-				DECAA45E54B9F04DD8AAA880 /* face_ghost.json in Resources */,
-				EDF6DEF807BDA887ACDDA944 /* face_owl.json in Resources */,
-				A4DB6B4D2081F264A6F8D217 /* face_robot.json in Resources */,
-				B2804DE90D74989DCA300694 /* face_skull.json in Resources */,
-				0D59C29B986DBC22E3CFE354 /* sphere_rgb.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,6 +507,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FE6724EC194BF3AECB3DF88 /* AbstractAvatarConfig.swift in Sources */,
+				6D7FC2327C36FF6258A4050A /* AbstractFaceView.swift in Sources */,
 				2E83F5E12F4C1957F87DBD46 /* AudioSessionCoordinator.swift in Sources */,
 				7254239BD31DB536FEC3FE7A /* AvatarConfig.swift in Sources */,
 				EF7B91D22DF162B3D390BFCF /* BonjourClient.swift in Sources */,
@@ -542,12 +518,14 @@
 				850FD73BB6DB16B72E49BAF2 /* CustomFaceView.swift in Sources */,
 				641544A151C8D2DDA1289961 /* DeviceIdentity.swift in Sources */,
 				2D08C6DED23D3B0CABBE5209 /* EmotionAnimator.swift in Sources */,
+				5CF3EED27CE07BAB2472A43F /* EmotionMarker.swift in Sources */,
 				E018BAE326FEB69BD1FA7638 /* EmotionState.swift in Sources */,
 				E9570B9159B6A02EF499A31D /* FaceShapes.swift in Sources */,
 				E28C38B02BAFA693F2BD4098 /* FaceView.swift in Sources */,
 				DB6F1A7CF3EBF9C819C060AE /* GatewayConnectionConfig.swift in Sources */,
 				B6BF3A2570916A6EDEFCAB2D /* GatewayService.swift in Sources */,
 				59A7C24336B43E1345206AB1 /* KeychainService.swift in Sources */,
+				BC86A51FFC3B5B01819C8B28 /* LinkDiagnostic.swift in Sources */,
 				A3784F6671622D251EB30195 /* LottieAnimationEngine.swift in Sources */,
 				AD4F4D5CFF2BDA1821C74181 /* LottieFaceView.swift in Sources */,
 				AD5BBC4525C75F9DB57929DE /* OpenClawAPI.swift in Sources */,
@@ -568,6 +546,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				780F255C93E139AA70DEBBE0 /* AbstractAvatarConfig.swift in Sources */,
+				CBCCF171B30B74BAE705E936 /* AbstractFaceView.swift in Sources */,
 				4FD5A69E9980F84F7D928C4E /* AvatarConfig.swift in Sources */,
 				5DE2762A976D9F8E50AE3F91 /* AvatarEditorView.swift in Sources */,
 				7347F605D94534486B19FD97 /* BonjourConstants.swift in Sources */,
@@ -580,6 +560,7 @@
 				045D8E1129B581C24103C16B /* DashboardView.swift in Sources */,
 				3B6412B2D222907C20304DEB /* DeviceIdentity.swift in Sources */,
 				09D2B9C59CEFB552A5BDEB4A /* EmotionAnimator.swift in Sources */,
+				CBB1411513FC89E32487219F /* EmotionMarker.swift in Sources */,
 				42BE5F83619754C334D28288 /* EmotionRouter.swift in Sources */,
 				C16DBD2091736392CA283213 /* EmotionSkillService.swift in Sources */,
 				7FE6C4E80F19D77AC6B06496 /* EmotionState.swift in Sources */,
@@ -587,6 +568,7 @@
 				4B7D99CD838493F33951D756 /* GatewayConnectionConfig.swift in Sources */,
 				5D444975990CAEB920391DC3 /* GatewayService.swift in Sources */,
 				92A103B72D4F2D1B01BE6A9F /* KeychainService.swift in Sources */,
+				8C69D0C30B74A97AD3BFE66D /* LinkDiagnostic.swift in Sources */,
 				F5D06BEA82E9FABDDA66D65E /* LottieAnimationEngine.swift in Sources */,
 				D31A49A6A8BD46A7A9661513 /* LottieFaceView.swift in Sources */,
 				CA0DC97AA47D47610FD76B16 /* OpenClawAPI.swift in Sources */,
@@ -705,6 +687,7 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "OpenClaw Display uses the microphone for speech-to-text and sound analysis to interact with the AI agent.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "OpenClaw Display uses on-device speech recognition to convert your voice to text for the AI agent.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -760,6 +743,7 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "OpenClaw Display uses the microphone for speech-to-text and sound analysis to interact with the AI agent.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "OpenClaw Display uses on-device speech recognition to convert your voice to text for the AI agent.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

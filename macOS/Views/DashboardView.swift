@@ -25,9 +25,58 @@ struct DashboardView: View {
 
                 statusRow("Gateway", connected: gateway.connectionState.isConnected, detail: gatewayDetail)
                 statusRow("Display", connected: bonjourServer.connectedDevice != nil, detail: bonjourServer.connectedDevice ?? "waiting...")
-                statusRow("Bonjour", connected: bonjourServer.isRunning, detail: bonjourServer.isRunning ? "advertising" : "stopped")
+                statusRow("Bonjour", connected: bonjourServer.isRunning, detail: bonjourServer.isRunning ? "advertising (path \(bonjourServer.pathStatus))" : "stopped")
+
+                HStack(spacing: Theme.Spacing.sm) {
+                    Button {
+                        bonjourServer.sendPing()
+                    } label: {
+                        Text("[PING DISPLAY]")
+                            .font(Theme.Font.tiny)
+                            .foregroundStyle(Theme.textPrimary)
+                            .padding(.horizontal, Theme.Spacing.sm)
+                            .padding(.vertical, 2)
+                            .background(Theme.backgroundTertiary)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(bonjourServer.connectedDevice == nil)
+
+                    if let err = bonjourServer.lastError {
+                        Text(err)
+                            .font(Theme.Font.tiny)
+                            .foregroundStyle(Theme.statusError)
+                            .lineLimit(1)
+                    }
+                }
             }
             .padding(.horizontal, Theme.Spacing.lg)
+
+            // Bonjour Link Diagnostics
+            if !bonjourServer.diagnostics.isEmpty {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("$ tail -f link.log")
+                        .font(Theme.Font.tiny)
+                        .foregroundStyle(Theme.textTertiary)
+
+                    ForEach(bonjourServer.diagnostics.suffix(5).reversed()) { entry in
+                        HStack(spacing: Theme.Spacing.xs) {
+                            Text(entry.timestamp, style: .time)
+                                .font(Theme.Font.tiny)
+                                .foregroundStyle(Theme.textTertiary)
+                            Text(entry.level.rawValue)
+                                .font(Theme.Font.tiny)
+                                .foregroundStyle(diagnosticColor(entry.level))
+                                .frame(width: 50, alignment: .leading)
+                            Text(entry.message)
+                                .font(Theme.Font.tiny)
+                                .foregroundStyle(Theme.textPrimary)
+                                .lineLimit(1)
+                            Spacer()
+                        }
+                    }
+                }
+                .padding(.horizontal, Theme.Spacing.lg)
+            }
 
             Divider().background(Theme.borderTertiary)
 
@@ -40,6 +89,15 @@ struct DashboardView: View {
                     Text(emotionRouter.currentEmotion.state.label.uppercased())
                         .font(Theme.Font.title)
                         .foregroundStyle(Theme.textPrimary)
+                    if let marker = emotionRouter.lastMarkerState {
+                        Text("via [emotion:\(marker.rawValue)]")
+                            .font(Theme.Font.tiny)
+                            .foregroundStyle(Theme.accent)
+                    } else if let ctx = emotionRouter.currentEmotion.context {
+                        Text("auto: \(ctx)")
+                            .font(Theme.Font.tiny)
+                            .foregroundStyle(Theme.textTertiary)
+                    }
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: Theme.Spacing.xs) {
@@ -139,6 +197,14 @@ struct DashboardView: View {
             return "\(gateway.connectionState.displayText) (retry #\(gateway.reconnectAttempt))"
         }
         return gateway.connectionState.displayText
+    }
+
+    private func diagnosticColor(_ level: LinkDiagnostic.Level) -> Color {
+        switch level {
+        case .info:    return Theme.textSecondary
+        case .warning: return Theme.warning
+        case .error:   return Theme.danger
+        }
     }
 
     private func statusRow(_ label: String, connected: Bool, detail: String) -> some View {

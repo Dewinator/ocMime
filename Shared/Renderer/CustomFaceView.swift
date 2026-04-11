@@ -6,14 +6,25 @@ struct CustomFaceView: View {
     @ObservedObject var animator: EmotionAnimator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    // Eyes-only mode: when nothing else is rendered, center the eyes and
+    // make them larger so the small viewport on a tablet still feels alive.
+    private var isEyesOnly: Bool {
+        config.faceOutline.variant == .none &&
+        config.mouth.variant == .none &&
+        config.nose.variant == .none &&
+        config.eyebrowLeft.variant == .none &&
+        config.eyebrowRight.variant == .none &&
+        config.accessory.variant == .none
+    }
+
     // Layout constants (relative to view size)
-    private let eyeSpacing: CGFloat = 0.32      // distance from center
-    private let eyeY: CGFloat = 0.38            // vertical position
-    private let eyebrowY: CGFloat = 0.24        // above eyes
+    private var eyeSpacing: CGFloat { isEyesOnly ? 0.22 : 0.32 }
+    private var eyeY: CGFloat { isEyesOnly ? 0.50 : 0.38 }
+    private let eyebrowY: CGFloat = 0.24
     private let noseY: CGFloat = 0.58
     private let mouthY: CGFloat = 0.72
-    private let eyeSize: CGFloat = 0.18         // relative to view width
-    private let pupilSize: CGFloat = 0.07
+    private var eyeSize: CGFloat { isEyesOnly ? 0.30 : 0.18 }
+    private var pupilSize: CGFloat { isEyesOnly ? 0.12 : 0.07 }
 
     var body: some View {
         GeometryReader { geo in

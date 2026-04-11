@@ -70,16 +70,20 @@ Alles in `Shared/` wird von beiden Targets kompiliert: Models, Networking, Rende
 
 ---
 
-## Drei Avatar-Systeme
+## Vier Avatar-Systeme
 
-### 1. Lottie-Presets (fertige Animationen)
-13 vorgefertigte Lottie-JSON-Animationen in `Shared/Animations/`. Jede hat 240 Frames (8 Emotion-Segments a 30 Frames, 30fps). Generiert mit `tools/generate_lottie.py`.
+Das Projekt hat sich von Voll-Kopf-Avataren weg entwickelt: Roboter-, Katzen-,
+Geister-, Eulen-, Toten- und Alien-Köpfe wirkten nie wirklich ausgereift. Statt
+dessen liegt der Fokus jetzt auf **Augen mit Mimik**, **abstrakten Auren** und
+optional **Rive State-Machines**. Voll-Köpfe sind komplett aus dem Build raus.
+
+### 1. Lottie-Presets (Augen-Set)
+6 vorgefertigte Lottie-JSON-Animationen in `Shared/Animations/`. Jede hat 240
+Frames (8 Emotion-Segments à 30 Frames, 30fps). Generiert mit `tools/generate_lottie.py`.
 
 | Kategorie | Avatare |
 |-----------|---------|
-| **Nur Augen** | Round Eyes, Cyber Eyes, Minimal Dots, Neon Eyes (Farbwechsel), Angry Eyes (rot), Cute Eyes (Kawaii) |
-| **Gesichter** | Robot, Cat, Ghost, Owl, Skull, Alien |
-| **Sphere** | RGB Sphere (Siri-aehnlich, Farbe = Emotion) |
+| **Eyes** | Round, Cyber, Minimal Dots, Neon (Farbwechsel), Sharp, Soft |
 
 Gesteuert durch: `LottieAnimationEngine` + `LottieFaceView` (UIKit/AppKit Wrapper mit `play(fromFrame:toFrame:)`)
 
@@ -106,7 +110,25 @@ Gesteuert durch: `EmotionAnimator` (30fps, smooth Transitions, Blinzeln, Pupille
 
 Quick-Presets: Default, Robot, Kawaii, Demon, Hacker
 
-### 3. Rive Avatare (State-Machine-basiert)
+### 3. Abstract Avatars (Auras / Orbs / Wellenformen)
+Sieben SwiftUI-Canvas-Renderer in `Shared/Renderer/AbstractFaceView.swift`. Komplett
+prozedural, kein Asset-Preprocessing, 60fps via `TimelineView`. Jede Variante wird
+durch eine gemeinsame `EmotionPalette` (Primary/Secondary/Glow/Speed) gefärbt, damit
+die visuelle Sprache über alle Stile konsistent bleibt.
+
+| Style | Look |
+|-------|------|
+| `pulseOrb` | Atmender Lichtkern mit additivem Halo-Glow |
+| `neuralRing` | Konzentrische rotierende Arc-Segmente, Synapsen-Look |
+| `plasmaCore` | Trigonometrisch animierte Plasma-Blobs |
+| `particleHalo` | 36 orbitierende Partikel um einen ruhigen Kern |
+| `waveform` | Sprach-Wellenform, Amplitude pro Emotion |
+| `gradientFlow` | Pseudo-Conic Gradient mit Highlight |
+| `ringBars` | Siri-ähnliche radiale Bars mit Sinus-Pulse |
+
+Gesteuert durch: `AbstractAnimator` (palette-blending, reduceMotion-aware) + `AbstractFaceView` + `AbstractFaceRenderer`. Kein Lottie, kein Rive — pure `Canvas` + `GraphicsContext`.
+
+### 4. Rive Avatare (State-Machine-basiert)
 State-Machine-gesteuerte Animationen via [Rive](https://rive.app). `.riv` Dateien in `Shared/RiveAssets/`. Jede Datei muss eine State Machine `"emotions"` mit Inputs `emotionState` (Number 0-7) und `intensity` (Number 0-1) enthalten.
 
 Gesteuert durch: `RiveAnimationEngine` (Wrapper um `RiveViewModel`) + `RiveFaceView` (SwiftUI View)
@@ -139,6 +161,7 @@ Aktuell verfuegbare Rive-Avatare: Robot Face (Platzhalter, `.riv` Datei muss noc
 {"cmd": "avatar", "avatar": {"avatarType": "eyes_neon"}}
 {"cmd": "customAvatar", "customAvatar": {...}}
 {"cmd": "riveAvatar", "riveAvatar": {"riveFile": "robot_face", "stateMachine": "emotions"}}
+{"cmd": "abstractAvatar", "abstractAvatar": {"style": "pulse_orb", "blackBackground": true}}
 {"cmd": "tts", "ttsText": "Hallo!", "context": "de-DE", "intensity": 0.5}
 {"cmd": "ttsStop"}
 {"cmd": "ping"}
@@ -264,6 +287,34 @@ ocFaceMe/
 - Sichtbare Fehlerzustände im UI statt stiller Fails
 
 ---
+
+## Bonjour-Härtung (2026-04-11)
+
+Die ursprüngliche Bonjour-Implementierung war optimistisch und hat unter realen
+LAN-Bedingungen häufig die Verbindung verloren. Die aktuelle Version (`BonjourServer`
+auf macOS, `BonjourClient` auf iOS) ist deutlich robuster:
+
+- **Sichere Frame-Parser** in `BonjourConstants.swift`: Hard-Cap auf 1 MB pro Frame,
+  defensive Bounds-Checks, kein Endlos-Spinning bei verstümmelten Headern.
+- **NWPathMonitor** auf beiden Seiten: Wenn der Netzwerk-Pfad zurück kommt
+  (Wi-Fi → USB Wechsel, Sleep/Wake), wird Listener bzw. Browser automatisch neu
+  gestartet.
+- **NSWorkspace `didWakeNotification`** auf macOS: Listener wird nach Sleep neu
+  aufgesetzt, da NWListener sonst tot bleiben kann.
+- **scenePhase Observer** auf iOS (`OpenClawDisplayApp`): Bei Rückkehr in den
+  Vordergrund wird der Browser über `client.restart()` zurückgesetzt.
+- **Heartbeat-Ping** alle 5s vom macOS-Server, damit halb-offene TCP-Sockets
+  sofort als Fehler hochkommen statt sich Updates aufzustauen.
+- **Send-Guard**: Jeder Send prüft `connection.state == .ready`, sonst wird das
+  Kommando verworfen statt in den `.waiting` State zu fallen.
+- **Connect-Timeout** auf iOS: Wenn ein Endpoint in 6s nicht `.ready` wird, wird
+  er fallen gelassen und neu gebrowst — wichtig nach Wi-Fi/USB-Wechseln.
+- **Exponentielles Backoff** ohne Rekursion: dedizierter `reconnectTask`, gecappt
+  auf 8s, danach erneutes Browsen.
+- **Live-Diagnose** über `LinkDiagnostic` (Shared/Networking): Beide Seiten halten
+  einen Rolling-Log von 60 Einträgen, Dashboard zeigt die letzten 5.
+- **`[PING DISPLAY]`** Button im Dashboard: Manueller Test, ob das Display
+  tatsächlich antwortet.
 
 ## Aktueller Audit-Stand (2026-04-05)
 

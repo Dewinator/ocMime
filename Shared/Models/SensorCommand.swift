@@ -58,6 +58,7 @@ extension EmotionCommand {
             avatar: nil,
             customAvatar: nil,
             riveAvatar: nil,
+            abstractAvatar: nil,
             ttsText: text
         )
     }
@@ -71,6 +72,7 @@ extension EmotionCommand {
             avatar: nil,
             customAvatar: nil,
             riveAvatar: nil,
+            abstractAvatar: nil,
             ttsText: nil
         )
     }

@@ -6,17 +6,21 @@ struct AvatarEditorView: View {
     @StateObject private var lottieEngine = LottieAnimationEngine()
     @StateObject private var riveEngine = RiveAnimationEngine()
     @StateObject private var emotionAnimator = EmotionAnimator()
+    @StateObject private var abstractAnimator = AbstractAnimator()
 
-    @State private var avatarMode: AvatarMode = .preset
+    @State private var avatarMode: AvatarMode = .abstract
     @State private var presetConfig = AvatarConfig.default
     @State private var customConfig = CustomAvatarConfig.default
     @State private var riveConfig = RiveAvatarConfig.default
+    @State private var abstractConfig = AbstractAvatarConfig.default
     @State private var selectedRiveType: RiveAvatarType = .robotFace
+    @State private var previewEmotion: EmotionState = .idle
 
     enum AvatarMode: String, CaseIterable {
-        case preset = "PRESETS"
-        case custom = "CUSTOM"
-        case rive = "RIVE"
+        case abstract = "ABSTRACT"
+        case eyes     = "EYES"
+        case custom   = "CUSTOM"
+        case rive     = "RIVE"
     }
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -55,7 +59,9 @@ struct AvatarEditorView: View {
             // Content
             Group {
                 switch avatarMode {
-                case .preset:
+                case .abstract:
+                    abstractContent
+                case .eyes:
                     presetContent
                 case .custom:
                     CustomEditorView(config: $customConfig, animator: emotionAnimator, bonjourServer: bonjourServer)
@@ -288,7 +294,9 @@ struct AvatarEditorView: View {
     private func pushToDisplay() {
         saveConfigs()
         switch avatarMode {
-        case .preset:
+        case .abstract:
+            bonjourServer.sendAbstractAvatarConfig(abstractConfig)
+        case .eyes:
             bonjourServer.sendAvatarConfig(presetConfig)
         case .custom:
             bonjourServer.sendCustomAvatarConfig(customConfig)
@@ -306,6 +314,9 @@ struct AvatarEditorView: View {
         }
         if let data = riveConfig.toData() {
             UserDefaults.standard.set(data, forKey: "avatar.rive")
+        }
+        if let data = abstractConfig.toData() {
+            UserDefaults.standard.set(data, forKey: "avatar.abstract")
         }
         UserDefaults.standard.set(avatarMode.rawValue, forKey: "avatar.mode")
     }
@@ -326,9 +337,85 @@ struct AvatarEditorView: View {
                 selectedRiveType = type
             }
         }
+        if let data = UserDefaults.standard.data(forKey: "avatar.abstract"),
+           let saved = AbstractAvatarConfig.from(data: data) {
+            abstractConfig = saved
+        }
         if let mode = UserDefaults.standard.string(forKey: "avatar.mode"),
            let m = AvatarMode(rawValue: mode) {
             avatarMode = m
+        }
+    }
+
+    // MARK: - Abstract Content
+
+    @ViewBuilder
+    private var abstractContent: some View {
+        VStack(spacing: 0) {
+            VStack(spacing: Theme.Spacing.sm) {
+                AbstractFaceView(config: abstractConfig, animator: abstractAnimator)
+                    .frame(height: 180)
+                    .clipped()
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: Theme.Spacing.xs) {
+                        ForEach(EmotionState.allCases) { state in
+                            Button {
+                                previewEmotion = state
+                                abstractAnimator.setEmotion(state)
+                            } label: {
+                                Text(state.label)
+                                    .font(Theme.Font.tiny)
+                                    .foregroundStyle(previewEmotion == state ? Theme.backgroundPrimary : Theme.textSecondary)
+                                    .padding(.horizontal, Theme.Spacing.xs)
+                                    .padding(.vertical, 2)
+                                    .background(previewEmotion == state ? Theme.accent : Theme.backgroundTertiary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, Theme.Spacing.lg)
+                }
+            }
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                    Text("$ ls abstract_avatars/")
+                        .font(Theme.Font.caption)
+                        .foregroundStyle(Theme.textTertiary)
+
+                    ForEach(AbstractAvatarStyle.allCases) { style in
+                        Button {
+                            abstractConfig.style = style
+                        } label: {
+                            HStack(spacing: Theme.Spacing.md) {
+                                Circle()
+                                    .fill(abstractConfig.style == style ? Theme.accent : Theme.statusReady)
+                                    .frame(width: 8, height: 8)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(style.label)
+                                        .font(Theme.Font.body)
+                                        .foregroundStyle(abstractConfig.style == style ? Theme.textPrimary : Theme.textSecondary)
+                                    Text(style.description)
+                                        .font(Theme.Font.tiny)
+                                        .foregroundStyle(Theme.textTertiary)
+                                }
+                                Spacer()
+                                if abstractConfig.style == style {
+                                    Text("[ACTIVE]")
+                                        .font(Theme.Font.tiny)
+                                        .foregroundStyle(Theme.accent)
+                                }
+                            }
+                            .padding(.vertical, Theme.Spacing.xs)
+                            .padding(.horizontal, Theme.Spacing.sm)
+                            .background(abstractConfig.style == style ? Theme.accentLight : Color.clear)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, Theme.Spacing.lg)
+            }
         }
     }
 }

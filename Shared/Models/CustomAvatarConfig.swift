@@ -206,6 +206,88 @@ struct CustomAvatarConfig: Codable, Equatable {
         accessory: AccessoryConfig(variant: .none)
     )
 
+    // ════════════════════════════════════════════
+    // MARK: - Eyes-Only Presets (curated)
+    // ════════════════════════════════════════════
+    //
+    // The pivot from full heads to "eyes + mimicry" relies on the rich
+    // EmotionAnimator pipeline to do the heavy lifting. These presets all
+    // hide face/mouth/nose/brows so only the eyes carry the expression.
+
+    static let eyesPhosphor = CustomAvatarConfig(
+        name: "Phosphor",
+        faceOutline: FaceOutlineConfig(variant: .none),
+        eyeLeft: EyeConfig(variant: .round, color: .green, size: 1.15),
+        eyeRight: EyeConfig(variant: .round, color: .green, size: 1.15),
+        eyebrowLeft: EyebrowConfig(variant: .none),
+        eyebrowRight: EyebrowConfig(variant: .none),
+        pupilLeft: PupilConfig(variant: .dot, color: .black, size: 0.95),
+        pupilRight: PupilConfig(variant: .dot, color: .black, size: 0.95),
+        nose: NoseConfig(variant: .none),
+        mouth: MouthConfig(variant: .none),
+        accessory: AccessoryConfig(variant: .none)
+    )
+
+    static let eyesArc = CustomAvatarConfig(
+        name: "Arc",
+        faceOutline: FaceOutlineConfig(variant: .none),
+        eyeLeft: EyeConfig(variant: .almond, color: .cyan, size: 1.05),
+        eyeRight: EyeConfig(variant: .almond, color: .cyan, size: 1.05),
+        eyebrowLeft: EyebrowConfig(variant: .none),
+        eyebrowRight: EyebrowConfig(variant: .none),
+        pupilLeft: PupilConfig(variant: .round, color: .white, size: 0.7),
+        pupilRight: PupilConfig(variant: .round, color: .white, size: 0.7),
+        nose: NoseConfig(variant: .none),
+        mouth: MouthConfig(variant: .none),
+        accessory: AccessoryConfig(variant: .none)
+    )
+
+    static let eyesEmber = CustomAvatarConfig(
+        name: "Ember",
+        faceOutline: FaceOutlineConfig(variant: .none),
+        eyeLeft: EyeConfig(variant: .slit, color: .orange, size: 1.1),
+        eyeRight: EyeConfig(variant: .slit, color: .orange, size: 1.1),
+        eyebrowLeft: EyebrowConfig(variant: .none),
+        eyebrowRight: EyebrowConfig(variant: .none),
+        pupilLeft: PupilConfig(variant: .vertical, color: .yellow, size: 0.85),
+        pupilRight: PupilConfig(variant: .vertical, color: .yellow, size: 0.85),
+        nose: NoseConfig(variant: .none),
+        mouth: MouthConfig(variant: .none),
+        accessory: AccessoryConfig(variant: .none)
+    )
+
+    static let eyesSerene = CustomAvatarConfig(
+        name: "Serene",
+        faceOutline: FaceOutlineConfig(variant: .none),
+        eyeLeft: EyeConfig(variant: .wide, color: .white, size: 1.2),
+        eyeRight: EyeConfig(variant: .wide, color: .white, size: 1.2),
+        eyebrowLeft: EyebrowConfig(variant: .none),
+        eyebrowRight: EyebrowConfig(variant: .none),
+        pupilLeft: PupilConfig(variant: .round, color: .blue, size: 1.1),
+        pupilRight: PupilConfig(variant: .round, color: .blue, size: 1.1),
+        nose: NoseConfig(variant: .none),
+        mouth: MouthConfig(variant: .none),
+        accessory: AccessoryConfig(variant: .none)
+    )
+
+    static let eyesVoid = CustomAvatarConfig(
+        name: "Void",
+        faceOutline: FaceOutlineConfig(variant: .none),
+        eyeLeft: EyeConfig(variant: .oval, color: .purple, size: 1.0),
+        eyeRight: EyeConfig(variant: .oval, color: .purple, size: 1.0),
+        eyebrowLeft: EyebrowConfig(variant: .none),
+        eyebrowRight: EyebrowConfig(variant: .none),
+        pupilLeft: PupilConfig(variant: .round, color: .pink, size: 0.8),
+        pupilRight: PupilConfig(variant: .round, color: .pink, size: 0.8),
+        nose: NoseConfig(variant: .none),
+        mouth: MouthConfig(variant: .none),
+        accessory: AccessoryConfig(variant: .none)
+    )
+
+    static let eyesPresets: [CustomAvatarConfig] = [
+        .eyesPhosphor, .eyesArc, .eyesEmber, .eyesSerene, .eyesVoid
+    ]
+
     static let presets: [CustomAvatarConfig] = [.default, .robot, .kawaii, .demon, .hacker]
 
     func toData() -> Data? { try? JSONEncoder().encode(self) }

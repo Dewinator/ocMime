@@ -8,12 +8,15 @@ struct OpenClawDisplayApp: App {
     @StateObject private var client = BonjourClient()
     @StateObject private var audioCoordinator: AudioSessionCoordinator
     @StateObject private var animator = EmotionAnimator()
+    @StateObject private var abstractAnimator = AbstractAnimator()
     @StateObject private var ttsService: TTSService
     @StateObject private var sttService: STTService
     @StateObject private var presenceService = PresenceService()
     @StateObject private var soundService = SoundAnalysisService()
-    @State private var displayMode: DisplayMode = .lottie
+    @State private var displayMode: DisplayMode = .abstract
     @State private var customConfig = CustomAvatarConfig.default
+    @State private var abstractConfig = AbstractAvatarConfig.default
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         let coordinator = AudioSessionCoordinator()
@@ -29,18 +32,32 @@ struct OpenClawDisplayApp: App {
                 riveEngine: riveEngine,
                 client: client,
                 animator: animator,
+                abstractAnimator: abstractAnimator,
                 ttsService: ttsService,
                 sttService: sttService,
                 presenceService: presenceService,
                 soundService: soundService,
                 displayMode: $displayMode,
-                customConfig: $customConfig
+                customConfig: $customConfig,
+                abstractConfig: $abstractConfig
             )
             .onAppear {
                 setupEmotionHandler()
                 setupSensorCallbacks()
                 requestPermissions()
                 client.startBrowsing()
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                switch newPhase {
+                case .active:
+                    // Returning from background — discovery may be stuck on a stale endpoint.
+                    client.restart()
+                case .background:
+                    // Don't tear down completely; iOS will pause networking anyway.
+                    break
+                default:
+                    break
+                }
             }
             .preferredColorScheme(.dark)
         }
@@ -49,7 +66,7 @@ struct OpenClawDisplayApp: App {
     // MARK: - Emotion Handler (macOS → iOS)
 
     private func setupEmotionHandler() {
-        client.onEmotionReceived = { [weak engine, weak riveEngine, weak animator, weak ttsService] command in
+        client.onEmotionReceived = { [weak engine, weak riveEngine, weak animator, weak abstractAnimator, weak ttsService] command in
             switch command.cmd {
             case "emotion":
                 if let stateStr = command.state,
@@ -58,6 +75,7 @@ struct OpenClawDisplayApp: App {
                     engine?.setEmotion(state, intensity: intensity)
                     riveEngine?.setEmotion(state, intensity: intensity)
                     animator?.setEmotion(state)
+                    abstractAnimator?.setEmotion(state)
                 }
             case "avatar":
                 if let config = command.avatar {
@@ -78,6 +96,13 @@ struct OpenClawDisplayApp: App {
                     riveEngine?.setConfig(config)
                     Task { @MainActor in
                         displayMode = .rive
+                    }
+                }
+            case "abstractAvatar":
+                if let config = command.abstractAvatar {
+                    Task { @MainActor in
+                        abstractConfig = config
+                        displayMode = .abstract
                     }
                 }
             case "tts":

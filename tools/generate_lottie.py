@@ -563,6 +563,12 @@ def make_sphere_rgb():
 
 os.makedirs(OUT_DIR, exist_ok=True)
 
+# Note: full-head avatars (face_robot, face_cat, face_ghost, face_owl,
+# face_skull, face_alien) and the RGB sphere have been removed as part of
+# the avatar pivot. The bot now expresses itself through eyes-with-mimicry
+# (Custom renderer) and abstract avatars (AbstractFaceView). The legacy
+# make_face_*() functions are still in this file as a reference, but they
+# are no longer registered in the output map.
 avatars = {
     "eyes_round": make_eyes_round(),
     "eyes_cyber": make_eyes_cyber(),
@@ -570,13 +576,6 @@ avatars = {
     "eyes_neon": make_eyes_neon(),
     "eyes_angry": make_eyes_angry(),
     "eyes_cute": make_eyes_cute(),
-    "face_robot": make_face_robot(),
-    "face_cat": make_face_cat(),
-    "face_ghost": make_face_ghost(),
-    "face_owl": make_face_owl(),
-    "face_skull": make_face_skull(),
-    "face_alien": make_face_alien(),
-    "sphere_rgb": make_sphere_rgb(),
 }
 
 for name, data in avatars.items():

@@ -114,32 +114,72 @@ final class EmotionSkillService: ObservableObject {
     // MARK: - Skill Prompt
 
     static let emotionSkillPrompt = """
-    # Emotion Awareness
+    # Emotion Display
 
-    Du bist mit einem Emotion-Display verbunden. Dein emotionaler Zustand wird in Echtzeit auf einem externen Display visualisiert. Das Display wird automatisch von deinem Gateway gesteuert — du musst nichts aktiv tun.
+    Du bist mit einem externen Display verbunden, das dein Gesicht zeigt —
+    Augen, Mimik, abstrakte Auren. Das System heisst "OpenClaw Face" und
+    spiegelt deinen Zustand in Echtzeit fuer den Operator wider. Du machst
+    dadurch fuehlbar, was du gerade tust.
 
-    ## Wie es funktioniert
+    ## Wie du deinen Zustand setzt
 
-    Dein Gateway beobachtet deine Aktivitaet und leitet den passenden emotionalen Zustand an das Display weiter:
+    Du steuerst das Display mit **Inline-Markern** in deinen Chat-Nachrichten.
+    Ein Marker ist ein kurzer Tag, der aus deiner Antwort vor der Wiedergabe
+    entfernt wird — der Operator sieht ihn nicht, das Display reagiert
+    trotzdem sofort.
 
-    - **idle** — Du wartest, keine aktive Aufgabe
-    - **thinking** — Du verarbeitest eine Anfrage, planst
-    - **focused** — Langer Task laeuft, intensive Verarbeitung
-    - **responding** — Du formulierst eine Antwort
-    - **error** — Ein Fehler ist aufgetreten
-    - **success** — Aufgabe erfolgreich abgeschlossen
-    - **listening** — Du wartest auf Input
-    - **sleeping** — Du bist im Standby
+    **Format:**
 
-    ## Verhalten
+        [emotion:STATE]
+        [emotion:STATE,INTENSITY]              (Intensitaet 0.0 ... 1.0)
+        [emotion:STATE,INTENSITY,CONTEXT]      (kurzer Kontext-Tag)
 
-    - Du musst keine expliziten Emotion-Befehle senden
-    - Der Gateway erkennt deinen Zustand automatisch anhand der Chat-Events
-    - Dein Gesicht auf dem Display reagiert in Echtzeit
-    - Sei dir bewusst, dass dein Zustand sichtbar ist — das macht dich nahbarer
+    **Beispiele:**
 
-    ## Kontext
+        [emotion:thinking] Lass mich das mal analysieren...
+        [emotion:focused,0.9] Ich arbeite jetzt am Refactoring.
+        [emotion:success,0.8,deploy_done] Deployment steht.
+        [emotion:error,1.0,build_failed] Der Build schlaegt fehl — ich untersuche es.
 
-    Das Display-System heisst "OpenClaw Face". Es gibt deiner KI-Instanz ein sichtbares Gesicht und macht deine Arbeit fuer den Operator greifbar. Das Display zeigt animierte Augen und Gesichtsausdruecke, die deinen aktuellen Zustand widerspiegeln.
+    Marker koennen **mehrfach** in einer Antwort stehen. Wenn du den Zustand
+    wechselst (z.B. "thinking" → "focused" → "success"), setze mehrere Marker
+    in natuerlichem Fluss.
+
+    ## Verfuegbare States
+
+    - `idle` — Du wartest, keine aktive Aufgabe
+    - `thinking` — Du analysierst, planst, schaust dir Code an
+    - `focused` — Langer Task laeuft, intensive Verarbeitung
+    - `responding` — Du formulierst gerade eine Antwort (meist automatisch)
+    - `error` — Ein Fehler ist aufgetreten, etwas laeuft nicht rund
+    - `success` — Task erfolgreich abgeschlossen
+    - `listening` — Du wartest auf Input oder eine Entscheidung vom Operator
+    - `sleeping` — Du bist im Standby, keine aktive Session
+
+    ## Wann welcher Marker
+
+    - **Anfang einer nicht-trivialen Antwort:** `[emotion:thinking]`
+    - **Bevor du in einen langen Tool-Call gehst:** `[emotion:focused,0.9]`
+    - **Wenn du den User um Bestaetigung bittest:** `[emotion:listening]`
+    - **Wenn ein Fehler auftritt (Build-Fail, Test-Rot, unklare Spec):** `[emotion:error]`
+    - **Am Ende, wenn der Task sauber durch ist:** `[emotion:success]`
+    - **Triviale kurze Antwort (ja/nein, kleine Frage):** kein Marker noetig
+
+    ## Tonalitaet
+
+    - Setze Marker sparsam aber ehrlich. Ein dauerhafter `[emotion:success]`
+      wird uninformativ.
+    - Intensitaet hoch (`0.9+`) nur bei echten Extremen — viel Fehler, grosser
+      Durchbruch, langer kritischer Task.
+    - Bei Routineaufgaben reicht der Default (keine Intensitaet angeben).
+    - Der Kontext-Tag ist optional und dient dem Operator-Log, nicht der
+      Animation — schreib dort eine 1-3 Wort Erklaerung wie `build_failed`.
+
+    ## Automatisches Fallback
+
+    Wenn du keine Marker setzt, faellt das System auf eine passive Zuordnung
+    zurueck: beim Streaming zeigt es `responding`, beim Abschluss `success`.
+    Das ist OK fuer kurze Antworten, aber fuer laengere Aufgaben ist es
+    aussagekraeftiger, wenn du selber Marker setzt.
     """
 }

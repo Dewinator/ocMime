@@ -167,20 +167,41 @@ struct CustomEditorView: View {
 
         Divider().background(Theme.borderTertiary)
 
-        sectionLabel("Presets")
-        HStack(spacing: Theme.Spacing.sm) {
-            ForEach(CustomAvatarConfig.presets, id: \.name) { preset in
-                Button {
-                    config = preset
-                } label: {
-                    Text("[\(preset.name)]")
-                        .font(Theme.Font.caption)
-                        .foregroundStyle(Theme.textPrimary)
-                        .padding(.horizontal, Theme.Spacing.sm)
-                        .padding(.vertical, Theme.Spacing.xs)
-                        .background(Theme.backgroundTertiary)
+        sectionLabel("Eyes-Only Presets")
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: Theme.Spacing.sm) {
+                ForEach(CustomAvatarConfig.eyesPresets, id: \.name) { preset in
+                    Button {
+                        config = preset
+                    } label: {
+                        Text("[\(preset.name)]")
+                            .font(Theme.Font.caption)
+                            .foregroundStyle(Theme.textPrimary)
+                            .padding(.horizontal, Theme.Spacing.sm)
+                            .padding(.vertical, Theme.Spacing.xs)
+                            .background(Theme.backgroundTertiary)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
+            }
+        }
+
+        sectionLabel("Voll-Gesicht Presets")
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: Theme.Spacing.sm) {
+                ForEach(CustomAvatarConfig.presets, id: \.name) { preset in
+                    Button {
+                        config = preset
+                    } label: {
+                        Text("[\(preset.name)]")
+                            .font(Theme.Font.caption)
+                            .foregroundStyle(Theme.textPrimary)
+                            .padding(.horizontal, Theme.Spacing.sm)
+                            .padding(.vertical, Theme.Spacing.xs)
+                            .background(Theme.backgroundTertiary)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
     }

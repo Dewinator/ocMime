@@ -39,13 +39,18 @@ Alles laeuft **komplett on-device**. Keine Cloud, keine externen APIs, keine Dat
 
 ## Features
 
-### Drei Avatar-Systeme
+### Vier Avatar-Systeme
 
 | System | Beschreibung | Anpassbar? |
 |--------|-------------|------------|
-| **Lottie Presets** | 13 vorgefertigte Animationen (Augen, Gesichter, RGB Sphere) | Avatar-Auswahl |
-| **Custom Editor** | Baukasten mit 7 Komponenten, 10 Farben, Quick-Presets | Komplett |
+| **Abstract** | 7 SwiftUI-Canvas Auren, Orbs, Wellenformen — pure GPU | Style-Auswahl |
+| **Eyes (Lottie)** | 6 vorgefertigte Augen-Animationen | Avatar-Auswahl |
+| **Custom Editor** | Baukasten mit 7 Komponenten, Eyes-Only Quick-Presets | Komplett |
 | **Rive** | State-Machine-basierte Animationen, GPU-beschleunigt | Via Rive Editor |
+
+> **Pivot:** Voll-Kopf-Avatare (Roboter, Katze, Geist, Eule, Totenkopf, Alien)
+> wurden komplett entfernt — sie wirkten nie ausgereift. Stattdessen liegt der
+> Fokus auf **Augen mit Mimik** und **abstrakten Auren** für den Bot.
 
 ### 8 Emotionen
 
@@ -205,6 +210,7 @@ Bidirektionale Kommunikation via TCP mit 4-Byte Length-Prefixed JSON Framing.
 {"cmd": "avatar", "avatar": {"avatarType": "eyes_neon"}}
 {"cmd": "customAvatar", "customAvatar": {...}}
 {"cmd": "riveAvatar", "riveAvatar": {"riveFile": "robot_face", "stateMachine": "emotions"}}
+{"cmd": "abstractAvatar", "abstractAvatar": {"style": "pulse_orb", "blackBackground": true}}
 {"cmd": "tts", "ttsText": "Hallo!", "context": "de-DE", "intensity": 0.5}
 {"cmd": "ttsStop"}
 {"cmd": "ping"}

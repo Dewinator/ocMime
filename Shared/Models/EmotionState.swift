@@ -44,33 +44,38 @@ struct EmotionEvent: Equatable {
 
 /// JSON command sent from macOS Bridge to iOS Display via Bonjour
 struct EmotionCommand: Codable {
-    let cmd: String           // "emotion", "ping", "avatar", "customAvatar", "riveAvatar", "tts", "ttsStop"
+    let cmd: String           // "emotion", "ping", "avatar", "customAvatar", "riveAvatar", "abstractAvatar", "tts", "ttsStop"
     let state: String?        // EmotionState rawValue
     let intensity: Double?
     let context: String?
-    let avatar: AvatarConfig?             // Only for cmd:"avatar"
-    let customAvatar: CustomAvatarConfig? // Only for cmd:"customAvatar"
-    let riveAvatar: RiveAvatarConfig?     // Only for cmd:"riveAvatar"
-    let ttsText: String?                  // Only for cmd:"tts"
+    let avatar: AvatarConfig?                 // Only for cmd:"avatar"
+    let customAvatar: CustomAvatarConfig?     // Only for cmd:"customAvatar"
+    let riveAvatar: RiveAvatarConfig?         // Only for cmd:"riveAvatar"
+    let abstractAvatar: AbstractAvatarConfig? // Only for cmd:"abstractAvatar"
+    let ttsText: String?                      // Only for cmd:"tts"
 
     static func emotion(_ state: EmotionState, intensity: Double = 0.5, context: String? = nil) -> EmotionCommand {
-        EmotionCommand(cmd: "emotion", state: state.rawValue, intensity: intensity, context: context, avatar: nil, customAvatar: nil, riveAvatar: nil, ttsText: nil)
+        EmotionCommand(cmd: "emotion", state: state.rawValue, intensity: intensity, context: context, avatar: nil, customAvatar: nil, riveAvatar: nil, abstractAvatar: nil, ttsText: nil)
     }
 
     static var ping: EmotionCommand {
-        EmotionCommand(cmd: "ping", state: nil, intensity: nil, context: nil, avatar: nil, customAvatar: nil, riveAvatar: nil, ttsText: nil)
+        EmotionCommand(cmd: "ping", state: nil, intensity: nil, context: nil, avatar: nil, customAvatar: nil, riveAvatar: nil, abstractAvatar: nil, ttsText: nil)
     }
 
     static func avatarUpdate(_ config: AvatarConfig) -> EmotionCommand {
-        EmotionCommand(cmd: "avatar", state: nil, intensity: nil, context: nil, avatar: config, customAvatar: nil, riveAvatar: nil, ttsText: nil)
+        EmotionCommand(cmd: "avatar", state: nil, intensity: nil, context: nil, avatar: config, customAvatar: nil, riveAvatar: nil, abstractAvatar: nil, ttsText: nil)
     }
 
     static func customAvatarUpdate(_ config: CustomAvatarConfig) -> EmotionCommand {
-        EmotionCommand(cmd: "customAvatar", state: nil, intensity: nil, context: nil, avatar: nil, customAvatar: config, riveAvatar: nil, ttsText: nil)
+        EmotionCommand(cmd: "customAvatar", state: nil, intensity: nil, context: nil, avatar: nil, customAvatar: config, riveAvatar: nil, abstractAvatar: nil, ttsText: nil)
     }
 
     static func riveAvatarUpdate(_ config: RiveAvatarConfig) -> EmotionCommand {
-        EmotionCommand(cmd: "riveAvatar", state: nil, intensity: nil, context: nil, avatar: nil, customAvatar: nil, riveAvatar: config, ttsText: nil)
+        EmotionCommand(cmd: "riveAvatar", state: nil, intensity: nil, context: nil, avatar: nil, customAvatar: nil, riveAvatar: config, abstractAvatar: nil, ttsText: nil)
+    }
+
+    static func abstractAvatarUpdate(_ config: AbstractAvatarConfig) -> EmotionCommand {
+        EmotionCommand(cmd: "abstractAvatar", state: nil, intensity: nil, context: nil, avatar: nil, customAvatar: nil, riveAvatar: nil, abstractAvatar: config, ttsText: nil)
     }
 
     func toData() -> Data? {
