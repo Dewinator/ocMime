@@ -5,6 +5,7 @@ struct DashboardView: View {
     @ObservedObject var gateway: GatewayService
     @ObservedObject var emotionRouter: EmotionRouter
     @ObservedObject var bonjourServer: BonjourServer
+    @ObservedObject var agentTarget: AgentTargetService
 
     @State private var selectedState: EmotionState = .idle
     @State private var intensity: Double = 0.5
@@ -26,6 +27,13 @@ struct DashboardView: View {
                 statusRow("Gateway", connected: gateway.connectionState.isConnected, detail: gatewayDetail)
                 statusRow("Display", connected: bonjourServer.connectedDevice != nil, detail: bonjourServer.connectedDevice ?? "waiting...")
                 statusRow("Bonjour", connected: bonjourServer.isRunning, detail: bonjourServer.isRunning ? "advertising (path \(bonjourServer.pathStatus))" : "stopped")
+                statusRow(
+                    "Voice",
+                    connected: agentTarget.config.isConfigured,
+                    detail: agentTarget.config.isConfigured
+                        ? "-> \(agentTarget.config.agentLabel.isEmpty ? agentTarget.config.agentId : agentTarget.config.agentLabel) via \(agentTarget.config.chatMethod)"
+                        : "not configured — [SKILL] tab"
+                )
 
                 HStack(spacing: Theme.Spacing.sm) {
                     Button {

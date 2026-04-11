@@ -30,6 +30,7 @@ struct OCErrorPayload: Decodable, Sendable {
 enum GatewayError: Error, LocalizedError {
     case invalidURL
     case notConnected
+    case notConfigured
     case unexpectedFrame
     case authenticationFailed
     case timeout
@@ -44,6 +45,7 @@ enum GatewayError: Error, LocalizedError {
         switch self {
         case .invalidURL:             return "Invalid gateway URL"
         case .notConnected:           return "Not connected"
+        case .notConfigured:          return "No target agent configured"
         case .unexpectedFrame:        return "Unexpected gateway frame"
         case .authenticationFailed:   return "Authentication failed"
         case .timeout:                return "Connection timeout"

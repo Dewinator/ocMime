@@ -28,13 +28,15 @@ final class SensorRouter: ObservableObject {
     private weak var bonjourServer: BonjourServer?
     private weak var emotionRouter: EmotionRouter?
     private weak var gateway: GatewayService?
+    private weak var agentTarget: AgentTargetService?
 
     // MARK: - Subscribe
 
-    func subscribe(to bonjourServer: BonjourServer, emotionRouter: EmotionRouter, gateway: GatewayService) {
+    func subscribe(to bonjourServer: BonjourServer, emotionRouter: EmotionRouter, gateway: GatewayService, agentTarget: AgentTargetService) {
         self.bonjourServer = bonjourServer
         self.emotionRouter = emotionRouter
         self.gateway = gateway
+        self.agentTarget = agentTarget
 
         bonjourServer.onSensorReceived = { [weak self] command in
             self?.handleSensorCommand(command)
@@ -72,13 +74,42 @@ final class SensorRouter: ObservableObject {
 
             addLog(.stt, detail: text)
 
-            // Set emotion to listening while user is speaking
+            // Local display: flash listening so the operator sees the capture.
             emotionRouter?.setEmotion(.listening, intensity: 0.6, context: "stt_input")
+
+            // Generic sensor.event relay — agents can subscribe to this if they
+            // want raw transcripts without being the direct chat target.
             forwardGatewayEvent(name: "stt.transcript", payload: [
                 "text": text,
                 "isFinal": true,
                 "locale": command.locale ?? "de-DE"
             ], logType: .stt)
+
+            // Direct chat upstream: if the user has designated a target agent
+            // via the SKILL tab, actually send the voice input as a chat
+            // message. The reply lands back through GatewayService.eventSubject
+            // → EmotionRouter.handleChatEvent → TTS (auto-spoken below).
+            sendVoiceToAgent(text: text)
+        }
+    }
+
+    private func sendVoiceToAgent(text: String) {
+        guard let target = agentTarget?.config, target.isConfigured else { return }
+        guard let gateway, gateway.connectionState.isConnected else {
+            addLog(.stt, detail: "gateway offline — chat upstream skipped")
+            return
+        }
+        Task { [weak self] in
+            do {
+                _ = try await gateway.sendChatMessage(target: target, text: text)
+                await MainActor.run {
+                    self?.addLog(.stt, detail: "-> \(target.agentLabel.isEmpty ? target.agentId : target.agentLabel)")
+                }
+            } catch {
+                await MainActor.run {
+                    self?.addLog(.stt, detail: "chat failed: \(error.localizedDescription)")
+                }
+            }
         }
     }
 
@@ -103,6 +134,24 @@ final class SensorRouter: ObservableObject {
                 "personCount": count,
                 "confidence": confidence
             ], logType: .presence)
+
+            // Optional: ask the target agent to greet the newcomer. Off by
+            // default because it surprises people the first time it happens.
+            if let target = agentTarget?.config, target.isConfigured, target.proactiveGreetOnEntry,
+               let gateway, gateway.connectionState.isConnected {
+                Task { [weak self] in
+                    do {
+                        _ = try await gateway.sendChatMessage(
+                            target: target,
+                            text: "Eine Person hat gerade den Raum betreten. Begruesse sie kurz und freundlich auf Deutsch."
+                        )
+                    } catch {
+                        await MainActor.run {
+                            self?.addLog(.presence, detail: "greet failed: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            }
         } else if !detected && wasPresent {
             addLog(.presence, detail: "Room empty")
             emotionRouter?.setEmotion(.sleeping, intensity: 0.3, context: "room_empty")

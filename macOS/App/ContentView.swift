@@ -6,6 +6,7 @@ struct ContentView: View {
     @ObservedObject var emotionRouter: EmotionRouter
     @ObservedObject var bonjourServer: BonjourServer
     @ObservedObject var sensorRouter: SensorRouter
+    @ObservedObject var agentTarget: AgentTargetService
 
     @State private var selectedTab: Tab = .dashboard
 
@@ -42,14 +43,15 @@ struct ContentView: View {
                 DashboardView(
                     gateway: gateway,
                     emotionRouter: emotionRouter,
-                    bonjourServer: bonjourServer
+                    bonjourServer: bonjourServer,
+                    agentTarget: agentTarget
                 )
             case .avatar:
                 AvatarEditorView(bonjourServer: bonjourServer)
             case .sensor:
                 SensorView(sensorRouter: sensorRouter, bonjourServer: bonjourServer)
             case .skill:
-                SkillView(gateway: gateway)
+                SkillView(gateway: gateway, agentTarget: agentTarget)
             case .settings:
                 SettingsView(
                     viewModel: SettingsViewModel(gateway: gateway),

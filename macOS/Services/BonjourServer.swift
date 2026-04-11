@@ -183,16 +183,8 @@ final class BonjourServer: ObservableObject {
         send(.ping, label: "ping")
     }
 
-    func sendAvatarConfig(_ config: AvatarConfig) {
-        send(.avatarUpdate(config), label: "avatar=\(config.avatarType.rawValue)")
-    }
-
     func sendCustomAvatarConfig(_ config: CustomAvatarConfig) {
         send(.customAvatarUpdate(config), label: "customAvatar")
-    }
-
-    func sendRiveAvatarConfig(_ config: RiveAvatarConfig) {
-        send(.riveAvatarUpdate(config), label: "riveAvatar")
     }
 
     func sendAbstractAvatarConfig(_ config: AbstractAvatarConfig) {

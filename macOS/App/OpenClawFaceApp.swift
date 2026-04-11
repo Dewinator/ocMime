@@ -7,44 +7,27 @@ struct OpenClawFaceApp: App {
     @StateObject private var emotionRouter = EmotionRouter()
     @StateObject private var bonjourServer = BonjourServer()
     @StateObject private var sensorRouter = SensorRouter()
+    @StateObject private var agentTarget = AgentTargetService()
 
     var body: some Scene {
-        #if os(macOS)
         WindowGroup {
             ContentView(
                 gateway: gateway,
                 emotionRouter: emotionRouter,
                 bonjourServer: bonjourServer,
-                sensorRouter: sensorRouter
+                sensorRouter: sensorRouter,
+                agentTarget: agentTarget
             )
             .frame(minWidth: 560, minHeight: 500)
             .background(Theme.backgroundPrimary)
             .onAppear {
-                emotionRouter.subscribe(to: gateway, bonjourServer: bonjourServer)
-                sensorRouter.subscribe(to: bonjourServer, emotionRouter: emotionRouter, gateway: gateway)
+                sensorRouter.subscribe(to: bonjourServer, emotionRouter: emotionRouter, gateway: gateway, agentTarget: agentTarget)
+                emotionRouter.subscribe(to: gateway, bonjourServer: bonjourServer, sensorRouter: sensorRouter, agentTarget: agentTarget)
                 bonjourServer.start()
                 gateway.autoConnect()
             }
         }
         .windowStyle(.hiddenTitleBar)
-        .defaultSize(width: 560, height: 560)
-        #else
-        WindowGroup {
-            ContentView(
-                gateway: gateway,
-                emotionRouter: emotionRouter,
-                bonjourServer: bonjourServer,
-                sensorRouter: sensorRouter
-            )
-            .frame(minWidth: 560, minHeight: 500)
-            .background(Theme.backgroundPrimary)
-            .onAppear {
-                emotionRouter.subscribe(to: gateway, bonjourServer: bonjourServer)
-                sensorRouter.subscribe(to: bonjourServer, emotionRouter: emotionRouter, gateway: gateway)
-                bonjourServer.start()
-                gateway.autoConnect()
-            }
-        }
-        #endif
+        .defaultSize(width: 560, height: 600)
     }
 }

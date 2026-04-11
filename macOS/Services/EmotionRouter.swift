@@ -10,6 +10,8 @@ final class EmotionRouter: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
     private weak var bonjourServer: BonjourServer?
+    private weak var sensorRouter: SensorRouter?
+    private weak var agentTarget: AgentTargetService?
 
     // Remember every marker we've fired in the current chat response, in
     // order. Reset on `final` or `error`. This lets us handle both cumulative
@@ -20,8 +22,10 @@ final class EmotionRouter: ObservableObject {
     private var firedMarkers: [EmotionMarker] = []
     private var lastAppliedMarker: EmotionMarker?
 
-    func subscribe(to gateway: GatewayService, bonjourServer: BonjourServer) {
+    func subscribe(to gateway: GatewayService, bonjourServer: BonjourServer, sensorRouter: SensorRouter, agentTarget: AgentTargetService) {
         self.bonjourServer = bonjourServer
+        self.sensorRouter = sensorRouter
+        self.agentTarget = agentTarget
 
         gateway.eventSubject
             .receive(on: DispatchQueue.main)
@@ -99,9 +103,10 @@ final class EmotionRouter: ObservableObject {
             if lastAppliedMarker == nil {
                 setEmotion(.success, intensity: 0.6, context: "response_complete")
             }
-            if !cleanedText.isEmpty {
-                let locale = payload["locale"] as? String ?? "de-DE"
-                bonjourServer?.sendTTS(text: cleanedText, locale: locale, rate: 0.5)
+            if !cleanedText.isEmpty, agentTarget?.config.autoTTSResponse ?? true {
+                // Route through SensorRouter so the ttsEnabled toggle is
+                // respected and the TTS appears in the sensor log.
+                sensorRouter?.speak(cleanedText)
             }
             // Reset the marker memory so the next response starts fresh.
             resetMarkerMemory()

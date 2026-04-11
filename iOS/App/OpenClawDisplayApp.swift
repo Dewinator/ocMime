@@ -3,8 +3,6 @@ import SwiftUI
 @main
 struct OpenClawDisplayApp: App {
 
-    @StateObject private var engine = LottieAnimationEngine()
-    @StateObject private var riveEngine = RiveAnimationEngine()
     @StateObject private var client = BonjourClient()
     @StateObject private var audioCoordinator: AudioSessionCoordinator
     @StateObject private var animator = EmotionAnimator()
@@ -28,8 +26,6 @@ struct OpenClawDisplayApp: App {
     var body: some Scene {
         WindowGroup {
             FaceView(
-                engine: engine,
-                riveEngine: riveEngine,
                 client: client,
                 animator: animator,
                 abstractAnimator: abstractAnimator,
@@ -48,15 +44,8 @@ struct OpenClawDisplayApp: App {
                 client.startBrowsing()
             }
             .onChange(of: scenePhase) { _, newPhase in
-                switch newPhase {
-                case .active:
-                    // Returning from background — discovery may be stuck on a stale endpoint.
+                if newPhase == .active {
                     client.restart()
-                case .background:
-                    // Don't tear down completely; iOS will pause networking anyway.
-                    break
-                default:
-                    break
                 }
             }
             .preferredColorScheme(.dark)
@@ -66,36 +55,19 @@ struct OpenClawDisplayApp: App {
     // MARK: - Emotion Handler (macOS → iOS)
 
     private func setupEmotionHandler() {
-        client.onEmotionReceived = { [weak engine, weak riveEngine, weak animator, weak abstractAnimator, weak ttsService] command in
+        client.onEmotionReceived = { [weak animator, weak abstractAnimator, weak ttsService] command in
             switch command.cmd {
             case "emotion":
                 if let stateStr = command.state,
                    let state = EmotionState(rawValue: stateStr) {
-                    let intensity = command.intensity ?? 0.5
-                    engine?.setEmotion(state, intensity: intensity)
-                    riveEngine?.setEmotion(state, intensity: intensity)
                     animator?.setEmotion(state)
                     abstractAnimator?.setEmotion(state)
-                }
-            case "avatar":
-                if let config = command.avatar {
-                    engine?.setConfig(config)
-                    Task { @MainActor in
-                        displayMode = .lottie
-                    }
                 }
             case "customAvatar":
                 if let config = command.customAvatar {
                     Task { @MainActor in
                         customConfig = config
                         displayMode = .custom
-                    }
-                }
-            case "riveAvatar":
-                if let config = command.riveAvatar {
-                    riveEngine?.setConfig(config)
-                    Task { @MainActor in
-                        displayMode = .rive
                     }
                 }
             case "abstractAvatar":
@@ -122,7 +94,6 @@ struct OpenClawDisplayApp: App {
     // MARK: - Sensor Callbacks (iOS → macOS)
 
     private func setupSensorCallbacks() {
-        // TTS: sync emotion state with speaking
         ttsService.onSpeakingChanged = { [weak animator] isSpeaking in
             if isSpeaking {
                 animator?.setEmotion(.responding)
@@ -131,19 +102,16 @@ struct OpenClawDisplayApp: App {
             }
         }
 
-        // STT: send transcripts to macOS
         sttService.onTranscript = { [weak client] text, isFinal in
             let command = SensorCommand.stt(text: text, isFinal: isFinal)
             client?.sendSensorCommand(command)
         }
 
-        // Presence: send detection events to macOS
         presenceService.onPresenceChanged = { [weak client] detected, count, confidence in
             let command = SensorCommand.presence(detected: detected, personCount: count, confidence: confidence)
             client?.sendSensorCommand(command)
         }
 
-        // Sound: send classified sounds to macOS
         soundService.onSoundDetected = { [weak client] soundType, confidence in
             let command = SensorCommand.sound(type: soundType, confidence: confidence)
             client?.sendSensorCommand(command)
@@ -154,6 +122,5 @@ struct OpenClawDisplayApp: App {
 
     private func requestPermissions() {
         sttService.requestAuthorization()
-        // Camera and microphone permissions are requested when services start
     }
 }

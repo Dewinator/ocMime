@@ -1,16 +1,12 @@
 import SwiftUI
 
 enum DisplayMode {
-    case lottie
     case custom
-    case rive
     case abstract
 }
 
 struct FaceView: View {
 
-    @ObservedObject var engine: LottieAnimationEngine
-    @ObservedObject var riveEngine: RiveAnimationEngine
     @ObservedObject var client: BonjourClient
     @ObservedObject var animator: EmotionAnimator
     @ObservedObject var abstractAnimator: AbstractAnimator
@@ -29,14 +25,8 @@ struct FaceView: View {
             Color.black.ignoresSafeArea()
 
             switch displayMode {
-            case .lottie:
-                LottieFaceView(engine: engine)
-                    .ignoresSafeArea()
             case .custom:
                 CustomFaceView(config: customConfig, animator: animator)
-                    .ignoresSafeArea()
-            case .rive:
-                RiveFaceView(engine: riveEngine)
                     .ignoresSafeArea()
             case .abstract:
                 AbstractFaceView(config: abstractConfig, animator: abstractAnimator)
@@ -91,11 +81,9 @@ struct FaceView: View {
         }
         .persistentSystemOverlays(.hidden)
         .onAppear {
-            engine.reduceMotion = reduceMotion
             animator.reduceMotion = reduceMotion
         }
         .onChange(of: reduceMotion) { _, newValue in
-            engine.reduceMotion = newValue
             animator.reduceMotion = newValue
         }
     }

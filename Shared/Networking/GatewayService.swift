@@ -231,6 +231,20 @@ final class GatewayService: ObservableObject {
         ])
     }
 
+    /// Voice-to-chat upstream. Uses the user-configured RPC method and field
+    /// names so this still works against gateways with a non-standard chat
+    /// surface. The caller supplies the target agent + the user-provided text.
+    /// Returns the gateway's immediate ack; the actual agent reply arrives
+    /// asynchronously via `eventSubject` like any other chat event.
+    func sendChatMessage(target: AgentTargetConfig, text: String) async throws -> OCResponse {
+        guard target.isConfigured else { throw GatewayError.notConfigured }
+        let params: [String: Any] = [
+            target.paramNameForAgentId: target.agentId,
+            target.paramNameForText: text
+        ]
+        return try await sendRequest(target.chatMethod, params: params)
+    }
+
     // MARK: - Wait for Nonce
 
     struct ChallengeInfo {

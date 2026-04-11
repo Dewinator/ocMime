@@ -70,22 +70,14 @@ Alles in `Shared/` wird von beiden Targets kompiliert: Models, Networking, Rende
 
 ---
 
-## Vier Avatar-Systeme
+## Zwei Avatar-Systeme
 
-Das Projekt hat sich von Voll-Kopf-Avataren weg entwickelt: Roboter-, Katzen-,
-Geister-, Eulen-, Toten- und Alien-Köpfe wirkten nie wirklich ausgereift. Statt
-dessen liegt der Fokus jetzt auf **Augen mit Mimik**, **abstrakten Auren** und
-optional **Rive State-Machines**. Voll-Köpfe sind komplett aus dem Build raus.
-
-### 1. Lottie-Presets (Augen-Set)
-6 vorgefertigte Lottie-JSON-Animationen in `Shared/Animations/`. Jede hat 240
-Frames (8 Emotion-Segments à 30 Frames, 30fps). Generiert mit `tools/generate_lottie.py`.
-
-| Kategorie | Avatare |
-|-----------|---------|
-| **Eyes** | Round, Cyber, Minimal Dots, Neon (Farbwechsel), Sharp, Soft |
-
-Gesteuert durch: `LottieAnimationEngine` + `LottieFaceView` (UIKit/AppKit Wrapper mit `play(fromFrame:toFrame:)`)
+Das Projekt hat sich aus dem ursprünglichen "drei Lottie/Custom/Rive"-Setup
+radikal vereinfacht: Voll-Kopf-Lottie-Avatare (Roboter, Katze, Geist, Eule,
+Totenkopf, Alien) wirkten nie ausgereift; Rive war ein Platzhalter ohne
+Assets; die Lottie-Augen-Varianten haben sich nicht genug von ihrer Custom-
+Renderer-Version differenziert. Beide Lottie **und** Rive SPM-Dependencies
+sind komplett aus dem Build raus. Geblieben sind zwei kohärente Systeme:
 
 ### 2. Custom Avatar Editor (Baukasten)
 Programmatischer SwiftUI-Renderer. Der User baut sein eigenes Gesicht aus Komponenten:
@@ -110,7 +102,7 @@ Gesteuert durch: `EmotionAnimator` (30fps, smooth Transitions, Blinzeln, Pupille
 
 Quick-Presets: Default, Robot, Kawaii, Demon, Hacker
 
-### 3. Abstract Avatars (Auras / Orbs / Wellenformen)
+### 1. Abstract Avatars (Auras / Orbs / Wellenformen)
 Sieben SwiftUI-Canvas-Renderer in `Shared/Renderer/AbstractFaceView.swift`. Komplett
 prozedural, kein Asset-Preprocessing, 60fps via `TimelineView`. Jede Variante wird
 durch eine gemeinsame `EmotionPalette` (Primary/Secondary/Glow/Speed) gefärbt, damit
@@ -126,9 +118,28 @@ die visuelle Sprache über alle Stile konsistent bleibt.
 | `gradientFlow` | Pseudo-Conic Gradient mit Highlight |
 | `ringBars` | Siri-ähnliche radiale Bars mit Sinus-Pulse |
 
-Gesteuert durch: `AbstractAnimator` (palette-blending, reduceMotion-aware) + `AbstractFaceView` + `AbstractFaceRenderer`. Kein Lottie, kein Rive — pure `Canvas` + `GraphicsContext`.
+Gesteuert durch: `AbstractAnimator` (palette-blending, reduceMotion-aware) + `AbstractFaceView` + `AbstractFaceRenderer`. Pure `Canvas` + `GraphicsContext`, keine externen Dependencies.
 
-### 4. Rive Avatare (State-Machine-basiert)
+### 2. Custom Bezier Face (Eyes + Mimik)
+SwiftUI-Bezier-Renderer mit `EmotionAnimator` als 30fps-Brain. Komponenten:
+FaceOutline, EyeL/R, PupilL/R, EyebrowL/R, Nose, Mouth, Accessory — jede mit
+Shape-Variant + Farbe + Größe. Die eingebauten `eyesPresets` (Phosphor, Arc,
+Ember, Serene, Void) schalten alles ausser den Augen ab und nutzen den
+EmotionAnimator als Mimik-Quelle (Blink, Pupillen-Drift, Augenbrauen-
+Asymmetrie beim Thinking, Error-Shake, Breathing-Scale, Mood-Tracking).
+
+Gesteuert durch: `EmotionAnimator` + `CustomFaceView` + `FaceShapes`. Der
+Editor hat drei Tabs — `[ABSTRACT]` (Aura-Picker), `[EYES]` (Eyes-Only
+Quick-Presets) und `[CUSTOM]` (voller Baukasten-Editor mit Slidern und
+Farb-Pickern).
+
+### Entfernt
+Rive-Integration, `LottieAnimationEngine`, `LottieFaceView`,
+`RiveAnimationEngine`, `RiveFaceView`, `AvatarConfig` (Lottie-basiert),
+`RiveAvatarConfig`, `Shared/Animations/`, `Shared/RiveAssets/`,
+`tools/generate_lottie.py`, und die SPM-Dependencies `lottie-ios` und
+`rive-ios`. Der Bonjour-Protokoll-Typ `avatar` und `riveAvatar` sind aus
+`EmotionCommand` gelöscht.
 State-Machine-gesteuerte Animationen via [Rive](https://rive.app). `.riv` Dateien in `Shared/RiveAssets/`. Jede Datei muss eine State Machine `"emotions"` mit Inputs `emotionState` (Number 0-7) und `intensity` (Number 0-1) enthalten.
 
 Gesteuert durch: `RiveAnimationEngine` (Wrapper um `RiveViewModel`) + `RiveFaceView` (SwiftUI View)
@@ -158,9 +169,7 @@ Aktuell verfuegbare Rive-Avatare: Robot Face (Platzhalter, `.riv` Datei muss noc
 **macOS -> iOS:**
 ```json
 {"cmd": "emotion", "state": "thinking", "intensity": 0.8, "context": "planning"}
-{"cmd": "avatar", "avatar": {"avatarType": "eyes_neon"}}
 {"cmd": "customAvatar", "customAvatar": {...}}
-{"cmd": "riveAvatar", "riveAvatar": {"riveFile": "robot_face", "stateMachine": "emotions"}}
 {"cmd": "abstractAvatar", "abstractAvatar": {"style": "pulse_orb", "blackBackground": true}}
 {"cmd": "tts", "ttsText": "Hallo!", "context": "de-DE", "intensity": 0.5}
 {"cmd": "ttsStop"}
@@ -287,6 +296,43 @@ ocFaceMe/
 - Sichtbare Fehlerzustände im UI statt stiller Fails
 
 ---
+
+## Voice Loop (2026-04-11)
+
+Der Sensor-Hub hat jetzt einen echten Upstream-Pfad zum Agenten:
+
+1. iOS `STTService` erkennt Sprache on-device via `SFSpeechRecognizer`,
+   streamt Partial + Final Transcripts.
+2. `onTranscript` schickt jeden Final-Transcript via Bonjour als
+   `SensorCommand.stt(text, isFinal: true)` an die Bridge.
+3. `SensorRouter.handleSTT` loggt den Text lokal, setzt den Display-State
+   auf `.listening`, relayed `stt.transcript` via `sensor.event` an den
+   Gateway (wie bisher) **und** — falls ein Ziel-Agent konfiguriert ist —
+   ruft `gateway.sendChatMessage(target:, text:)` auf, das via
+   `agents.chat`-RPC den Transcript als Chat-Input an den ausgewaehlten
+   Agenten schickt.
+4. Der Agent antwortet. `GatewayService.eventSubject` feuert `chat` mit
+   `state: "delta"` / `"final"`.
+5. `EmotionRouter.handleChatEvent` parst `[emotion:*]` Marker aus dem
+   Text, setzt den Display-State, und leitet den bereinigten Text
+   (bei `autoTTSResponse=true`) an `SensorRouter.speak(text)` weiter —
+   das wiederum `BonjourServer.sendTTS(...)` aufruft und die iOS-App
+   lässt den Text via `AVSpeechSynthesizer` sprechen.
+
+Die Konfiguration lebt in `AgentTargetConfig` (persistiert als
+`avatar.target` UserDefault via `AgentTargetService`). Drei Felder sind
+editierbar, weil OpenClaws echte Chat-RPC-Form nicht festgeschrieben ist:
+`chatMethod` (default `agents.chat`), `paramNameForAgentId` (default
+`agentId`), `paramNameForText` (default `text`). Zwei Verhaltens-Flags:
+`autoTTSResponse` (an) und `proactiveGreetOnEntry` (aus).
+
+Die Auswahl "welcher Agent ist Ziel" passiert im `[SKILL]`-Tab: neben
+`[INSTALL SKILL]` gibt es jetzt `[SET VOICE]` pro Agent. Das Dashboard
+zeigt die aktive Voice-Target-Zeile direkt neben Gateway/Display/Bonjour.
+
+Presence-Wake: `handlePresence` setzt den Display-State bei Raumbetritt
+automatisch von `.sleeping` auf `.idle` und — falls `proactiveGreetOnEntry`
+aktiv ist — schickt der Bridge einen kurzen Greeting-Chat an den Agenten.
 
 ## Bonjour-Härtung (2026-04-11)
 
