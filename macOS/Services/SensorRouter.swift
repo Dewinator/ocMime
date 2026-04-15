@@ -222,6 +222,12 @@ final class SensorRouter: ObservableObject {
 
     // MARK: - Log
 
+    /// Public entry point so other routers (EmotionRouter) can surface
+    /// gateway/chat activity to the user-visible sensor log for diagnostics.
+    func logEvent(_ type: SensorLogEntry.SensorType, detail: String) {
+        addLog(type, detail: detail)
+    }
+
     private func addLog(_ type: SensorLogEntry.SensorType, detail: String) {
         let entry = SensorLogEntry(type: type, detail: detail, timestamp: Date())
         sensorLog.append(entry)

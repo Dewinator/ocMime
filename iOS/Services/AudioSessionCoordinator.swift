@@ -46,18 +46,25 @@ final class AudioSessionCoordinator: ObservableObject {
     }
 
 
-    func activateListening() {
+    /// Single stable session: `.playAndRecord` + default mode. Activated once,
+    /// never toggled — switching categories mid-stream kills the STT audio
+    /// engine and previously caused a restart loop that starved the main
+    /// thread. We prefer default mode over `.voiceChat` here because voice-chat
+    /// processing was correlated with zero-byte audio buffers reaching
+    /// SFSpeechRecognizer, which blocked finalisation of transcripts.
+    private func ensureActive() {
         #if os(iOS)
+        guard mode == .idle else { return }
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(
                 .playAndRecord,
-                mode: .measurement,
-                options: [.duckOthers, .allowBluetoothHFP, .allowBluetoothA2DP, .defaultToSpeaker]
+                mode: .default,
+                options: [.allowBluetoothHFP, .allowBluetoothA2DP, .defaultToSpeaker]
             )
             try session.setActive(true, options: .notifyOthersOnDeactivation)
-            desiredMode = .listening
             mode = .listening
+            desiredMode = .listening
             lastError = nil
         } catch {
             lastError = error.localizedDescription
@@ -65,37 +72,13 @@ final class AudioSessionCoordinator: ObservableObject {
         #endif
     }
 
-    func activateSpeaking() {
-        #if os(iOS)
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(
-                .playback,
-                mode: .spokenAudio,
-                options: [.duckOthers]
-            )
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
-            desiredMode = .speaking
-            mode = .speaking
-            lastError = nil
-        } catch {
-            lastError = error.localizedDescription
-        }
-        #endif
-    }
+    func activateListening() { ensureActive() }
+    func activateSpeaking() { ensureActive() }
 
     func deactivateIfIdle(expected: Mode) {
-        guard mode == expected else { return }
-        #if os(iOS)
-        do {
-            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            desiredMode = .idle
-            mode = .idle
-            lastError = nil
-        } catch {
-            lastError = error.localizedDescription
-        }
-        #endif
+        // No-op: the shared session is kept active while the app runs so STT
+        // and TTS can coexist without toggling categories. Background teardown
+        // happens via scenePhase in OpenClawDisplayApp.
     }
 
     #if os(iOS)

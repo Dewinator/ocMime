@@ -36,12 +36,14 @@ final class PresenceService: ObservableObject {
         case .authorized:
             setupCaptureSession()
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                Task { @MainActor in
+            Task { [weak self] in
+                let granted = await Self.awaitCameraAccess()
+                await MainActor.run {
+                    guard let self else { return }
                     if granted {
-                        self?.setupCaptureSession()
+                        self.setupCaptureSession()
                     } else {
-                        self?.lastError = "Camera access denied"
+                        self.lastError = "Camera access denied"
                     }
                 }
             }
@@ -60,6 +62,14 @@ final class PresenceService: ObservableObject {
         personCount = 0
         consecutiveDetections = 0
         consecutiveAbsences = 0
+    }
+
+    private nonisolated static func awaitCameraAccess() async -> Bool {
+        await withCheckedContinuation { continuation in
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                continuation.resume(returning: granted)
+            }
+        }
     }
 
     // MARK: - Capture Setup

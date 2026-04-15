@@ -8,8 +8,12 @@ enum DisplayMode {
 struct FaceView: View {
 
     @ObservedObject var client: BonjourClient
-    @ObservedObject var animator: EmotionAnimator
-    @ObservedObject var abstractAnimator: AbstractAnimator
+    // Animators are deliberately NOT @ObservedObject: they mutate internal
+    // state every frame. Their views (CustomFaceView / AbstractFaceView)
+    // drive redraw via TimelineView at their own cadence. Observing them
+    // here would recompute this whole view tree on every animation tick.
+    let animator: EmotionAnimator
+    let abstractAnimator: AbstractAnimator
     @ObservedObject var ttsService: TTSService
     @ObservedObject var sttService: STTService
     @ObservedObject var presenceService: PresenceService

@@ -22,18 +22,21 @@ targets:
     sources:
       - path: macOS
       - path: Shared
+    info:
+      path: macOS/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: "OpenClaw Face"
+        LSApplicationCategoryType: "public.app-category.utilities"
+        NSMainStoryboardFile: ""
+        NSLocalNetworkUsageDescription: "OpenClaw Face needs local network access to communicate with the iOS display device."
+        NSBonjourServices:
+          - "_openclawface._tcp"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: net.eab-solutions.openclawface
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: "OpenClaw Face"
-        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.utilities"
-        INFOPLIST_KEY_NSMainStoryboardFile: ""
-        INFOPLIST_KEY_NSLocalNetworkUsageDescription: "OpenClaw Face needs local network access to communicate with the iOS display device."
-        INFOPLIST_KEY_NSBonjourServices: "_openclawface._tcp"
         ENABLE_HARDENED_RUNTIME: YES
         SWIFT_STRICT_CONCURRENCY: complete
     entitlements:
@@ -50,22 +53,30 @@ targets:
     sources:
       - path: iOS
       - path: Shared
+    info:
+      path: iOS/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: "OpenClaw Display"
+        UILaunchScreen:
+          UIColorName: ""
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIRequiresFullScreen: YES
+        NSLocalNetworkUsageDescription: "OpenClaw Display needs local network access to receive emotion commands from the Mac bridge."
+        NSBonjourServices:
+          - "_openclawface._tcp"
+        NSMicrophoneUsageDescription: "OpenClaw Display uses the microphone for speech-to-text and sound analysis to interact with the AI agent."
+        NSSpeechRecognitionUsageDescription: "OpenClaw Display uses on-device speech recognition to convert your voice to text for the AI agent."
+        NSCameraUsageDescription: "OpenClaw Display uses the camera to detect when someone enters the room, so the AI agent can react."
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: net.eab-solutions.openclawdisplay
         IPHONEOS_DEPLOYMENT_TARGET: "17.0"
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: "OpenClaw Display"
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
-        INFOPLIST_KEY_UIRequiresFullScreen: YES
-        INFOPLIST_KEY_NSLocalNetworkUsageDescription: "OpenClaw Display needs local network access to receive emotion commands from the Mac bridge."
-        INFOPLIST_KEY_NSBonjourServices: "_openclawface._tcp"
-        INFOPLIST_KEY_NSMicrophoneUsageDescription: "OpenClaw Display uses the microphone for speech-to-text and sound analysis to interact with the AI agent."
-        INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: "OpenClaw Display uses on-device speech recognition to convert your voice to text for the AI agent."
-        INFOPLIST_KEY_NSCameraUsageDescription: "OpenClaw Display uses the camera to detect when someone enters the room, so the AI agent can react."
         SWIFT_STRICT_CONCURRENCY: complete
         TARGETED_DEVICE_FAMILY: "1,2"

@@ -1,4 +1,8 @@
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
+import Speech
 
 @main
 struct OpenClawDisplayApp: App {
@@ -42,10 +46,24 @@ struct OpenClawDisplayApp: App {
                 setupSensorCallbacks()
                 requestPermissions()
                 client.startBrowsing()
+                setIdleTimer(disabled: true)
             }
             .onChange(of: scenePhase) { _, newPhase in
-                if newPhase == .active {
+                switch newPhase {
+                case .active:
+                    setIdleTimer(disabled: true)
                     client.restart()
+                    startSTTIfPossible()
+                case .inactive, .background:
+                    setIdleTimer(disabled: false)
+                    sttService.stopListening()
+                @unknown default:
+                    break
+                }
+            }
+            .onChange(of: sttService.authorizationStatus) { _, status in
+                if status == .authorized {
+                    startSTTIfPossible()
                 }
             }
             .preferredColorScheme(.dark)
@@ -94,11 +112,25 @@ struct OpenClawDisplayApp: App {
     // MARK: - Sensor Callbacks (iOS → macOS)
 
     private func setupSensorCallbacks() {
-        ttsService.onSpeakingChanged = { [weak animator] isSpeaking in
+        ttsService.onSpeakingChanged = { [weak animator, weak sttService] isSpeaking in
             if isSpeaking {
                 animator?.setEmotion(.responding)
+                // Mute STT while we're playing back the agent's reply — the
+                // speaker feeds straight into the mic on most iPhones/iPads
+                // and would otherwise be transcribed and sent back as a new
+                // chat, triggering an infinite chatter loop.
+                sttService?.stopListening()
             } else {
                 animator?.setEmotion(.idle)
+                // Brief settle delay so the tail of the utterance isn't picked
+                // up the moment STT comes back online.
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(400))
+                    if sttService?.authorizationStatus == .authorized,
+                       sttService?.isListening == false {
+                        sttService?.startListening()
+                    }
+                }
             }
         }
 
@@ -122,5 +154,17 @@ struct OpenClawDisplayApp: App {
 
     private func requestPermissions() {
         sttService.requestAuthorization()
+    }
+
+    private func setIdleTimer(disabled: Bool) {
+        #if canImport(UIKit)
+        UIApplication.shared.isIdleTimerDisabled = disabled
+        #endif
+    }
+
+    private func startSTTIfPossible() {
+        guard sttService.authorizationStatus == .authorized else { return }
+        guard !sttService.isListening else { return }
+        sttService.startListening()
     }
 }

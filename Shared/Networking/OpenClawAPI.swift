@@ -2,21 +2,44 @@ import Foundation
 
 // MARK: - Generic WebSocket Response
 
-struct OCResponse: Decodable, @unchecked Sendable {
+struct OCResponse: @unchecked Sendable {
     let type: String?
     let id: String?
     let method: String?
     let ok: Bool?
-    let payload: AnyCodable?
-    let result: AnyCodable?
     let error: OCErrorPayload?
     let event: String?
-    let data: AnyCodable?
-    let seq: Int?
-    let nonce: String?
+    let raw: [String: Any]
 
+    init?(data: Data) {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+        self.raw = json
+        self.type = json["type"] as? String
+        self.id = json["id"] as? String
+        self.method = json["method"] as? String
+        self.ok = json["ok"] as? Bool
+        self.event = json["event"] as? String
+        if let err = json["error"] as? [String: Any] {
+            self.error = OCErrorPayload(
+                message: err["message"] as? String,
+                code: err["code"] as? String
+            )
+        } else {
+            self.error = nil
+        }
+    }
+
+    /// Unwraps `payload` / `result` / `data` wrappers when present, otherwise
+    /// returns the top-level object. OpenClaw's `broadcast("chat", payload)`
+    /// flattens its payload onto the top level, so events like chat deltas
+    /// have `state`, `message`, `sessionKey` at the root.
     var responseData: [String: Any]? {
-        (payload?.value as? [String: Any]) ?? (result?.value as? [String: Any])
+        if let payload = raw["payload"] as? [String: Any] { return payload }
+        if let result = raw["result"] as? [String: Any] { return result }
+        if let data = raw["data"] as? [String: Any] { return data }
+        return raw
     }
 }
 

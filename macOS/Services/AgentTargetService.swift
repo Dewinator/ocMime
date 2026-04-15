@@ -16,10 +16,23 @@ final class AgentTargetService: ObservableObject {
     init() {
         if let data = UserDefaults.standard.data(forKey: Self.defaultsKey),
            let loaded = AgentTargetConfig.from(data: data) {
-            self.config = loaded
+            self.config = Self.migrateLegacyRPCFields(loaded)
         } else {
             self.config = .default
         }
+    }
+
+    /// Older builds defaulted the chat RPC to `agents.chat` with `agentId` /
+    /// `text`; the current gateway uses `chat.send` with `sessionKey` /
+    /// `message`. Upgrade stale persisted configs silently so the voice path
+    /// keeps working after an update without the user having to reconfigure
+    /// the SKILL tab.
+    private static func migrateLegacyRPCFields(_ config: AgentTargetConfig) -> AgentTargetConfig {
+        var migrated = config
+        if migrated.chatMethod == "agents.chat" { migrated.chatMethod = "chat.send" }
+        if migrated.paramNameForAgentId == "agentId" { migrated.paramNameForAgentId = "sessionKey" }
+        if migrated.paramNameForText == "text" { migrated.paramNameForText = "message" }
+        return migrated
     }
 
     private func save() {

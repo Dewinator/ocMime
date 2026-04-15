@@ -62,10 +62,10 @@ final class GatewayService: ObservableObject {
                     "minProtocol": 3,
                     "maxProtocol": 3,
                     "client": [
-                        "id": "openclaw-control-ui",
+                        "id": "openclaw-macos",
                         "version": version,
                         "platform": "macos",
-                        "mode": "webchat"
+                        "mode": "ui"
                     ] as [String: Any],
                     "role": "operator",
                     "scopes": scopes,
@@ -104,7 +104,9 @@ final class GatewayService: ObservableObject {
             }
 
             if connectResponse.ok == false || connectResponse.error != nil {
-                throw GatewayError.authenticationFailed
+                let code = connectResponse.error?.code ?? "auth-failed"
+                let message = connectResponse.error?.message ?? "Authentication failed"
+                throw GatewayError.serverError("\(code): \(message)")
             }
 
             if let payload = connectResponse.responseData,
@@ -240,9 +242,16 @@ final class GatewayService: ObservableObject {
         guard target.isConfigured else { throw GatewayError.notConfigured }
         let params: [String: Any] = [
             target.paramNameForAgentId: target.agentId,
-            target.paramNameForText: text
+            target.paramNameForText: text,
+            "idempotencyKey": UUID().uuidString
         ]
-        return try await sendRequest(target.chatMethod, params: params)
+        let response = try await sendRequest(target.chatMethod, params: params)
+        if response.ok == false || response.error != nil {
+            let code = response.error?.code ?? "chat-failed"
+            let message = response.error?.message ?? "Gateway refused chat request"
+            throw GatewayError.serverError("\(code): \(message)")
+        }
+        return response
     }
 
     // MARK: - Wait for Nonce
@@ -273,10 +282,20 @@ final class GatewayService: ObservableObject {
         @unknown default: throw GatewayError.unexpectedFrame
         }
 
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let payload = json["payload"] as? [String: Any],
-              let nonce = payload["nonce"] as? String else {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw GatewayError.unexpectedFrame
+        }
+
+        if let error = json["error"] as? [String: Any] {
+            let code = error["code"] as? String ?? "gateway-error"
+            let message = error["message"] as? String ?? "Gateway rejected connection"
+            throw GatewayError.serverError("\(code): \(message)")
+        }
+
+        guard let payload = json["payload"] as? [String: Any],
+              let nonce = payload["nonce"] as? String else {
+            let preview = String(data: data, encoding: .utf8)?.prefix(160) ?? ""
+            throw GatewayError.serverError("unexpected-frame: \(preview)")
         }
 
         let ts = (payload["ts"] as? NSNumber)?.int64Value ?? Int64(Date().timeIntervalSince1970 * 1000)
@@ -299,7 +318,7 @@ final class GatewayService: ObservableObject {
                     continue
                 }
 
-                if let response = try? JSONDecoder().decode(OCResponse.self, from: data) {
+                if let response = OCResponse(data: data) {
                     handleResponse(response)
                 }
 

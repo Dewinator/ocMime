@@ -41,9 +41,9 @@ struct AgentTargetConfig: Codable, Equatable {
     static let `default` = AgentTargetConfig(
         agentId: "",
         agentLabel: "",
-        chatMethod: "agents.chat",
-        paramNameForAgentId: "agentId",
-        paramNameForText: "text",
+        chatMethod: "chat.send",
+        paramNameForAgentId: "sessionKey",
+        paramNameForText: "message",
         autoTTSResponse: true,
         proactiveGreetOnEntry: false
     )

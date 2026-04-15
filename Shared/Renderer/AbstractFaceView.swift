@@ -7,8 +7,12 @@ import SwiftUI
 @MainActor
 final class AbstractAnimator: ObservableObject {
 
-    @Published private(set) var blendedPalette = EmotionPalette.forEmotion(.idle)
-    @Published private(set) var currentEmotion: EmotionState = .idle
+    // Deliberately NOT @Published: these are mutated 60× per second by the
+    // Canvas TimelineView. Publishing would invalidate every observing view
+    // on every frame and stall SwiftUI. The Canvas re-reads them on each
+    // tick anyway, so no subscription is needed.
+    private(set) var blendedPalette = EmotionPalette.forEmotion(.idle)
+    private(set) var currentEmotion: EmotionState = .idle
 
     var reduceMotion: Bool = false
 
@@ -64,7 +68,7 @@ final class AbstractAnimator: ObservableObject {
 struct AbstractFaceView: View {
 
     let config: AbstractAvatarConfig
-    @ObservedObject var animator: AbstractAnimator
+    let animator: AbstractAnimator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {

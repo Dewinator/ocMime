@@ -22,6 +22,13 @@ final class EmotionRouter: ObservableObject {
     private var firedMarkers: [EmotionMarker] = []
     private var lastAppliedMarker: EmotionMarker?
 
+    /// Last `runId` whose final we've already handed to TTS. OpenClaw can emit
+    /// more than one `final` per turn when the agent revises its answer
+    /// (common on long responses). The first final kicks off speaking and we
+    /// ignore the rest so the user doesn't hear the text jump mid-sentence.
+    /// A new runId means a new turn → reset and speak again.
+    private var lastSpokenRunId: String?
+
     func subscribe(to gateway: GatewayService, bonjourServer: BonjourServer, sensorRouter: SensorRouter, agentTarget: AgentTargetService) {
         self.bonjourServer = bonjourServer
         self.sensorRouter = sensorRouter
@@ -86,7 +93,7 @@ final class EmotionRouter: ObservableObject {
         // Agent-driven markers take priority over the passive mapping below.
         // They apply to both `delta` (streaming) and `final` (completed) events
         // so the display can react mid-sentence.
-        let rawText = payload["text"] as? String ?? ""
+        let rawText = Self.extractChatText(from: payload)
         let (markers, cleanedText) = EmotionMarker.parse(rawText)
         applyMarkers(markers)
 
@@ -103,9 +110,14 @@ final class EmotionRouter: ObservableObject {
             if lastAppliedMarker == nil {
                 setEmotion(.success, intensity: 0.6, context: "response_complete")
             }
-            if !cleanedText.isEmpty, agentTarget?.config.autoTTSResponse ?? true {
-                // Route through SensorRouter so the ttsEnabled toggle is
-                // respected and the TTS appears in the sensor log.
+            let autoTTS = agentTarget?.config.autoTTSResponse ?? true
+            let runId = payload["runId"] as? String
+            // Same turn, the agent is revising — don't restart TTS
+            // mid-sentence. First final wins for this turn; a new runId
+            // resets the guard so the next turn speaks normally.
+            let alreadySpoken = (runId != nil && runId == lastSpokenRunId)
+            if !cleanedText.isEmpty, autoTTS, !alreadySpoken {
+                lastSpokenRunId = runId
                 sensorRouter?.speak(cleanedText)
             }
             // Reset the marker memory so the next response starts fresh.
@@ -162,6 +174,23 @@ final class EmotionRouter: ObservableObject {
         firedMarkers.removeAll()
         lastAppliedMarker = nil
         lastMarkerState = nil
+    }
+
+    /// Pull the agent's reply out of a chat event payload. OpenClaw's current
+    /// wire format stores it as `message.content[0].text`; older / alternate
+    /// builds sometimes flatten it to `text` at the payload root. Fall back
+    /// to the flat form so custom gateways keep working.
+    private static func extractChatText(from payload: [String: Any]) -> String {
+        if let text = payload["text"] as? String, !text.isEmpty { return text }
+        if let message = payload["message"] as? [String: Any],
+           let content = message["content"] as? [[String: Any]] {
+            let parts = content.compactMap { block -> String? in
+                guard (block["type"] as? String) == "text" else { return nil }
+                return block["text"] as? String
+            }
+            if !parts.isEmpty { return parts.joined(separator: "") }
+        }
+        return ""
     }
 
     private func handleAgentStatusEvent(_ response: OCResponse) {

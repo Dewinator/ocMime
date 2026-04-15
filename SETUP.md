@@ -137,7 +137,7 @@ Wenn Punkt 4 funktioniert:
 ## Terminal-Flow zum Wiederbauen
 
 ```bash
-cd /Users/reed/Documents/ocMime
+cd ocMime
 rm -rf OpenClawFace.xcodeproj && xcodegen generate
 xcodebuild -scheme OpenClawFace -destination 'platform=macOS' build
 xcodebuild -scheme OpenClawDisplay -destination 'generic/platform=iOS' build CODE_SIGNING_ALLOWED=NO

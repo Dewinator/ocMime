@@ -18,6 +18,11 @@ final class STTService: ObservableObject {
     private let audioEngine = AVAudioEngine()
     private var locale: String = "de-DE"
     private weak var audioCoordinator: AudioSessionCoordinator?
+    private var isRestarting = false
+    private var silenceTimer: Timer?
+    private var pendingPartial: String = ""
+    private var hasEmittedFinal = false
+    private let silenceTimeout: TimeInterval = 1.2
 
     init(locale: String = "de-DE", audioCoordinator: AudioSessionCoordinator? = nil) {
         self.locale = locale
@@ -28,9 +33,18 @@ final class STTService: ObservableObject {
     // MARK: - Authorization
 
     func requestAuthorization() {
-        SFSpeechRecognizer.requestAuthorization { [weak self] status in
-            Task { @MainActor in
+        Task { [weak self] in
+            let status = await Self.awaitAuthorization()
+            await MainActor.run {
                 self?.authorizationStatus = status
+            }
+        }
+    }
+
+    private nonisolated static func awaitAuthorization() async -> SFSpeechRecognizerAuthorizationStatus {
+        await withCheckedContinuation { continuation in
+            SFSpeechRecognizer.requestAuthorization { status in
+                continuation.resume(returning: status)
             }
         }
     }
@@ -63,6 +77,8 @@ final class STTService: ObservableObject {
     }
 
     func stopListening() {
+        silenceTimer?.invalidate()
+        silenceTimer = nil
         audioEngine.stop()
         audioEngine.inputNode.removeTap(onBus: 0)
         recognitionRequest?.endAudio()
@@ -87,73 +103,124 @@ final class STTService: ObservableObject {
         // Cancel previous task
         recognitionTask?.cancel()
         recognitionTask = nil
+        silenceTimer?.invalidate()
+        silenceTimer = nil
+        pendingPartial = ""
+        hasEmittedFinal = false
 
         audioCoordinator?.activateListening()
 
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
-        request.requiresOnDeviceRecognition = true  // Force on-device
+        if speechRecognizer?.supportsOnDeviceRecognition == true {
+            request.requiresOnDeviceRecognition = true
+        }
 
         self.recognitionRequest = request
 
         recognitionTask = speechRecognizer?.recognitionTask(with: request) { [weak self] result, error in
             Task { @MainActor in
+                guard let self else { return }
+                var needsRestart = false
+
                 if let result {
                     let text = result.bestTranscription.formattedString
                     let isFinal = result.isFinal
-                    self?.lastTranscript = text
-                    self?.onTranscript?(text, isFinal)
-
+                    self.lastTranscript = text
+                    self.pendingPartial = text
+                    self.onTranscript?(text, isFinal)
                     if isFinal {
-                        self?.restartSession()
+                        self.hasEmittedFinal = true
+                        self.silenceTimer?.invalidate()
+                        self.silenceTimer = nil
+                        needsRestart = true
+                    } else if !text.isEmpty {
+                        // Reset silence window — we're still hearing speech.
+                        self.scheduleSilenceEnd()
                     }
                 }
 
                 if let error {
-                    // Session expired or error — restart
                     let nsError = error as NSError
-                    // Code 1110 = "No speech detected" — normal, just restart
-                    if nsError.code != 1110 {
-                        self?.lastError = error.localizedDescription
+                    // If the recognizer bailed with a transcript still
+                    // pending, promote it to final now so the bridge can
+                    // forward it to the agent instead of dropping it.
+                    if !self.hasEmittedFinal, !self.pendingPartial.isEmpty {
+                        self.onTranscript?(self.pendingPartial, true)
+                        self.hasEmittedFinal = true
                     }
-                    self?.restartSession()
+                    // Code 1110 = "No speech detected" — silence, not a bug.
+                    if nsError.code != 1110 {
+                        self.lastError = error.localizedDescription
+                    }
+                    needsRestart = true
                 }
+
+                if needsRestart { self.restartSession() }
             }
         }
 
         let inputNode = audioEngine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
-        // Capture `request` directly — avoids crossing the @MainActor isolation
-        // boundary from the audio thread that drives the tap callback.
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [request] buffer, _ in
-            request.append(buffer)
-        }
+        Self.installTap(on: inputNode, format: recordingFormat, request: request)
 
         audioEngine.prepare()
         try audioEngine.start()
     }
 
-    /// Restart recognition session (Apple limits sessions to ~1 minute)
+    /// Force-finalise the recognition after a short stretch of silence.
+    /// On-device SFSpeechRecognizer does not emit `isFinal=true` reliably
+    /// on end-of-speech, so we call `endAudio()` ourselves once the partial
+    /// results stop streaming. The recognizer responds with a proper final.
+    private func scheduleSilenceEnd() {
+        silenceTimer?.invalidate()
+        silenceTimer = Timer.scheduledTimer(withTimeInterval: silenceTimeout, repeats: false) { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.silenceTimer = nil
+                self.recognitionRequest?.endAudio()
+            }
+        }
+    }
+
+    /// Install the audio tap from a nonisolated scope so the block closure is
+    /// not inferred as @MainActor. The audio realtime thread invokes it, which
+    /// otherwise trips Swift 6's executor-isolation assertion.
+    private nonisolated static func installTap(
+        on node: AVAudioInputNode,
+        format: AVAudioFormat,
+        request: SFSpeechAudioBufferRecognitionRequest
+    ) {
+        node.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+            request.append(buffer)
+        }
+    }
+
+    /// Restart recognition session (Apple limits sessions to ~1 minute).
+    /// Guarded: repeat callbacks (final + error in the same turn) collapse
+    /// into a single restart instead of stacking tear-down/start-up pairs.
     private func restartSession() {
-        guard isListening else { return }
+        guard isListening, !isRestarting else { return }
+        isRestarting = true
 
         audioEngine.stop()
         audioEngine.inputNode.removeTap(onBus: 0)
         recognitionRequest?.endAudio()
         recognitionRequest = nil
+        recognitionTask?.cancel()
         recognitionTask = nil
 
-        audioCoordinator?.deactivateIfIdle(expected: .listening)
-
-        // Brief pause then restart
-        Task {
-            try? await Task.sleep(for: .milliseconds(300))
-            if isListening {
+        Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(400))
+            await MainActor.run {
+                guard let self else { return }
+                self.isRestarting = false
+                guard self.isListening else { return }
                 do {
-                    try startRecognitionSession()
+                    try self.startRecognitionSession()
                 } catch {
-                    lastError = "Restart failed: \(error.localizedDescription)"
-                    isListening = false
+                    self.lastError = "Restart failed: \(error.localizedDescription)"
+                    self.isListening = false
                 }
             }
         }

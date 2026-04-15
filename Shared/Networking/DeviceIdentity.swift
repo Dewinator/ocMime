@@ -34,8 +34,8 @@ struct DeviceIdentity {
         let payload = [
             "v2",
             id,
-            "openclaw-control-ui",
-            "webchat",
+            "openclaw-macos",
+            "ui",
             "operator",
             scopesStr,
             String(signedAtMs),

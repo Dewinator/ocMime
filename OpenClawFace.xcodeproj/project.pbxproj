@@ -85,6 +85,7 @@
 		591A5A7B281466D7B4A9428C /* BonjourConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourConstants.swift; sourceTree = "<group>"; };
 		628480542B362A1C2F80A640 /* LinkDiagnostic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkDiagnostic.swift; sourceTree = "<group>"; };
 		6A701C3DA0C568C830649DFF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		75088C9EBEFCA82E57BDED75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8113A644F456070302A2D547 /* OpenClawAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenClawAPI.swift; sourceTree = "<group>"; };
 		8164FBF82A41CA22A9B3919B /* DeviceIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentity.swift; sourceTree = "<group>"; };
 		8A244AAB6AE282D76EED418F /* BonjourClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourClient.swift; sourceTree = "<group>"; };
@@ -96,6 +97,7 @@
 		95A3E4FB9C96532DC73862E4 /* OpenClawFaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenClawFaceApp.swift; sourceTree = "<group>"; };
 		989C7D15835E9BDD2961F75D /* EmotionSkillService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionSkillService.swift; sourceTree = "<group>"; };
 		A2CBC5379AA0519941E74F6F /* EmotionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionState.swift; sourceTree = "<group>"; };
+		A583CD832F8418C5816EA664 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A8CF05B0A5382F9D9E06DD96 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AB20ADA3D8508ACECECB0BE2 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		B59526262F15AB71BD3E63C3 /* OpenClawFace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenClawFace.entitlements; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				C71EB65255881F9B931478F1 /* App */,
+				B39FBED49E72C4DABD2D8DA8 /* Resources */,
 				BBC290BDDC5C4A3854A5D6F9 /* Services */,
 				DDF0B02DDF6704C8C393A385 /* Views */,
 			);
@@ -189,6 +192,14 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		B39FBED49E72C4DABD2D8DA8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				75088C9EBEFCA82E57BDED75 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		B774ABA42A0C5EE63A8B8631 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -216,6 +227,7 @@
 		BCC5A5F38A6310CEC67E1A9F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A583CD832F8418C5816EA664 /* Info.plist */,
 				B59526262F15AB71BD3E63C3 /* OpenClawFace.entitlements */,
 			);
 			path = Resources;
@@ -457,12 +469,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "OpenClaw Face";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSBonjourServices = _openclawface._tcp;
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "OpenClaw Face needs local network access to communicate with the iOS display device.";
-				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				INFOPLIST_FILE = macOS/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -539,17 +546,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "OpenClaw Display";
-				INFOPLIST_KEY_NSBonjourServices = _openclawface._tcp;
-				INFOPLIST_KEY_NSCameraUsageDescription = "OpenClaw Display uses the camera to detect when someone enters the room, so the AI agent can react.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "OpenClaw Display needs local network access to receive emotion commands from the Mac bridge.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "OpenClaw Display uses the microphone for speech-to-text and sound analysis to interact with the AI agent.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "OpenClaw Display uses on-device speech recognition to convert your voice to text for the AI agent.";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_FILE = iOS/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -571,12 +568,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "OpenClaw Face";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSBonjourServices = _openclawface._tcp;
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "OpenClaw Face needs local network access to communicate with the iOS display device.";
-				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				INFOPLIST_FILE = macOS/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -595,17 +587,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "OpenClaw Display";
-				INFOPLIST_KEY_NSBonjourServices = _openclawface._tcp;
-				INFOPLIST_KEY_NSCameraUsageDescription = "OpenClaw Display uses the camera to detect when someone enters the room, so the AI agent can react.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "OpenClaw Display needs local network access to receive emotion commands from the Mac bridge.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "OpenClaw Display uses the microphone for speech-to-text and sound analysis to interact with the AI agent.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "OpenClaw Display uses on-device speech recognition to convert your voice to text for the AI agent.";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_FILE = iOS/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

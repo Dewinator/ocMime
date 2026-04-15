@@ -24,7 +24,11 @@ final class TTSService: NSObject, ObservableObject {
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: locale)
-        utterance.rate = Float(min(max(rate, 0), 1))
+        // Map the 0…1 slider around AVSpeechUtteranceDefaultSpeechRate so the
+        // midpoint (0.5) lands on natural speed. Using the raw slider value
+        // as `rate` hit close to the maximum on iOS 17+ and sounded hectic.
+        let clamped = Float(min(max(rate, 0), 1))
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * (0.5 + clamped)
         utterance.pitchMultiplier = 1.0
         utterance.volume = 1.0
 
