@@ -10,7 +10,9 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    DEVELOPMENT_TEAM: ""
+    # Read from the DEVELOPMENT_TEAM env var so forks don't need to touch
+    # project.yml. Set it once in your shell, e.g. `export DEVELOPMENT_TEAM=XXXXXXXXXX`.
+    DEVELOPMENT_TEAM: ${DEVELOPMENT_TEAM}
     CODE_SIGN_STYLE: Automatic
 
 targets:
