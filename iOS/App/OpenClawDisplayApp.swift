@@ -15,16 +15,41 @@ struct OpenClawDisplayApp: App {
     @StateObject private var sttService: STTService
     @StateObject private var presenceService = PresenceService()
     @StateObject private var soundService = SoundAnalysisService()
-    @State private var displayMode: DisplayMode = .abstract
-    @State private var customConfig = CustomAvatarConfig.default
-    @State private var abstractConfig = AbstractAvatarConfig.default
+    @State private var displayMode: DisplayMode
+    @State private var customConfig: CustomAvatarConfig
+    @State private var abstractConfig: AbstractAvatarConfig
     @Environment(\.scenePhase) private var scenePhase
+
+    // UserDefaults keys — the iPad remembers the last avatar it was told to
+    // show, so a cold launch or a Bonjour reconnect doesn't snap back to
+    // defaults before the bridge has a chance to re-push.
+    private static let storedDisplayModeKey = "display.mode"
+    private static let storedCustomKey = "display.customConfig"
+    private static let storedAbstractKey = "display.abstractConfig"
 
     init() {
         let coordinator = AudioSessionCoordinator()
         _audioCoordinator = StateObject(wrappedValue: coordinator)
         _ttsService = StateObject(wrappedValue: TTSService(audioCoordinator: coordinator))
         _sttService = StateObject(wrappedValue: STTService(audioCoordinator: coordinator))
+
+        let defaults = UserDefaults.standard
+        let storedMode = (defaults.string(forKey: Self.storedDisplayModeKey)).flatMap(DisplayMode.init(rawValue:))
+        _displayMode = State(initialValue: storedMode ?? .abstract)
+
+        if let data = defaults.data(forKey: Self.storedCustomKey),
+           let decoded = try? JSONDecoder().decode(CustomAvatarConfig.self, from: data) {
+            _customConfig = State(initialValue: decoded)
+        } else {
+            _customConfig = State(initialValue: .default)
+        }
+
+        if let data = defaults.data(forKey: Self.storedAbstractKey),
+           let decoded = try? JSONDecoder().decode(AbstractAvatarConfig.self, from: data) {
+            _abstractConfig = State(initialValue: decoded)
+        } else {
+            _abstractConfig = State(initialValue: .default)
+        }
     }
 
     var body: some Scene {
@@ -64,6 +89,19 @@ struct OpenClawDisplayApp: App {
             .onChange(of: sttService.authorizationStatus) { _, status in
                 if status == .authorized {
                     startSTTIfPossible()
+                }
+            }
+            .onChange(of: displayMode) { _, newValue in
+                UserDefaults.standard.set(newValue.rawValue, forKey: Self.storedDisplayModeKey)
+            }
+            .onChange(of: customConfig) { _, newValue in
+                if let data = try? JSONEncoder().encode(newValue) {
+                    UserDefaults.standard.set(data, forKey: Self.storedCustomKey)
+                }
+            }
+            .onChange(of: abstractConfig) { _, newValue in
+                if let data = try? JSONEncoder().encode(newValue) {
+                    UserDefaults.standard.set(data, forKey: Self.storedAbstractKey)
                 }
             }
             .preferredColorScheme(.dark)

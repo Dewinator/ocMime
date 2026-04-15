@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum DisplayMode {
+enum DisplayMode: String {
     case custom
     case abstract
 }
