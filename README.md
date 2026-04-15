@@ -19,6 +19,21 @@ ocMime gives your locally-running [OpenClaw](https://github.com/openclaw-enginee
    └──────────────────────────┘
 ```
 
+## Screenshots
+
+<table>
+<tr>
+<td width="33%"><img src="docs/screenshots/config-tab.png" alt="CONFIG tab — gateway connection" /></td>
+<td width="33%"><img src="docs/screenshots/sensor-tab.png" alt="SENSOR tab — STT/TTS, presence, sound" /></td>
+<td width="33%"><img src="docs/screenshots/avatar-waveform.png" alt="AVATAR tab — abstract Waveform style" /></td>
+</tr>
+<tr>
+<td align="center"><sub><b>CONFIG</b> — gateway host / token, live connection status</sub></td>
+<td align="center"><sub><b>SENSOR</b> — voice I/O, camera, sound classifier, live logs</sub></td>
+<td align="center"><sub><b>AVATAR</b> — seven abstract styles, push live to iPad</sub></td>
+</tr>
+</table>
+
 ## What you get today
 
 **Working, on real hardware:**
